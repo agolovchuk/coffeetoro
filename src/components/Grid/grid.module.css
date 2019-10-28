@@ -1,0 +1,13 @@
+.container {
+  display: grid;
+  padding: 10px;
+  grid-template-columns: repeat(auto-fit, 180px);
+  grid-template-rows: repeat(auto-fill, 180px);
+  grid-gap: 15px;
+}
+.container > * {
+  align-self: center;
+  justify-self: start;
+  min-height: 180px;
+  min-width: 180px;
+}

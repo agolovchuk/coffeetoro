@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.field {
+  font-size: 30px;
+  width: 80px;
+  height: 100%;
+  margin: 0 5px;
+  text-align: center;
+}
+
+.btn {
+  width: 30px;
+  height: 100%;
+  position: relative;
+}
+.btn::before {
+  font-size: 20px;
+}
+
+.minus::before {
+  content: '-';
+}
+.plus::before {
+  content: '+';
+}
+
+.remove {
+  height: 100%;
+  margin-left: 10px;
+  background-color: red;
+  width: 40px;
+  border: 0 none;
+}
+.remove::before {
+  content: 'x';
+  font-size: 20px;
+  color: #fff;
+}

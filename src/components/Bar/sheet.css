@@ -1,0 +1,12 @@
+.bar__list {
+  display: flex;
+  list-style-type: none;
+}
+
+.bar__item {
+  margin: 0 10px;
+}
+
+.bar__link {
+  padding: 0 10px;
+}

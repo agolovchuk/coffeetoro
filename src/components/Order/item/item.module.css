@@ -1,0 +1,40 @@
+.container {
+  border: 1px solid #456595;
+  border-radius: 2px;
+  padding: 5px;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+.link {
+  text-decoration: none;
+  color: #456595;
+  font-size: 14px;
+  background: #fff;
+}
+.link:hover {
+  box-shadow: 0px 4px 12px rgba(63, 109, 178, 0.4);
+}
+.active {
+  color: #171A1C;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+.volume {
+  min-width: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: right;
+}
+.summary { 
+  display: flex;
+  justify-content: space-between;
+}
+.summ {
+  font-weight: 600;
+}
