@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
+import { Modal, Popup, Confirmation } from 'components/Popup';
 import { quantify, valueNormalize, maybyRemove } from './helper';
 import styles from './quantity.module.css';
 
@@ -12,8 +13,11 @@ interface Props {
 function Quantity({ quantity, onChange, onRemove }: Props) {
   const clickHandler = (m: number) => quantify(quantity, m, onChange);
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => onChange(valueNormalize(e.currentTarget.value))
+  const [confirm, setConfirm] = React.useState(false);
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+    >
       <button
         type="button"
         onClick={clickHandler(-1)}
@@ -25,7 +29,6 @@ function Quantity({ quantity, onChange, onRemove }: Props) {
         value={quantity}
         onChange={changeHandler}
         className={styles.field}
-        onBlur={maybyRemove(quantity, onRemove)}
       />
       <button
         type="button"
@@ -35,8 +38,23 @@ function Quantity({ quantity, onChange, onRemove }: Props) {
       <button
         type="button"
         className={styles.remove}
-        onClick={onRemove}
+        onClick={() => setConfirm(true)}
       />
+      {
+        confirm ? (
+          <Modal>
+            <Popup onCancel={() => null}>
+              <Confirmation
+                title="Confirm remove"
+                onCancel={() => setConfirm(false)}
+                onConfirm={() => onRemove()}
+              >
+                <p>Realy?</p>
+              </Confirmation>
+            </Popup>
+          </Modal>
+        ) : null
+      }
     </div>
   )
 }

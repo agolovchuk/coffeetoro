@@ -1,0 +1,32 @@
+.container {
+  padding: 10px;
+  background: #fff;
+}
+
+.btnGroup {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0 0 0;
+}
+
+.title {
+  font-size: 26px;
+}
+
+.btn {
+  font-size: 14px;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 4px;
+}
+
+.ok {
+  color: #fff;
+  background-color: #3F6DB2;
+}
+
+.cancel {
+  color: #000;
+  background: #fff;
+  border: 1px solid #3F6DB2;
+}
