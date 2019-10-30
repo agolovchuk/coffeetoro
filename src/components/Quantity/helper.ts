@@ -1,11 +1,15 @@
 
 export function quantify(quantity: number, m: number, handler: (q: number) => void) {
-  return () => handler(Math.max(quantity + m, 1));
+  return (): void => {
+    const q = Math.max(quantity + m, 1);
+    if (quantity !== q) {
+      handler(Math.max(quantity + m, 1));
+    }
+  }
 }
 
 export function valueNormalize(value: string): number {
-  const n = parseInt(value, 10)
-  return isNaN(n) ? 0 : n;
+  return Number(value);
 }
 
 export function maybyRemove(quantity: number, onRemove: () => void) {
