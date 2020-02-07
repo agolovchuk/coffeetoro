@@ -13,11 +13,14 @@ export const reducer = {
         return set(action.payload.id)(action.payload)(state);
 
       case A.ADD_ITEM:
-        return set([
-          action.payload.orderId,
-          'items',
-          action.payload.priceId
-        ])(omit('orderId')(action.payload))(state);
+        return update(action.payload.orderId)
+          (order => order && set(['items', action.payload.priceId])(omit('orderId')(action.payload))(order))
+          (state);
+        // return set([
+        //   action.payload.orderId,
+        //   'items',
+        //   action.payload.priceId
+        // ])(omit('orderId')(action.payload))(state);
 
       case A.UPDATE_QUANTITY:
         return set([

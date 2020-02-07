@@ -26,5 +26,5 @@ export const orderByProductSelector = createSelector(
 
 export const ordersListSelector = createSelector(
   [ordersById],
-  o => Object.entries(o).map(([_, elements]) => elements).sort(sortByDate('date'))
+  o => Object.values(o).sort(sortByDate('date'))
 )
