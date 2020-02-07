@@ -1,28 +1,34 @@
 import { ProductItem, VolumeItem } from '../dictionary';
 import { PriceItem } from '../dictionary/Types';
 
-export interface OrderItem {
-  id: string,
-  priceId: string,
-  quantity: number,
-}
-
-enum Payment {
+export enum Payment {
+  Opened,
   Cache,
-  Cards,
+  Bank,
 }
 
-enum Status {
+export enum Status {
   Opened,
   Archive,
 }
 
-interface OrderListItem {
-  id: string,
-  date: string,
-  status: Status,
-  client: string,
-  payment: Payment,
+export interface IOrderItem {
+  readonly orderId: string,
+  readonly priceId: string,
+  readonly quantity: number,
+}
+
+export interface OrderItem {
+  readonly priceId: string;
+  readonly quantity: number;
+}
+
+export interface Order {
+  readonly id: string;
+  readonly date: string;
+  readonly client: string;
+  readonly payment: Payment;
+  readonly items: Record<string, OrderItem>;
 }
 
 export interface OrderItemContainer {
@@ -33,6 +39,5 @@ export interface OrderItemContainer {
 }
 
 export interface OrderState {
-  order: Record<string, OrderItem>;
-  orderList: ReadonlyArray<OrderListItem>;
+  ordersList: Record<string, Order>;
 }

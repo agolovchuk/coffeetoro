@@ -5,61 +5,41 @@ function categories() {
       id: '1',
       title: 'Напитки',
       name: 'drink',
-      parentName: null,
-    },
-    {
-      id: '2',
-      title: 'Развесное',
-      name: 'dry',
-      parentName: null,
-    },
-    {
-      id: '3',
-      title: 'С молоком',
-      name: 'milk',
-      parentName: 'drink',
-    },
-    {
-      id: '4',
-      title: 'Без молока',
-      name: 'no-milk',
-      parentName: 'drink',
-    },
-    {
-      id: '5',
-      title: 'Чай',
-      name: 'tea',
-      parentName: 'drink',
+      parentName: undefined,
+      sortIndex: 2,
+      productsNest: true,
     },
     {
       id: '6',
       title: 'Какао',
       name: 'cacao',
       parentName: 'drink',
+      sortIndex: 2,
+      productsNest: true,
     },
     {
       id: '7',
       title: 'Десерты',
       name: 'diserts',
-      parentName: 'drink',
-    },
-    {
-      id: '8',
-      title: 'Топинги',
-      name: 'topings',
-      parentName: 'drink',
+      parentName: undefined,
+      sortIndex: 2,
+      productsNest: true,
     },
     {
       id: '9',
       title: 'Кофе',
       name: 'coffee',
-      parentName: 'dry',
+      parentName: undefined,
+      sortIndex: 0,
+      productsNest: true,
     },
     {
       id: '10',
       title: 'Чай',
       name: 'tea',
-      parentName: 'dry',
+      parentName: undefined,
+      sortIndex: 1,
+      productsNest: true,
     },
   ]
 }
@@ -70,43 +50,43 @@ function products() {
       id: '1',
       title: 'Эспресо',
       name: 'espreso',
-      categoryName: 'no-milk',
+      categoryName: 'coffee',
     },
     {
       id: '2',
       title: 'Американо',
       name: 'americano',
-      categoryName: 'no-milk',
+      categoryName: 'coffee',
     },
     {
       id: '3',
       title: 'Лунго',
       name: 'lungo',
-      categoryName: 'no-milk',
+      categoryName: 'coffee',
     },
     {
       id: '4',
       title: 'Ристретто',
       name: 'ristretto',
-      categoryName: 'no-milk',
+      categoryName: 'coffee',
     },
     {
       id: '5',
       title: 'Доппио',
       name: 'doppio',
-      categoryName: 'no-milk',
+      categoryName: 'coffee',
     },
     {
       id: '6',
       title: 'Капучино',
       name: 'capuchino',
-      categoryName: 'milk',
+      categoryName: 'coffee',
     },
     {
       id: '7',
       title: 'Латте',
-      name: 'Latte',
-      categoryName: 'milk',
+      name: 'latte',
+      categoryName: 'coffee',
     },
   ]
 }
@@ -120,8 +100,8 @@ function volume() {
     },
     '2': {
       id: '2',
-      title: '185 млл',
-      name: '185'
+      title: '180 млл',
+      name: '180'
     },
     '3': {
       id: '3',
@@ -130,8 +110,8 @@ function volume() {
     },
     '4': {
       id: '4',
-      title: '330 млл',
-      name: '330'
+      title: '350 млл',
+      name: '350'
     },
     '5': {
       id: '5',
@@ -177,7 +157,7 @@ function prices() {
     },
     {
       id: '5',
-      productName: 'Latte',
+      productName: 'latte',
       volumeId: '3',
       valuation: 23000,
       from: '2019-09-09T17:46:59.944Z',
@@ -185,7 +165,7 @@ function prices() {
     },
     {
       id: '6',
-      productName: 'Latte',
+      productName: 'latte',
       volumeId: '4',
       valuation: 29000,
       from: '2019-09-09T17:46:59.944Z',

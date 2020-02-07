@@ -1,0 +1,14 @@
+.container {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-rows: 80px 1fr;
+  position: relative;
+}
+.header {
+  background-color: #EAEAEA;
+}
+.content {
+  position: relative;
+  padding: 15px;
+}

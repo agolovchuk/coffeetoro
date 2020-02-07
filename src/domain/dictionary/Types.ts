@@ -5,6 +5,8 @@ interface CategoryItem {
   title: string;
   name: string;
   parentName: string | null;
+  sortIndex: number,
+  productsNest: boolean,
 }
 
 export interface ProductItem {

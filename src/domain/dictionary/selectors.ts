@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { DictionaryState, ProductForSale } from './Types';
-import { params, lastParamsValue } from 'domain/routes';
+import { params } from 'domain/routes';
 import { groupBy, arrayToMap, arrayMerge } from 'lib/dataHelper';
-import { getProductsForSaleList, indexedPrice, getProductsForSale } from './helpers';
+import { getProductsForSaleList, indexedPrice, getProductsForSale, sortByIndex } from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
 const products = (state: DictionaryState) => state.products;
@@ -11,10 +11,7 @@ export const volume = (state: DictionaryState) => state.volume;
 
 export const currentCategorySelector = createSelector(
   [categories, params],
-  (c, p) => {
-    const last = lastParamsValue(p);
-    return c.filter(f => f.parentName === last);
-  }
+  (c, p) => c.filter(f => f.parentName === p.category).sort(sortByIndex),
 )
 
 export const productsSelector = createSelector(

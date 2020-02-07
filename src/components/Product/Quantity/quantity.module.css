@@ -1,0 +1,52 @@
+.container {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+}
+
+.field {
+  font-size: 24px;
+  width: 70px;
+  height: 100%;
+  margin: 0 5px;
+  text-align: center;
+  font-weight: bold;
+  color: #3B4E63;
+  border: 0 none;
+}
+
+.btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: relative;
+  color: #fff;
+  border: 0 none;
+}
+.btn::before, .btn::after {
+  display: inline-block;
+  background-color: #fff;
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+.btn::before {
+  content: "";
+  width: 20px;
+  height: 3px;
+}
+.minus {
+  background-color: #5496EF;
+}
+.plus {
+  background-color: #7BCBB0;
+}
+.plus::after {
+  content: "";
+  height: 20px;
+  width: 3px;
+}

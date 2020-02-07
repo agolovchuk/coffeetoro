@@ -1,16 +1,16 @@
 .container {
-  border: 1px solid #456595;
+  background: #F1F4F7;
+  border: 1px solid #DCE0E3;
   border-radius: 2px;
-  padding: 5px;
+  padding: 10px;
   margin-bottom: 5px;
   position: relative;
 }
 
 .link {
   text-decoration: none;
-  color: #456595;
+  color: #516174;
   font-size: 14px;
-  background: #fff;
 }
 .link:hover {
   box-shadow: 0px 4px 12px rgba(63, 109, 178, 0.4);
@@ -19,11 +19,17 @@
   color: #171A1C;
 }
 
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .title {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 10px;
   margin-bottom: 15px;
+  font-size: 26px;
 }
 .volume {
   min-width: 0;
@@ -34,7 +40,13 @@
 .summary { 
   display: flex;
   justify-content: space-between;
+  font-size: 26px;
+  align-items: center;
+}
+.quantity {
+  font-weight: bold;
 }
 .summ {
   font-weight: 600;
+  font-size: 32px;
 }

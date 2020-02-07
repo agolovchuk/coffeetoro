@@ -1,17 +1,33 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { productsSelector, DictionaryState } from 'domain/dictionary';
-import { PARAMS_LIST, PropsMatch } from 'domain/routes';
+import { PropsMatch } from 'domain/routes';
 import Grid from 'components/Grid';
 
+interface IProductItem {
+  id: string;
+  title: string;
+  name: string;
+}
+
 interface Props extends PropsMatch {
-  products: Array<any>;
+  products: ReadonlyArray<IProductItem>;
+}
+
+function pathMaker({ url }: any) {
+  return (item: IProductItem) => {
+    return [url, item.name].join('/')
+  }
 }
 
 function Products({ products, match }: Props) {
+  const getLink = pathMaker(match);
   return (
-    <Grid params={match.params} list={products} paramsList={PARAMS_LIST} />
-  )
+    <Grid
+      list={products}
+      getLink={getLink}
+    />
+  );
 }
 
 const mapStateToProps = (state: DictionaryState, props: Props) => ({

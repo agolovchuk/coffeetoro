@@ -1,3 +1,8 @@
+import nanoid from 'nanoid';
+import get from 'lodash/get';
+import { Order, IOrderItem, Payment } from './Types';
+import { Thunk } from '../StoreType';
+
 // import { asyncAction } from 'lib/actionsHelper';
 
 // export const AddOrderItem = asyncAction(
@@ -5,25 +10,23 @@
 //   (priceId: string, quantity: number) => ({ payload: { priceId, quantity }}),
 // );
 
+export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
+
 export const ADD_ITEM = 'ORDER/ADD_ITEM';
 export const UPDATE_QUANTITY = 'ORDER/UPDATE_QUANTITY';
 export const UPDATE_ITEM = 'ORDER/UPDATE_ITEM';
 export const REMOVE_ITEM = 'ORDER/REMOVE_ITEM';
 
 interface IAddItem {
-  type: typeof ADD_ITEM,
-  payload: {
-    id: string,
-    priceId: string,
-    quantity: number,
-  }
+  type: typeof ADD_ITEM;
+  payload: IOrderItem;
 }
 
-export function addItemAction(id: string, priceId: string, quantity: number): IAddItem {
+export function addItemAction(orderId: string, priceId: string, quantity: number): IAddItem {
   return {
     type: ADD_ITEM,
     payload: {
-      id,
+      orderId,
       priceId,
       quantity,
     }
@@ -31,19 +34,15 @@ export function addItemAction(id: string, priceId: string, quantity: number): IA
 }
 
 interface UpdateQuantity {
-  type: typeof UPDATE_QUANTITY,
-  payload: {
-    id: string,
-    priceId: string,
-    quantity: number,
-  }
+  type: typeof UPDATE_QUANTITY;
+  payload: IOrderItem;
 }
 
-export function updateQuantityAction(id: string, priceId: string, quantity: number): UpdateQuantity {
+export function updateQuantityAction(orderId: string, priceId: string, quantity: number): UpdateQuantity {
   return {
     type: UPDATE_QUANTITY,
     payload: {
-      id,
+      orderId,
       priceId,
       quantity,
     }
@@ -53,33 +52,68 @@ export function updateQuantityAction(id: string, priceId: string, quantity: numb
 interface UpdateItem {
   type: typeof UPDATE_ITEM;
   payload: {
+    orderId: string;
     prevPriceId: string;
     nextPriceId: string;
+    quantity: number;
   }
 }
 
-export function updateItemAction(prevPriceId: string, nextPriceId: string): UpdateItem {
-  return {
+export function updateItemAction(orderId: string, prevPriceId: string, nextPriceId: string): Thunk<UpdateItem, UpdateItem> {
+  return (dispatch, getState) => dispatch({
     type: UPDATE_ITEM,
     payload: {
+      orderId,
       prevPriceId,
       nextPriceId,
+      quantity: get(getState(), ['ordersList', orderId, 'items', prevPriceId, 'quantity'], 0)
     }
-  }
+  });
 }
 
 interface RemoveItem {
   type: typeof REMOVE_ITEM;
   payload: {
-    priceId: string
-  }
+    orderId: string;
+    priceId: string;
+  };
 }
 
-export function removeItemAction(priceId: string): RemoveItem {
+export function removeItemAction(orderId: string, priceId: string): RemoveItem {
   return {
     type: REMOVE_ITEM,
     payload: {
-      priceId
+      priceId,
+      orderId,
     }
   }
 }
+
+interface CreateOrder {
+  type: typeof CREATE_ORDER;
+  payload: Order;
+}
+
+function createOrder(client: string): Order {
+  return {
+    id: nanoid(10),
+    date: new Date().toISOString(),
+    payment: Payment.Opened,
+    client: client,
+    items: {},
+  };
+}
+
+export function createOrderAction(client: string = 'incognito'): CreateOrder {
+  return {
+    type: CREATE_ORDER,
+    payload: createOrder(client),
+  }
+}
+
+export type Action = ReturnType<typeof createOrderAction>
+  |ReturnType<typeof addItemAction>
+  | ReturnType<typeof updateQuantityAction>
+  | ReturnType<ReturnType<typeof updateItemAction>>
+  | ReturnType<typeof removeItemAction>
+  ;

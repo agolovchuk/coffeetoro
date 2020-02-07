@@ -30,7 +30,7 @@ export default function configureStore(history: History): Store<AppState> {
     }
   }
 
-  const reducers: Reducer<AppState> = combineReducers({
+  const reducers: Reducer<AppState> = combineReducers<AppState>({
     router: connectRouter(history),
     ...require('./dictionary').reducer,
     ...require('./env').reducer,

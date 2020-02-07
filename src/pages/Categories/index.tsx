@@ -1,16 +1,40 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { match } from 'react-router-dom';
 import { currentCategorySelector, DictionaryState } from 'domain/dictionary';
-import { PARAMS_LIST, PropsMatch } from 'domain/routes';
 import Grid from 'components/Grid';
 
-interface Props extends PropsMatch {
-  categories: Array<any>,
+interface ICategoryItem {
+  name: string;
+  id: string;
+  title: string;
+  productsNest: boolean;
 }
 
-function Categories({ categories, match: { params } }: Props) {
+interface ICategoryMatch {
+  readonly orderId: string;
+  readonly category?: string;
+}
+
+interface Props {
+  categories: Array<ICategoryItem>;
+  match: match<ICategoryMatch>;
+}
+
+function pathMaker({ url }: match<ICategoryMatch>) {
+  return (item: ICategoryItem) => {
+    if (item.productsNest) return [url, item.name, 'product'].join('/');
+    return [url, item.name].join('/')
+  }
+}
+
+function Categories({ categories, match }: Props) {
+  const getLink = pathMaker(match);
   return (
-    <Grid list={categories} params={params} paramsList={PARAMS_LIST} />
+    <Grid
+      list={categories}
+      getLink={getLink}
+    />
   );
 }
 

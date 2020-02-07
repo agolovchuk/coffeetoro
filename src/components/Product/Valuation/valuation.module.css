@@ -3,6 +3,7 @@
   text-align: center;
   line-height: 1.667;
   position: relative;
+  height: 100%;
 }
 
 .label {
@@ -10,6 +11,12 @@
   display: block;
   padding: 4px 6px;
   border: 2px solid transparent;
+  height: 100%;
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  text-align: center;
 }
 .input {
   position: absolute;
@@ -17,5 +24,15 @@
   display: inline;
 }
 .input:checked + .label {
-  border-color: #456595;
+  background: #95A8BC;
+  color: #fff;
+  border-color: #fff;
+}
+
+.price {
+  font-size: 20px;
+  font-weight: bold;
+}
+.unit {
+  font-size: 18px;
 }

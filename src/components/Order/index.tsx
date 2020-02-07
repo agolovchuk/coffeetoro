@@ -27,12 +27,17 @@ function Order({ list, onComplete }: Props) {
           )
         }
       </ul>
-      <div className={styles.summ}>{summ}</div>
-      <button
-        type="button"
-        onClick={onComplete}
-        className={styles.btn}
-      >Готово</button>
+      <div className={styles.footer}>
+        <dl className={styles.summ}>
+          <dt>Итого:</dt>
+          <dd>{summ}</dd>
+        </dl>
+        <button
+          type="button"
+          onClick={onComplete}
+          className={styles.btn}
+        >Оплатить</button>
+      </div>
     </section>
   )
 }

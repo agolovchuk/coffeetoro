@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { match } from 'react-router-dom';
 import Product from 'components/Product';
 import {
   productItemSelector,
@@ -15,36 +16,58 @@ import {
   OrderItemContainer,
   orderByProductSelector,
 } from 'domain/orders';
-import { PropsMatch } from 'domain/routes';
+import { activeOrderSelector } from 'domain/env';
 import { AppState } from 'domain/StoreType';
 import styles from './product.module.css';
 
+interface IMatchParams {
+  readonly orderId: string;
+  readonly category: string;
+  readonly product: string;
+}
+
 interface IOrderApi {
-  updateQuantity: (id: string, priceId: string, quantity: number) => void;
-  removeItem: (priceId: string) => void;
+  updateQuantity: (orderId: string, priceId: string, quantity: number) => void;
+  removeItem: (orderId: string, priceId: string) => void;
+  match: match<IMatchParams>;
 }
 
-interface Props extends PropsMatch, IOrderApi {
+interface Props extends IOrderApi {
   readonly products: ReadonlyArray<ProductForSale>;
-  addItem: (id: string, priceId: string, quantity: number) => void;
-  updateItem: (prevPriceId: string, nextPriceId: string) => void;
-  readonly orders: ReadonlyArray<OrderItemContainer>,
-  readonly orderByProduct: ReadonlyArray<OrderItemContainer>,
-  productsByName: Record<string, ProductForSale>,
+  addItem: (orderId: string, priceId: string, quantity: number) => void;
+  updateItem: (orderId: string, prevPriceId: string, nextPriceId: string) => void;
+  readonly orders: ReadonlyArray<OrderItemContainer>;
+  readonly orderByProduct: ReadonlyArray<OrderItemContainer>;
+  productsByName: Record<string, ProductForSale>;
+  activeOrder: string | null;
 }
 
-function orderApi(order: OrderItemContainer, { updateQuantity, removeItem }: IOrderApi) {
+function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match }: IOrderApi) {
+  const { params: { orderId } } = match;
   return {
     isChecked: (id: string) => order.price.id === id,
-    onQuantity: (quantity: number) => updateQuantity('#fff', order.price.id, quantity),
-    onRemove: () => removeItem(order.price.id),
+    onQuantity: (quantity: number) => updateQuantity(orderId, order.price.id, quantity),
+    onRemove: () => removeItem(orderId, order.price.id),
   }
 }
 
 function ProductItem({ products, addItem, orderByProduct, productsByName, ...props }: Props) {
-  const addHandler = (priceId: string) => addItem('#fff', priceId, 1);
-  const changeHandler = (order: OrderItemContainer) => (nextPriceId: string) => props.updateItem(order.price.id, nextPriceId);
+  const { match: { params }} = props;
+
+  const addHandler = (priceId: string) => addItem(
+    params.orderId,
+    priceId,
+    1,
+  );
+
+  const changeHandler = (order: OrderItemContainer) => (nextPriceId: string) => props.updateItem(
+    params.orderId,
+    order.price.id,
+    nextPriceId,
+  );
+
   const api = (order: OrderItemContainer) => orderApi(order, props);
+  
   return (
     <section className={styles.container}>
       {
@@ -75,9 +98,10 @@ function ProductItem({ products, addItem, orderByProduct, productsByName, ...pro
 
 const mapStateToProps = (state: AppState, props: Props) => ({
   products: productItemSelector(state, props),
-  orders: ordersSelector(state),
+  orders: ordersSelector(state, props),
   orderByProduct: orderByProductSelector(state, props),
-  productsByName: productItemByNameSelector(state, props)
+  productsByName: productItemByNameSelector(state, props),
+  activeOrder: activeOrderSelector(state),
 });
 
 const mapDispatchToProps = {

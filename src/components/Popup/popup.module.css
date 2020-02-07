@@ -9,7 +9,9 @@
   background: rgba(0, 0, 0, 0.4);
   align-items: center;
   justify-content: center;
-  @supports (-webkit-backdrop-filter: blur(10px)) {
+}
+@supports (-webkit-backdrop-filter: blur(10px)) {
+  .container {
     backdrop-filter: blur(10px);
     background: none;
   }

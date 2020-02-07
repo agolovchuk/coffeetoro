@@ -1,41 +1,48 @@
 import * as A from './actions';
-import { mergeOrder, updateOrder, updateOrderItem, removeOrderItem } from './helpers';
-import { OrderItem } from './Types';
-
-function order(): Record<string, OrderItem> {
-  return {
-    "2": {
-      "id": "#fff",
-      "priceId": "2",
-      "quantity": 1
-    },
-  };
-}
-
-type Action = ReturnType<typeof A.addItemAction>
-  | ReturnType<typeof A.updateQuantityAction>
-  | ReturnType<typeof A.updateItemAction>
-  | ReturnType<typeof A.removeItemAction>
-  ;
+import compose from 'lodash/fp/compose';
+import set from 'lodash/fp/set';
+import update from 'lodash/fp/update';
+import omit from 'lodash/fp/omit';
+import { Order } from './Types';
 
 export const reducer = {
-  order(state = order(), action: Action) {
+  ordersList(state: Record<string, Order> = {}, action: A.Action) {
     switch (action.type) {
 
+      case A.CREATE_ORDER:
+        return set(action.payload.id)(action.payload)(state);
+
       case A.ADD_ITEM:
-        return mergeOrder(state, action.payload);
+        return set([
+          action.payload.orderId,
+          'items',
+          action.payload.priceId
+        ])(omit('orderId')(action.payload))(state);
 
       case A.UPDATE_QUANTITY:
-        return updateOrder(state, action.payload);
-
-      case A.UPDATE_ITEM:
-        return updateOrderItem(state, action.payload.prevPriceId, action.payload.nextPriceId);
+        return set([
+          action.payload.orderId,
+          'items',
+          action.payload.priceId,
+          'quantity'
+        ])(action.payload.quantity)(state);
 
       case A.REMOVE_ITEM:
-        return removeOrderItem(state, action.payload.priceId);
+        return update([action.payload.orderId, 'items'])(omit(action.payload.priceId))(state);
+
+      case A.UPDATE_ITEM:
+        return update([action.payload.orderId, 'items'])(
+          compose(
+            omit(action.payload.prevPriceId),
+            set(action.payload.nextPriceId)({
+              priceId: action.payload.nextPriceId,
+              quantity: action.payload.quantity,
+            }),
+          ),
+        )(state);
 
       default:
         return state;
     }
-  },
+  }
 };

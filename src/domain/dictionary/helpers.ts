@@ -66,3 +66,11 @@ export function getProductsForSale(
   const ad = getProductForSale(price, volume, merger);
   return products.reduce((a, product) => ad(a, product), def);
 }
+
+interface ISortebaleList {
+  sortIndex: number;
+}
+
+export function sortByIndex<T extends ISortebaleList>(a: T, b: T) {
+  return a.sortIndex - b.sortIndex;
+}
