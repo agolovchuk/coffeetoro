@@ -6,9 +6,11 @@ export function scrollBarWidth(): string {
 }
 
 export function updateStyle(el: HTMLElement | null, val: CSSStylesType) {
-  val.forEach((prop) => {
-    if (el) el.style.setProperty(prop.name, prop.value);
-  });
+  if (el) {
+    val.forEach((prop) => {
+      el.style.setProperty(prop.name, prop.value);
+    });
+  }
 }
 
 export function bodyToggler(isOpened: boolean) {
