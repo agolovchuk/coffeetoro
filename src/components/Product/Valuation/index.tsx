@@ -1,5 +1,6 @@
 import * as React from 'react';
 import nanoid from 'nanoid';
+import { Price } from 'components/Units';
 import styles from './valuation.module.css';
 
 interface IPrice {
@@ -29,7 +30,9 @@ export default function Valuation({ volume, price, ...props }: Props) {
         className={styles.input}
       />
       <label htmlFor={id} className={styles.label}>
-        <div className={styles.price}>{price.valuation / 1000} грн.</div>
+        <div className={styles.price}>
+          <Price value={price.valuation} sign notation="compact" />
+        </div>
         <div className={styles.unit}>{volume}</div>
       </label>
     </li>

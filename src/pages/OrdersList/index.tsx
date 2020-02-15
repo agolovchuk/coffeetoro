@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import { connect } from 'react-redux';
-import { ordersListSelector, createOrderAction, Order } from 'domain/orders';
+import { ordersListSelector, createOrderAction, Order, getOrdersListAction } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
 
 import styles from './orders.module.css';
@@ -10,6 +10,7 @@ import styles from './orders.module.css';
 interface Props {
   orders: ReadonlyArray<Order>;
   createOrder: () => void;
+  getOrdersList: () => void;
 }
 
 const mapsStateToProps = (state: AppState) => ({
@@ -18,9 +19,14 @@ const mapsStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = {
   createOrder: createOrderAction,
+  getOrdersList: getOrdersListAction,
 }
 
-function Orders({ orders, createOrder }: Props) {
+function Orders({ orders, createOrder, getOrdersList }: Props) {
+  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  React.useEffect(() => { getOrdersList(); }, []);
+
   return (
     <React.Fragment>
       <button

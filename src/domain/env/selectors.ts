@@ -3,4 +3,4 @@ import { EnvState } from './Types';
 
 const env = (state: EnvState) => state.env;
 
-export const activeOrderSelector = createSelector(env, e => e.activeOrder);
+export const multiplierSelector = createSelector(env, e => e.multiplier);

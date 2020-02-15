@@ -1,11 +1,16 @@
 import * as A from './actions';
 import { IEnv } from './Types';
 
-function env() {
+function env(): IEnv {
   return {
     multiplier: 1000,
-    currency: 'грн.',
-    activeOrder: null,
+    currency: 'UAH',
+    user: {
+      id: '0',
+      firstName: '',
+      lastName: '',
+      nikName: 'Max',
+    }
   }
 }
 

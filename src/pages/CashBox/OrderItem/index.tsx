@@ -14,9 +14,13 @@ interface Props {
   match: match<IOrderParams>;
 }
 
-function OrderItem({ orders }: Props) {
+function OrderItem({ orders, match }: Props) {
   return (
-    <Order list={orders} onComplete={() => null} />
+    <Order
+      list={orders}
+      onComplete={() => null}
+      orderId={match.params.orderId}
+    />
   )
 }
 

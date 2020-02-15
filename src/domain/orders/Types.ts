@@ -12,13 +12,8 @@ export enum Status {
   Archive,
 }
 
-export interface IOrderItem {
-  readonly orderId: string,
-  readonly priceId: string,
-  readonly quantity: number,
-}
-
 export interface OrderItem {
+  readonly orderId: string,
   readonly priceId: string;
   readonly quantity: number;
 }
@@ -28,7 +23,7 @@ export interface Order {
   readonly date: string;
   readonly client: string;
   readonly payment: Payment;
-  readonly items: Record<string, OrderItem>;
+  readonly owner: string;
 }
 
 export interface OrderItemContainer {
@@ -39,5 +34,6 @@ export interface OrderItemContainer {
 }
 
 export interface OrderState {
+  orderItems: Record<string, OrderItem>;
   ordersList: Record<string, Order>;
 }

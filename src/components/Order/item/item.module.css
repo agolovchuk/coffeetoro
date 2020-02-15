@@ -1,35 +1,30 @@
 .container {
-  background: #F1F4F7;
-  border: 1px solid #DCE0E3;
-  border-radius: 2px;
-  padding: 10px;
   margin-bottom: 5px;
   position: relative;
 }
-
 .link {
   text-decoration: none;
   color: #516174;
   font-size: 14px;
-}
-.link:hover {
-  box-shadow: 0px 4px 12px rgba(63, 109, 178, 0.4);
+  background: #F1F4F7;
+  border: 1px solid #DCE0E3;
+  border-radius: 2px;
+  padding: 10px;
 }
 .active {
-  color: #171A1C;
+  color: #fff;
+  background: #95A8BC;
 }
-
 .wrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
-
 .title {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
-  font-size: 26px;
+  font-size: 20px;
 }
 .volume {
   min-width: 0;
@@ -40,7 +35,7 @@
 .summary { 
   display: flex;
   justify-content: space-between;
-  font-size: 26px;
+  font-size: 20px;
   align-items: center;
 }
 .quantity {
@@ -48,5 +43,5 @@
 }
 .summ {
   font-weight: 600;
-  font-size: 32px;
+  font-size: 20px;
 }

@@ -1,6 +1,6 @@
 import nanoid from 'nanoid';
 import get from 'lodash/get';
-import { Order, IOrderItem, Payment } from './Types';
+import { Order, Payment, OrderItem } from './Types';
 import { Thunk } from '../StoreType';
 
 // import { asyncAction } from 'lib/actionsHelper';
@@ -17,9 +17,16 @@ export const UPDATE_QUANTITY = 'ORDER/UPDATE_QUANTITY';
 export const UPDATE_ITEM = 'ORDER/UPDATE_ITEM';
 export const REMOVE_ITEM = 'ORDER/REMOVE_ITEM';
 
+export const GET_ORDER = 'ORDER/GET_ORDER';
+export const GET_ORDER_SUCCESS = 'ORDER/GET_ORDER/SUCCESS';
+
+export const GET_ORDERS_LIST = 'ORDER/GET_ORDERS_LIST';
+export const GET_ORDERS_LIST_SUCCESS = 'ORDER/GET_ORDERS_LIST_SUCCESS';
+export const GET_ORDER_ITEMS_SUCCESS = 'ORDER/GET_ORDER_ITEMS_SUCCESS';
+
 interface IAddItem {
   type: typeof ADD_ITEM;
-  payload: IOrderItem;
+  payload: OrderItem;
 }
 
 export function addItemAction(orderId: string, priceId: string, quantity: number): IAddItem {
@@ -35,7 +42,7 @@ export function addItemAction(orderId: string, priceId: string, quantity: number
 
 interface UpdateQuantity {
   type: typeof UPDATE_QUANTITY;
-  payload: IOrderItem;
+  payload: OrderItem;
 }
 
 export function updateQuantityAction(orderId: string, priceId: string, quantity: number): UpdateQuantity {
@@ -94,26 +101,88 @@ interface CreateOrder {
   payload: Order;
 }
 
-function createOrder(client: string): Order {
+function createOrder(client: string, owner: string): Order {
   return {
     id: nanoid(10),
     date: new Date().toISOString(),
     payment: Payment.Opened,
     client: client,
-    items: {},
+    owner,
   };
 }
 
-export function createOrderAction(client: string = 'incognito'): CreateOrder {
-  return {
+export function createOrderAction(client: string = 'incognito'): Thunk<CreateOrder, CreateOrder> {
+  return (dispatch, getState) => dispatch({
     type: CREATE_ORDER,
-    payload: createOrder(client),
-  }
+    payload: createOrder(client, getState().env.user.id),
+  })
 }
 
-export type Action = ReturnType<typeof createOrderAction>
-  |ReturnType<typeof addItemAction>
+// ===== async ==========
+interface GetOrder {
+  type: typeof GET_ORDER;
+  payload: {
+    id: string;
+  }
+}
+export function getOrderAction(id: string): GetOrder {
+  return {
+    type: GET_ORDER,
+    payload: {
+      id,
+    }
+  }
+}
+interface GetOrderSuccess {
+  type: typeof GET_ORDER_SUCCESS;
+  payload: Order;
+}
+export function getOrderSuccessAction(o: Order): GetOrderSuccess {
+  return {
+    type: GET_ORDER_SUCCESS,
+    payload: o,
+  }
+}
+// +++++++++++++++++++++
+interface GetOrdersList {
+  type: typeof GET_ORDERS_LIST;
+}
+export function getOrdersListAction(): GetOrdersList {
+  return {
+    type: GET_ORDERS_LIST,
+  }
+}
+interface GetOrdersListSuccess {
+  type: typeof GET_ORDERS_LIST_SUCCESS;
+  payload: Record<string, Order>;
+}
+export function getOrdersListSuccessAction(orders: Record<string, Order>): GetOrdersListSuccess {
+  return {
+    type: GET_ORDERS_LIST_SUCCESS,
+    payload: orders,
+  }
+}
+// +++++++++++++++++++++
+interface GetOrderItemsSuccess {
+  type: typeof GET_ORDER_ITEMS_SUCCESS;
+  payload: Record<string, OrderItem>;
+}
+export function getOrderItemsSuccessAction(items: Record<string, OrderItem>): GetOrderItemsSuccess {
+  return {
+    type: GET_ORDER_ITEMS_SUCCESS,
+    payload: items,
+  }
+}
+// +++++++++++++++++++++
+
+export type Action = ReturnType<ReturnType<typeof createOrderAction>>
+  | ReturnType<typeof addItemAction>
   | ReturnType<typeof updateQuantityAction>
   | ReturnType<ReturnType<typeof updateItemAction>>
   | ReturnType<typeof removeItemAction>
+  | ReturnType<typeof getOrderAction>
+  | ReturnType<typeof getOrderSuccessAction>
+  | ReturnType<typeof getOrdersListAction>
+  | ReturnType<typeof getOrdersListSuccessAction>
+  | ReturnType<typeof getOrderItemsSuccessAction>
   ;

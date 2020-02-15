@@ -7,4 +7,4 @@ import { RouterState } from './routes';
 
 export interface AppState extends DictionaryState, OrderState, EnvState, RouterState {};
 
-export type Thunk<R, A extends Action> = ThunkAction<R, OrderState, undefined, A>;
+export type Thunk<R, A extends Action> = ThunkAction<R, AppState, undefined, A>;

@@ -15,8 +15,8 @@ import {
   ordersSelector,
   OrderItemContainer,
   orderByProductSelector,
+  getOrderAction,
 } from 'domain/orders';
-import { activeOrderSelector } from 'domain/env';
 import { AppState } from 'domain/StoreType';
 import styles from './product.module.css';
 
@@ -39,7 +39,7 @@ interface Props extends IOrderApi {
   readonly orders: ReadonlyArray<OrderItemContainer>;
   readonly orderByProduct: ReadonlyArray<OrderItemContainer>;
   productsByName: Record<string, ProductForSale>;
-  activeOrder: string | null;
+  getOrder: (id: string) => void;
 }
 
 function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match }: IOrderApi) {
@@ -68,6 +68,10 @@ function ProductItem({ products, addItem, orderByProduct, productsByName, ...pro
 
   const api = (order: OrderItemContainer) => orderApi(order, props);
   
+  React.useEffect(() => {
+    props.getOrder(props.match.params.orderId);
+  }, [props.match.params.orderId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <section className={styles.container}>
       {
@@ -101,10 +105,10 @@ const mapStateToProps = (state: AppState, props: Props) => ({
   orders: ordersSelector(state, props),
   orderByProduct: orderByProductSelector(state, props),
   productsByName: productItemByNameSelector(state, props),
-  activeOrder: activeOrderSelector(state),
 });
 
 const mapDispatchToProps = {
+  getOrder: getOrderAction,
   addItem: addItemAction,
   updateQuantity: updateQuantityAction,
   updateItem: updateItemAction,

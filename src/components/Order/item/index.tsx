@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
+import { Price } from 'components/Units';
 import styles from './item.module.css';
 import { OrderItemContainer, OrderApi } from '../Types';
 
-type Props = OrderApi & OrderItemContainer;
+type Props = OrderApi & OrderItemContainer & {
+  url: string;
+};
 
-function OrderItem({ product, quantity, volume, price, onRemove }: Props) {
+function OrderItem({ product, quantity, volume, price, onRemove, url }: Props) {
   return (
     <li className={styles.container}>
       <NavLink
-        to={`/drink/${product.categoryName}/${product.name}`}
+        to={url}
         activeClassName={styles.active}
         className={cx(styles.link, styles.wrapper)}
       >
@@ -19,9 +22,14 @@ function OrderItem({ product, quantity, volume, price, onRemove }: Props) {
         </h3>
         <div className={styles.summary}>
           <span>
-            <span className={styles.quantity}>{quantity}</span> x <span className={styles.valuation}>{price.valuation}</span>
+            <span className={styles.quantity}>{quantity}</span> x 
+            <span className={styles.valuation}>
+              <Price value={price.valuation} notation="compact" sign />
+            </span>
           </span>
-          <span className={styles.summ}>{quantity * price.valuation}</span>
+          <span className={styles.summ}>
+            <Price value={quantity * price.valuation} sign notation="compact" />
+          </span>
         </div>
       </NavLink>
     </li>

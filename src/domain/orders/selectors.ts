@@ -1,5 +1,4 @@
 import { createSelector } from 'reselect';
-import get from 'lodash/get'
 import { params } from 'domain/routes';
 import { sortByDate } from 'lib/dateHelper';
 import { priceByID, productByName, volume } from '../dictionary/selectors';
@@ -7,11 +6,12 @@ import { getOrderItem,  } from './helpers';
 import { OrderState } from './Types';
 
 export const ordersById = (state: OrderState) => state.ordersList;
+export const orderItems = (state: OrderState) => state.orderItems;
 
 // Filter order items list for specific order 
 const orderItemSelector = createSelector(
-  [ordersById, params],
-  (o, p) => p.orderId ? Object.values(get(o, [p.orderId, 'items'], [])) : [],
+  [orderItems, params],
+  (o, p) => p.orderId ? Object.values(o) : [],
 )
 
 export const ordersSelector = createSelector(

@@ -9,7 +9,8 @@ import {
 import thunk from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
-import { AppState } from './StoreType'
+import { AppState } from './StoreType';
+import idbMiddlware from 'db/middlware';
 
 const __DEV__ = (process.env.NODE_ENV === 'development');
 
@@ -43,6 +44,7 @@ export default function configureStore(history: History): Store<AppState> {
       applyMiddleware(
         thunk,
         routerMiddleware(history),
+        idbMiddlware(),
       ),
     ),
   );
