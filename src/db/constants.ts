@@ -9,6 +9,7 @@ export const TABLE = {
       payment: 'payment',
       client: 'client',
       owner: 'owner',
+      orderIdPayment: 'orderIdPayment',
     }
   },
   orderItem: {

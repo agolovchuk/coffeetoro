@@ -1,6 +1,6 @@
 import nanoid from 'nanoid';
 import get from 'lodash/get';
-import { Order, Payment, OrderItem } from './Types';
+import { Order, PaymentMethod, OrderItem } from './Types';
 import { Thunk } from '../StoreType';
 
 // import { asyncAction } from 'lib/actionsHelper';
@@ -16,6 +16,7 @@ export const ADD_ITEM = 'ORDER/ADD_ITEM';
 export const UPDATE_QUANTITY = 'ORDER/UPDATE_QUANTITY';
 export const UPDATE_ITEM = 'ORDER/UPDATE_ITEM';
 export const REMOVE_ITEM = 'ORDER/REMOVE_ITEM';
+export const COMPLETE = 'ORDER/COMPLETE';
 
 export const GET_ORDER = 'ORDER/GET_ORDER';
 export const GET_ORDER_SUCCESS = 'ORDER/GET_ORDER/SUCCESS';
@@ -105,7 +106,7 @@ function createOrder(client: string, owner: string): Order {
   return {
     id: nanoid(10),
     date: new Date().toISOString(),
-    payment: Payment.Opened,
+    payment: PaymentMethod.Opened,
     client: client,
     owner,
   };
@@ -118,6 +119,22 @@ export function createOrderAction(client: string = 'incognito'): Thunk<CreateOrd
   })
 }
 
+interface OrderComplete {
+  type: typeof COMPLETE;
+  payload: {
+    id: string;
+    method: PaymentMethod;
+  }
+}
+export function completeOrderAction(id: string, method: PaymentMethod): OrderComplete {
+  return {
+    type: COMPLETE,
+    payload: {
+      id,
+      method,
+    }
+  }
+}
 // ===== async ==========
 interface GetOrder {
   type: typeof GET_ORDER;
@@ -181,6 +198,7 @@ export type Action = ReturnType<ReturnType<typeof createOrderAction>>
   | ReturnType<ReturnType<typeof updateItemAction>>
   | ReturnType<typeof removeItemAction>
   | ReturnType<typeof getOrderAction>
+  | ReturnType<typeof completeOrderAction>
   | ReturnType<typeof getOrderSuccessAction>
   | ReturnType<typeof getOrdersListAction>
   | ReturnType<typeof getOrdersListSuccessAction>

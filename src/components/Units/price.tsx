@@ -6,9 +6,10 @@ interface PriceProps {
   value: number;
   sign?: boolean;
   notation?: 'standard' | 'compact',
+  currencyDisplay?: 'symbol' | 'code' | 'narrowSymbol' | 'name';
 }
 
-export default function Price({ value, sign, notation }: PriceProps) {
+export default function Price({ value, sign, currencyDisplay, notation }: PriceProps) {
   return (
     <UnitsContext.Consumer>
       {
@@ -16,7 +17,7 @@ export default function Price({ value, sign, notation }: PriceProps) {
         <FormattedNumber
           value={data.getPrice(value)}
           compactDisplay="short"
-          currencyDisplay="narrowSymbol"
+          currencyDisplay={currencyDisplay}
           currencySign="standard"
           notation={notation}
           style={sign ? 'currency' : 'unit'} // eslint-disable-line react/style-prop-object

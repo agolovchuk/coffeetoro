@@ -24,11 +24,21 @@ function OrderItem({ product, quantity, volume, price, onRemove, url }: Props) {
           <span>
             <span className={styles.quantity}>{quantity}</span> x 
             <span className={styles.valuation}>
-              <Price value={price.valuation} notation="compact" sign />
+              <Price
+                value={price.valuation}
+                sign
+                notation="compact"
+                currencyDisplay="narrowSymbol"
+              />
             </span>
           </span>
           <span className={styles.summ}>
-            <Price value={quantity * price.valuation} sign notation="compact" />
+            <Price
+              value={quantity * price.valuation}
+              sign
+              notation="compact"
+              currencyDisplay="narrowSymbol"
+            />
           </span>
         </div>
       </NavLink>
