@@ -3,11 +3,13 @@ import Item from './item';
 import styles from './order.module.css';
 import { OrderItemContainer } from './Types';
 import { Price } from 'components/Units';
+import { PaymentMethod } from 'domain/orders/Types';
+import Payment from './payment';
 
 interface Props {
   orderId: string,
   list: ReadonlyArray<OrderItemContainer>,
-  onComplete: () => void,
+  onComplete: (method: PaymentMethod) => void,
 }
 
 function getSumm(list: ReadonlyArray<OrderItemContainer>): number {
@@ -21,6 +23,7 @@ function makeUrl(orderId: string) {
 
 function Order({ list, onComplete, orderId }: Props) {
   const summ = getSumm(list);
+  const [isPiced, picMethod] = React.useState(false);
   return (
     <section className={styles.container}>
       <ul className={styles.list}>
@@ -42,10 +45,19 @@ function Order({ list, onComplete, orderId }: Props) {
         </dl>
         <button
           type="button"
-          onClick={onComplete}
+          onClick={() => picMethod(true)}
           className={styles.btn}
         >Оплатить</button>
       </div>
+      {
+        isPiced ? (
+          <Payment
+            onCancel={() => picMethod(false)}
+            valuation={summ}
+            onConplete={onComplete}
+          />
+        ) : null
+      }
     </section>
   )
 }

@@ -31,6 +31,9 @@ export const reducer = {
       case A.GET_ORDER_ITEMS_SUCCESS:
         return action.payload;
 
+      case A.COMPLETE:
+        return {};
+
       default:
         return state;
     }
@@ -46,6 +49,9 @@ export const reducer = {
 
       case A.GET_ORDERS_LIST_SUCCESS:
         return action.payload;
+
+      case A.COMPLETE:
+        return {};
 
       default:
         return state;

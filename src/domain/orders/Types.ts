@@ -1,9 +1,9 @@
 import { ProductItem, VolumeItem } from '../dictionary';
 import { PriceItem } from '../dictionary/Types';
 
-export enum Payment {
+export enum PaymentMethod {
   Opened,
-  Cache,
+  Cash,
   Bank,
 }
 
@@ -22,7 +22,7 @@ export interface Order {
   readonly id: string;
   readonly date: string;
   readonly client: string;
-  readonly payment: Payment;
+  readonly payment: PaymentMethod;
   readonly owner: string;
 }
 

@@ -10,10 +10,14 @@ export function getValueFromStore(store: APPStore) {
   return {
     getPrice: getPrice(multiplier),
     currency,
+    toInnerMoney: (value: number) => value * multiplier,
   }
 }
 
+const DEFAULT_MULTIPLIER = 1000;
+
 export default  React.createContext({
-  getPrice: getPrice(1000),
-  currency: 'UAH'
+  getPrice: getPrice(DEFAULT_MULTIPLIER),
+  currency: 'UAH',
+  toInnerMoney: (value: number) => value * DEFAULT_MULTIPLIER,
 });

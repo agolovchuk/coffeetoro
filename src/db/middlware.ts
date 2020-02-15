@@ -1,10 +1,12 @@
 import { Dispatch, MiddlewareAPI } from 'redux';
 import { replace } from 'connected-react-router';
+import get from 'lodash/get';
 import * as OrderAction from 'domain/orders/actions';
-import IDB from 'lib/idbx/db';
+import { PaymentMethod } from 'domain/orders/Types';
+import IDB, { READ_WRITE } from 'lib/idbx/db';
 import * as C from './constants';
 import requestUpgrade from './migration';
-import { orderAdapter, validateOrder, orderItemAdapter } from './helpers';
+import { orderAdapter, oneOrderAdapter, orderItemAdapter } from './helpers';
 
 type Action = OrderAction.Action;
 
@@ -17,14 +19,19 @@ export default function idbMiddlware() {
         break;
 
       case OrderAction.GET_ORDER:
-        idb.getItem(C.TABLE.orders.name, action.payload.id, validateOrder)
+        idb.getItem(
+          C.TABLE.orders.name,
+          C.TABLE.orders.field.orderIdPayment,
+          [action.payload.id, PaymentMethod.Opened],
+          oneOrderAdapter,
+        )
           .then((order) => {
             if (order) {
               dispatch(OrderAction.getOrderSuccessAction(order));
             } else {
               dispatch(replace('/'));
             }
-          })
+          });
         break;
 
       case OrderAction.GET_ORDER_SUCCESS:
@@ -61,6 +68,28 @@ export default function idbMiddlware() {
 
       case OrderAction.REMOVE_ITEM:
         idb.deleteItem(C.TABLE.orderItem.name, [action.payload.orderId, action.payload.priceId]);
+        break;
+
+      case OrderAction.COMPLETE:
+        idb.open().then(db => new Promise((resolve, reject) => {
+          const request = db
+            .transaction([C.TABLE.orders.name], READ_WRITE)
+            .objectStore(C.TABLE.orders.name)
+            .openCursor(action.payload.id)
+          request.onsuccess = function success(event) {
+            const cursor = get(event, ['target', 'result']);
+            if (cursor) {
+              const v = Object.assign({}, cursor.value, { payment: action.payload.method });
+              cursor.update(v);
+              cursor.continue();
+            } else {
+              db.close();
+              resolve();
+            }
+          };
+          request.onerror = () => { db.close(); reject() }
+        }))
+          .then(() => { dispatch(replace('/')) });
         break;
       default:
         break;

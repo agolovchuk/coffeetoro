@@ -26,6 +26,12 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
         unique: false
       }
     );
+    osOrders.createIndex(C.TABLE.orders.field.orderIdPayment, [
+      C.TABLE.orders.field.id,
+      C.TABLE.orders.field.payment,
+    ], {
+      unique: true
+    });
     const osOrderItem = this.result.createObjectStore(
       C.TABLE.orderItem.name, {
         keyPath: [

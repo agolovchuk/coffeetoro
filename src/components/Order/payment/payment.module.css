@@ -1,0 +1,71 @@
+.container {
+  background-color: #fff;
+  position: relative;
+  width: 400px;
+  overflow: hidden;
+}
+.wrapper {
+  display: flex;
+  will-change: transform;
+  transition: 0.3s transform ease-out;
+}
+.wrapper.checkout {
+  transform: translateX(-100%);
+}
+.frame {
+  flex: 0 0 400px;
+}
+.title {
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: 20px;
+  font-weight: normal;
+  padding: 0 10px;
+  font-size: 26px;
+  background-color: #E0E0E0;
+  display: flex;
+  align-items: center;
+}
+.btnGroup {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+.tile {
+  background: #EBECED;
+  border: 1px solid #DCE0E3;
+  box-sizing: border-box;
+  border-radius: 10px;
+  padding: 10px 20px 20px 20px;
+  width: 120px;
+  height: 120px;
+  margin: 0 20px;
+}
+.tile::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 50px;
+  margin: 10px auto 0;
+}
+.cash::after {
+  background-image: url("./image/money.svg");
+}
+.bank::after {
+  background-image: url("./image/credit-card.svg");
+}
+.btn {
+  height: 40px;
+  padding: 0 20px;
+  border: 0 none;
+  font-size: 18px;
+  border-radius: 4px;
+}
+.cancel {
+  background-color: #E52752;
+  color: #fff;
+}
+.pay {
+  background-color: #5bceae;
+  color: #fff;
+}
