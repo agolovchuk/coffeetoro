@@ -1,18 +1,11 @@
 import * as React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { multiplierSelector } from 'domain/env';
-import { AppState } from 'domain/StoreType';
-import { connect } from 'react-redux';
 import Layouts from './layout';
 import OrdersList from './OrdersList';
 import CacheBox from './CashBox';
 import Auth from './Auth';
 
-interface Props {
-  multiplier: number;
-}
-
-function App({ multiplier }: Props) {
+export default function App() {
   return (
     <Switch>
       <Route path="/login" exact component={Auth} />
@@ -25,9 +18,3 @@ function App({ multiplier }: Props) {
     </Switch>
   );
 }
-
-const mapStateToProps = (state: AppState) => ({
-  multiplier: multiplierSelector(state),
-});
-
-export default connect(mapStateToProps)(App);

@@ -19,5 +19,18 @@ export const TABLE = {
       orderId: 'orderId',
       priceId: 'priceId',
     }
-  }
+  },
+  product: {
+    name: 'product',
+    field: {
+      name: 'name',
+      categoryName: 'categoryName',
+    }
+  },
+  category: {
+    name: 'category',
+    field: {
+      name: 'name',
+    }
+  },
 };

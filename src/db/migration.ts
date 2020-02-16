@@ -1,7 +1,9 @@
 import * as C from './constants';
+import * as Fixtures from './fixtures';
 
 export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionChangeEvent): any {
-  if (ev.oldVersion === 0) {
+  if (ev.oldVersion < 1) {
+// =========== Orders ==============================
     const osOrders = this.result.createObjectStore(
       C.TABLE.orders.name, {
         keyPath: C.TABLE.orders.field.id,
@@ -32,6 +34,7 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
     ], {
       unique: true
     });
+// =========== Order item ==============================
     const osOrderItem = this.result.createObjectStore(
       C.TABLE.orderItem.name, {
         keyPath: [
@@ -57,5 +60,43 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
     ], {
       unique: true
     });
+// ======== Category ==================================
+    const osCategory = this.result.createObjectStore(
+      C.TABLE.category.name, {
+        keyPath: C.TABLE.category.field.name,
+        autoIncrement: false,
+      }
+    );
+    osCategory.createIndex(
+      C.TABLE.category.field.name,
+      C.TABLE.category.field.name, {
+        unique: true,   
+      }
+    );
+
+// ========= Product =================================
+    const osProduct = this.result.createObjectStore(
+      C.TABLE.product.name, {
+        keyPath: C.TABLE.product.field.name,
+        autoIncrement: false,
+      }
+    );
+    osProduct.createIndex(
+      C.TABLE.product.field.name,
+      C.TABLE.product.field.name, {
+        unique: true
+      }
+    );
+    osProduct.createIndex(
+      C.TABLE.product.field.categoryName,
+      C.TABLE.product.field.categoryName, {
+        unique: false
+      }
+    );
+// ======================================================
   }
+  return [
+    { table: C.TABLE.category.name, data: Fixtures.categories },
+    { table: C.TABLE.product.name, data: Fixtures.products },
+  ];
 }

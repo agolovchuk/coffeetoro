@@ -7,7 +7,7 @@ function categories() {
       name: 'drink',
       parentName: undefined,
       sortIndex: 2,
-      productsNest: true,
+      productsNest: false,
     },
     {
       id: '6',

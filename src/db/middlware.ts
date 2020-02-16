@@ -3,7 +3,7 @@ import { replace } from 'connected-react-router';
 import get from 'lodash/get';
 import * as OrderAction from 'domain/orders/actions';
 import { PaymentMethod } from 'domain/orders/Types';
-import IDB, { READ_WRITE } from 'lib/idbx/db';
+import IDB from 'lib/idbx/db';
 import * as C from './constants';
 import requestUpgrade from './migration';
 import { orderAdapter, oneOrderAdapter, orderItemAdapter } from './helpers';
@@ -73,7 +73,7 @@ export default function idbMiddlware() {
       case OrderAction.COMPLETE:
         idb.open().then(db => new Promise((resolve, reject) => {
           const request = db
-            .transaction([C.TABLE.orders.name], READ_WRITE)
+            .transaction([C.TABLE.orders.name], C.READ_WRITE)
             .objectStore(C.TABLE.orders.name)
             .openCursor(action.payload.id)
           request.onsuccess = function success(event) {

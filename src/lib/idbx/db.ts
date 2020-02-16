@@ -1,14 +1,13 @@
 import get from 'lodash/get';
-export const READ_WRITE = 'readwrite';
-export const READ_ONLY = 'readonly';
-
-type RequestUpgrade = (this: IDBOpenDBRequest, ev: IDBVersionChangeEvent) => any;
-
-type DictionaryAdapter<T> = (prev: Record<string, T> | null, value: unknown) => Record<string, T>;
-
-type Adapter<T> = (value: unknown) => T | null;
-
-type Query = string | number | IDBArrayKey;
+import {
+  RequestUpgrade,
+  Fixtures,
+  DictionaryAdapter,
+  Query,
+  Adapter
+} from './Types';
+import * as C from './constant';
+import { applyFixtures, os } from './helpers';
 
 export default class IDB {
 
@@ -25,12 +24,22 @@ export default class IDB {
   open(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const request = window.indexedDB.open(this.name, this.version);
-      request.onupgradeneeded = this.requestUpgrade;
+      const _requestUpgrade = this.requestUpgrade;
+      let fixtures: ReadonlyArray<Fixtures> | undefined;
+      request.onupgradeneeded = function upgrade(event) {
+        if (typeof _requestUpgrade === 'function') {
+          fixtures = _requestUpgrade.call(this, event);
+        }
+      }
       request.onerror = function requestFailure() {
         reject(this.error);
       }
       request.onsuccess = function requestSuccess() {
-        resolve(this.result);
+        if (fixtures) {
+          applyFixtures.call(this.result, fixtures).then(() => { resolve(this.result); })
+        } else {
+          resolve(this.result);
+        }
       }
     });
   }
@@ -44,7 +53,7 @@ export default class IDB {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
       let result: Record<string, T> | null = null;
-      const request = db.transaction([table], READ_ONLY).objectStore(table).index(indexName).openCursor(query);
+      const request = os.call(db, table, C.READ_ONLY).index(indexName).openCursor(query);
       request.onsuccess = (event) => {
         const cursor = get(event, ['target', 'result']);
         if (cursor) {
@@ -63,7 +72,7 @@ export default class IDB {
   async addItem(table: string, value: any): Promise<void> {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
-      const request = db.transaction([table], READ_WRITE).objectStore(table).add(value);
+      const request = os.call(db, table, C.READ_WRITE).add(value);
       request.onsuccess = () => { db.close(); resolve(); };
       request.onerror = () => { db.close(); reject(); };
     });
@@ -72,7 +81,7 @@ export default class IDB {
   async getItem<T>(table: string, indexName: string, query: Query, adapter: Adapter<T>): Promise<T | null> {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
-      const request = db.transaction([table], READ_ONLY).objectStore(table).index(indexName).get(query);
+      const request = os.call(db, table, C.READ_ONLY).index(indexName).get(query);
       request.onsuccess = (event) => {
         db.close();
         resolve(adapter(get(event, ['target', 'result'])));
@@ -84,7 +93,7 @@ export default class IDB {
   async deleteItem(table: string, query: Query): Promise<void> {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
-      const request = db.transaction([table], READ_WRITE).objectStore(table).delete(query);
+      const request = os.call(db, table, C.READ_WRITE).delete(query);
       request.onsuccess = () => { db.close(); resolve(); };
       request.onerror = () => { db.close(); reject(); };
     });
@@ -93,7 +102,7 @@ export default class IDB {
   async updateItem(table: string, value: any): Promise<void> {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
-      const request = db.transaction([table], READ_WRITE).objectStore(table).put(value);
+      const request = os.call(db, table, C.READ_WRITE).put(value);
       request.onsuccess = () => { db.close(); resolve(); };
       request.onerror = () => { db.close(); reject(); };
     });
