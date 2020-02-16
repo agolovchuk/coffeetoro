@@ -10,7 +10,6 @@ import {
 import {
   addItemAction,
   updateQuantityAction,
-  updateItemAction,
   removeItemAction,
   ordersSelector,
   OrderItemContainer,
@@ -35,7 +34,6 @@ interface IOrderApi {
 interface Props extends IOrderApi {
   readonly products: ReadonlyArray<ProductForSale>;
   addItem: (orderId: string, priceId: string, quantity: number) => void;
-  updateItem: (orderId: string, prevPriceId: string, nextPriceId: string) => void;
   readonly orders: ReadonlyArray<OrderItemContainer>;
   readonly orderByProduct: ReadonlyArray<OrderItemContainer>;
   productsByName: Record<string, ProductForSale>;
@@ -60,12 +58,6 @@ function ProductItem({ products, addItem, orderByProduct, productsByName, ...pro
     1,
   );
 
-  const changeHandler = (order: OrderItemContainer) => (nextPriceId: string) => props.updateItem(
-    params.orderId,
-    order.price.id,
-    nextPriceId,
-  );
-
   const api = (order: OrderItemContainer) => orderApi(order, props);
   
   React.useEffect(() => {
@@ -78,7 +70,7 @@ function ProductItem({ products, addItem, orderByProduct, productsByName, ...pro
         orderByProduct.map((order) => (
           <Product
             key={order.product.name + order.volume.name}
-            onChange={changeHandler(order)}
+            onChange={() => null}
             title={order.product.title}
             name={order.product.name}
             valuation={productsByName[order.product.name].valuation}
@@ -111,7 +103,6 @@ const mapDispatchToProps = {
   getOrder: getOrderAction,
   addItem: addItemAction,
   updateQuantity: updateQuantityAction,
-  updateItem: updateItemAction,
   removeItem: removeItemAction,
 }
 
