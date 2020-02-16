@@ -2,23 +2,27 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow-y: auto;
 }
 .list {
   list-style-type: none;
   padding: 5px;
   flex: 1 1 100%;
+  overflow-y: auto;
 }
 .description {
   font-weight: normal;
 }
-.summ {
-  font-size: 48px;
+.amount {
+  font-size: 30px;
   color: #414141;
+  line-height: 1.5;
   text-align: right;
-  margin-bottom: 20px;
+  margin: 15px 0;
 }
-.summ dd {
+.amount dd {
   font-weight: bold;
+  font-size: 40px;
 }
 .btn {
   width: 100%;

@@ -22,7 +22,7 @@ function makeUrl(orderId: string) {
 }
 
 function Order({ list, onComplete, orderId }: Props) {
-  const summ = getSumm(list);
+  const amount = getSumm(list);
   const [isPiced, picMethod] = React.useState(false);
   return (
     <section className={styles.container}>
@@ -39,9 +39,9 @@ function Order({ list, onComplete, orderId }: Props) {
         }
       </ul>
       <div className={styles.footer}>
-        <dl className={styles.summ}>
-          <dt>Итого:</dt>
-          <dd><Price value={summ} sign /></dd>
+        <dl className={styles.amount}>
+          <dt>Итого: <b>{list.length}</b> позиций</dt>
+          <dd><Price value={amount} sign /></dd>
         </dl>
         <button
           type="button"
@@ -53,7 +53,7 @@ function Order({ list, onComplete, orderId }: Props) {
         isPiced ? (
           <Payment
             onCancel={() => picMethod(false)}
-            valuation={summ}
+            valuation={amount}
             onConplete={onComplete}
           />
         ) : null
