@@ -10,6 +10,7 @@ function env(): IEnv {
       firstName: '',
       lastName: '',
       nikName: 'Max',
+      role: 'manager',
     }
   }
 }

@@ -1,5 +1,6 @@
 import * as C from './constants';
 import * as Fixtures from './fixtures';
+import { os } from 'lib/idbx/helpers';
 
 export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionChangeEvent): any {
   if (ev.oldVersion < 1) {
@@ -91,6 +92,41 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       C.TABLE.product.field.categoryName,
       C.TABLE.product.field.categoryName, {
         unique: false
+      }
+    );
+// ===================== Price ==========================
+    const osPrice = this.result.createObjectStore(
+      C.TABLE.price.name, {
+        keyPath: C.TABLE.price.field.productName,
+        autoIncrement: false,
+      }
+    );
+    osPrice.createIndex(
+      C.TABLE.price.field.productName,
+      C.TABLE.price.field.productName, {
+        unique: false,
+      }
+    );
+    osPrice.createIndex(
+      'priceId', [
+        C.TABLE.price.field.productName,
+        C.TABLE.price.field.unitId,
+        C.TABLE.price.field.expiryDate,
+      ], {
+        unique: true
+      }
+    );
+// =================== Unit =============================
+    const osUnit = this.result.createObjectStore(
+      C.TABLE.unit.name, {
+        keyPath: C.TABLE.unit.field.id,
+        autoIncrement: false,
+      }
+    );
+    osUnit.createIndex(
+      C.TABLE.unit.field.id,
+      C.TABLE.unit.field.id, {
+        unique: true,
       }
     );
 // ======================================================

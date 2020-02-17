@@ -25,12 +25,28 @@ export const TABLE = {
     field: {
       name: 'name',
       categoryName: 'categoryName',
+      barcode: 'barcode',
     }
   },
   category: {
     name: 'category',
     field: {
       name: 'name',
+    }
+  },
+  price: {
+    name: 'price',
+    field: {
+      productName: 'productName',
+      unitId: 'unitId',
+      expiryDate: 'expiryDate',
+    }
+  },
+  unit: {
+    name: 'unit',
+    field: {
+      id: 'id',
+      type: 'type',
     }
   },
 };

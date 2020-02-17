@@ -61,4 +61,19 @@ export const products = [
     name: 'latte',
     categoryName: 'coffee',
   },
+];
+
+export const units = [
+  {
+    id: '1',
+    name: 'instance',
+    title: 'шт.',
+    type: 'countable'
+  },
+  {
+    id: '2',
+    name: 'wight',
+    title: 'г.',
+    type: 'wight',
+  }
 ]
