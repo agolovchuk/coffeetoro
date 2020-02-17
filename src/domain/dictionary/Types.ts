@@ -16,6 +16,15 @@ export interface ProductItem {
   categoryName: string;
 }
 
+type UnitType = 'wight' | 'countable';
+
+export interface IUnits {
+  id: string;
+  title: string;
+  name: string;
+  type: UnitType
+}
+
 export interface VolumeItem {
   readonly id: string;
   readonly title: string;
