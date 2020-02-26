@@ -1,27 +1,9 @@
-import { ObjectMap } from 'lib/dataHelper';
 import {
   ProductForSale,
   ProductItem,
   PriceItem,
   Units,
 } from './Types';
-
-interface ProductIndex {
-  readonly productName: string;
-  readonly volumeId: string;
-}
-
-function productHash({ productName, volumeId }: ProductIndex) {
-  return productName + '@' + volumeId;
-}
-
-export function indexedPrice(prices: ReadonlyArray<PriceItem>) {
-  const def = new ObjectMap<ProductIndex, PriceItem>(productHash);
-  return prices.reduce((a, v) => a.set({
-    productName: v.productName,
-    volumeId: v.unitId,
-  }, v), def);
-}
 
 function priceAdapter(units: Units) {
   return (e: PriceItem) => ({

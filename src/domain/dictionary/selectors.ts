@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { DictionaryState, ProductForSale } from './Types';
 import { params } from 'domain/routes';
-import { groupBy, arrayToMap, arrayMerge } from 'lib/dataHelper';
-import { getProductsForSaleList, indexedPrice, getProductsForSale, sortByIndex } from './helpers';
+import { groupBy, arrayMerge } from 'lib/dataHelper';
+import { getProductsForSaleList, getProductsForSale, sortByIndex } from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
 const products = (state: DictionaryState) => state.products;
@@ -20,7 +20,7 @@ export const unitsByIdSelector = createSelector(units, u => u);
 
 export const currentCategorySelector = createSelector(
   [categoriesListSelector, params],
-  (c, p) => c.filter(f => f.name === p.category).sort(sortByIndex),
+  (c, p) => c.filter(f => f.name === p.category),
 )
 
 export const productsSelector = createSelector(
@@ -33,24 +33,9 @@ export const productsWithNameSelector = createSelector(
   (pr, p) => pr.filter(f => f.name === p.product),
 )
 
-export const productByName = createSelector(
-  [productsListSelector],
-  p => arrayToMap(p, 'name'),
-)
-
 const priceByProductSelector = createSelector(
   pricesListSelector,
   (p) => groupBy(p, 'productName')
-)
-
-export const indexedPriceSelector = createSelector(
-  [pricesListSelector],
-  p => indexedPrice(p),
-)
-
-export const priceByID = createSelector(
-  [pricesListSelector],
-  p => arrayToMap(p, 'id'),
 )
 
 export const productItemSelector = createSelector(
