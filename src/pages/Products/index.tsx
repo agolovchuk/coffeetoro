@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { productsSelector, DictionaryState } from 'domain/dictionary';
+import { connect, ConnectedProps } from 'react-redux';
+import { AppState } from 'domain/StoreType';
+import { productsSelector, CRUD } from 'domain/dictionary';
 import { PropsMatch } from 'domain/routes';
 import Grid from 'components/Grid';
 
@@ -10,18 +11,30 @@ interface IProductItem {
   name: string;
 }
 
-interface Props extends PropsMatch {
-  products: ReadonlyArray<IProductItem>;
+type PropsFromRouter = PropsMatch<{orderId: string, category: string}>;
+
+const mapState = (state: AppState, props: PropsFromRouter) => ({
+  products: productsSelector(state, props),
+});
+
+const mapDispatch = {
+  getDictionary: CRUD.getAllAction,
 }
 
-function pathMaker({ url }: any) {
-  return (item: IProductItem) => {
-    return [url, item.name].join('/')
-  }
-}
+const connector = connect(mapState, mapDispatch);
 
-function Products({ products, match }: Props) {
-  const getLink = pathMaker(match);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface Props extends PropsFromRedux, PropsFromRouter {}
+
+function Products({ products, match: { params, url }, getDictionary }: Props) {
+
+  const getLink = React.useCallback((item: IProductItem) => [url, item.name].join('/'), [url])
+
+  React.useEffect(() => {
+    getDictionary('products', params.category, 'categoryName');
+  }, [params.category, getDictionary]);
+
   return (
     <Grid
       list={products}
@@ -30,8 +43,4 @@ function Products({ products, match }: Props) {
   );
 }
 
-const mapStateToProps = (state: DictionaryState, props: Props) => ({
-  products: productsSelector(state, props),
-});
-
-export default connect(mapStateToProps)(Products);
+export default connector(Products);

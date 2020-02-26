@@ -1,14 +1,9 @@
-import nanoid from 'nanoid';
+import { createAction } from '@reduxjs/toolkit';
 import get from 'lodash/get';
+import { getId } from 'lib/id';
 import { Order, PaymentMethod, OrderItem } from './Types';
+import { Products, Prices, PriceItem, ProductItem } from 'domain/dictionary/Types';
 import { Thunk } from '../StoreType';
-
-// import { asyncAction } from 'lib/actionsHelper';
-
-// export const AddOrderItem = asyncAction(
-//   'ORDER/ADD_ORDER_ITEM',
-//   (priceId: string, quantity: number) => ({ payload: { priceId, quantity }}),
-// );
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
 
@@ -19,25 +14,45 @@ export const REMOVE_ITEM = 'ORDER/REMOVE_ITEM';
 export const COMPLETE = 'ORDER/COMPLETE';
 
 export const GET_ORDER = 'ORDER/GET_ORDER';
-export const GET_ORDER_SUCCESS = 'ORDER/GET_ORDER/SUCCESS';
+const GET_ORDER_SUCCESS = 'ORDER/GET_ORDER/SUCCESS';
 
 export const GET_ORDERS_LIST = 'ORDER/GET_ORDERS_LIST';
 export const GET_ORDERS_LIST_SUCCESS = 'ORDER/GET_ORDERS_LIST_SUCCESS';
 export const GET_ORDER_ITEMS_SUCCESS = 'ORDER/GET_ORDER_ITEMS_SUCCESS';
 
-interface IAddItem {
-  type: typeof ADD_ITEM;
-  payload: OrderItem;
+type PrepareAction<T> = (payload: T) => { payload: T };
+
+function prepareAction<T>(payload: T) { 
+  return {
+    payload
+  };
 }
 
-export function addItemAction(orderId: string, priceId: string, quantity: number): IAddItem {
-  return {
-    type: ADD_ITEM,
-    payload: {
-      orderId,
-      priceId,
-      quantity,
-    }
+export interface IAddItem {
+  type: typeof ADD_ITEM;
+  payload: {
+    item: OrderItem,
+    price: PriceItem,
+    product: ProductItem,
+  }
+}
+
+export function addItemAction(orderId: string, priceId: string, quantity: number): Thunk<IAddItem, IAddItem> {
+  return (dispatch, getState) => {
+    const { prices, products } = getState();
+    const price = get(prices, priceId);
+    return dispatch({
+      type: ADD_ITEM,
+      payload: {
+        item: {
+          orderId,
+          priceId: get(price, 'id'),
+          quantity,
+        },
+        price,
+        product: get(products, price.productName),
+      }
+    });
   }
 }
 
@@ -104,7 +119,7 @@ interface CreateOrder {
 
 function createOrder(client: string, owner: string): Order {
   return {
-    id: nanoid(10),
+    id: getId(10),
     date: new Date().toISOString(),
     payment: PaymentMethod.Opened,
     client: client,
@@ -150,16 +165,16 @@ export function getOrderAction(id: string): GetOrder {
     }
   }
 }
+
 interface GetOrderSuccess {
-  type: typeof GET_ORDER_SUCCESS;
-  payload: Order;
+  order: Order;
+  orderItems: Record<string, OrderItem>;
+  products: Products;
+  prices: Prices;
 }
-export function getOrderSuccessAction(o: Order): GetOrderSuccess {
-  return {
-    type: GET_ORDER_SUCCESS,
-    payload: o,
-  }
-}
+
+export const getOrderSuccessAction = createAction<PrepareAction<GetOrderSuccess>, typeof GET_ORDER_SUCCESS>(GET_ORDER_SUCCESS, prepareAction);
+
 // +++++++++++++++++++++
 interface GetOrdersList {
   type: typeof GET_ORDERS_LIST;
@@ -193,7 +208,7 @@ export function getOrderItemsSuccessAction(items: Record<string, OrderItem>): Ge
 // +++++++++++++++++++++
 
 export type Action = ReturnType<ReturnType<typeof createOrderAction>>
-  | ReturnType<typeof addItemAction>
+  | ReturnType<ReturnType<typeof addItemAction>>
   | ReturnType<typeof updateQuantityAction>
   | ReturnType<ReturnType<typeof updateItemAction>>
   | ReturnType<typeof removeItemAction>

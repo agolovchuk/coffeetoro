@@ -2,7 +2,24 @@ import * as React from 'react';
 import { APPStore } from './Types';
 
 export function getPrice(multiplier: number) {
-  return (value: number) => value / multiplier;
+  return (value: number | string): number => {
+    if (typeof value === 'number') {
+      return value / multiplier;
+    }
+    if (value.trim() === '') return 0;
+    return parse(value) / multiplier;
+  }
+}
+
+function parse(value: string): number {
+  const v = parseFloat(value);
+  if (isNaN(v)) throw new TypeError('Invalid valur');
+  return v;
+}
+
+function toInnerMoney(value: string, multiplier: number) {
+  if (value.trim() === '') return '';
+  return (parse(value) * multiplier).toString();
 }
 
 export function getValueFromStore(store: APPStore) {
@@ -10,7 +27,8 @@ export function getValueFromStore(store: APPStore) {
   return {
     getPrice: getPrice(multiplier),
     currency,
-    toInnerMoney: (value: number) => value * multiplier,
+    multiplier,
+    toInnerMoney: (value: string) => toInnerMoney(value, multiplier),
   }
 }
 
@@ -19,5 +37,6 @@ const DEFAULT_MULTIPLIER = 1000;
 export default  React.createContext({
   getPrice: getPrice(DEFAULT_MULTIPLIER),
   currency: 'UAH',
-  toInnerMoney: (value: number) => value * DEFAULT_MULTIPLIER,
+  multiplier: DEFAULT_MULTIPLIER,
+  toInnerMoney: (value: string) => (parse(value) * DEFAULT_MULTIPLIER).toString(),
 });

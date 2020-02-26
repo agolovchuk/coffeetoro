@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Profile from '../profile';
+import { IUser } from '../Types';
 import styles from './header.module.css';
 
 interface Props {
@@ -7,11 +8,10 @@ interface Props {
   location: {
     pathname: string;
   };
-  name?: string;
-  ava?: string;
+  user: IUser;
 }
 
-function Header({ onBack, location }: Props) {
+function Header({ onBack, location, user }: Props) {
   return (
     <header className={styles.container}>
       <button
@@ -22,8 +22,7 @@ function Header({ onBack, location }: Props) {
       />
       <Profile
         className={styles.profile}
-        name="Max"
-        ava="https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50"
+        user={user}
       />
     </header>
   )

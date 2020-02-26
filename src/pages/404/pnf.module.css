@@ -1,0 +1,25 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  background-color: #f7fafc;
+  align-items: center;
+  justify-content: center;
+}
+.title {
+  color: #5bceae;
+  font-size: 200px;
+  text-align: center;
+}
+.description {
+  color: #90abbe;
+  font-size: 50px;
+  margin-bottom: 70px;
+}
+.link {
+  color: #3796f6;
+  text-decoration: none;
+}
+.wrapper {
+  text-align: center;
+}

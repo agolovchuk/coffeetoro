@@ -2,10 +2,10 @@ import * as C from './constant';
 import { Mode, Fixtures } from './Types';
 
 export function applyFixtures(this: IDBDatabase, fx: ReadonlyArray<Fixtures>): Promise<void[]> {
-  return Promise.all(fx.map(e => addList(os.apply(this, [e.table, C.READ_WRITE]), e.data)));
+  return Promise.all(fx.map(e => addList(os.call(this, e.table, C.READ_WRITE), e.data)));
 }
 
-export function os(this: IDBDatabase, table: string | string[], mode: Mode) {
+export function os(this: IDBDatabase, table: string | string[], mode: Mode): IDBObjectStore {
   const osName = Array.isArray(table) ? table[0] : table;
   return this.transaction(table, mode).objectStore(osName);
 }

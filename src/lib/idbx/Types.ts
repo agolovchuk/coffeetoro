@@ -7,7 +7,7 @@ export interface Fixtures {
 
 export type RequestUpgrade = (this: IDBOpenDBRequest, ev: IDBVersionChangeEvent) => ReadonlyArray<Fixtures>;
 
-export type DictionaryAdapter<T> = (prev: Record<string, T> | null, value: unknown) => Record<string, T>;
+export type DataAdapterFactory<T> = (prev: T | null, value: unknown) => T | null;
 
 export type Adapter<T> = (value: unknown) => T | null;
 

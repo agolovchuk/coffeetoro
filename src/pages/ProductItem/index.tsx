@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { match } from 'react-router-dom';
+import { connect, ConnectedProps } from 'react-redux';
+import { PropsMatch } from 'domain/routes';
 import Product from 'components/Product';
 import {
   productItemSelector,
-  ProductForSale,
   productItemByNameSelector,
+  CRUD,
 } from 'domain/dictionary';
 import {
   addItemAction,
@@ -14,7 +14,6 @@ import {
   ordersSelector,
   OrderItemContainer,
   orderByProductSelector,
-  getOrderAction,
 } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
 import styles from './product.module.css';
@@ -25,20 +24,32 @@ interface IMatchParams {
   readonly product: string;
 }
 
-interface IOrderApi {
-  updateQuantity: (orderId: string, priceId: string, quantity: number) => void;
-  removeItem: (orderId: string, priceId: string) => void;
-  match: match<IMatchParams>;
+type PropsFromRouter = PropsMatch<IMatchParams>;
+
+const mapState = (state: AppState, props: PropsFromRouter) => ({
+  products: productItemSelector(state, props),
+  orders: ordersSelector(state, props),
+  orderByProduct: orderByProductSelector(state, props),
+  productsByName: productItemByNameSelector(state, props),
+});
+
+const mapDispatch = {
+  addItem: addItemAction,
+  updateQuantity: updateQuantityAction,
+  removeItem: removeItemAction,
+  getDictionary: CRUD.getAllAction,
 }
 
-interface Props extends IOrderApi {
-  readonly products: ReadonlyArray<ProductForSale>;
-  addItem: (orderId: string, priceId: string, quantity: number) => void;
-  readonly orders: ReadonlyArray<OrderItemContainer>;
-  readonly orderByProduct: ReadonlyArray<OrderItemContainer>;
-  productsByName: Record<string, ProductForSale>;
-  getOrder: (id: string) => void;
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface IOrderApi extends PropsFromRouter {
+  updateQuantity: (orderId: string, priceId: string, quantity: number) => void;
+  removeItem: (orderId: string, priceId: string) => void;
 }
+
+interface Props extends PropsFromRedux, PropsFromRouter {};
 
 function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match }: IOrderApi) {
   const { params: { orderId } } = match;
@@ -49,20 +60,26 @@ function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match
   }
 }
 
-function ProductItem({ products, addItem, orderByProduct, productsByName, ...props }: Props) {
+function ProductItem({ addItem, orderByProduct, productsByName, getDictionary, ...props }: Props) {
   const { match: { params }} = props;
 
-  const addHandler = (priceId: string) => addItem(
+  const addHandler = React.useCallback((priceId: string) => addItem(
     params.orderId,
     priceId,
     1,
-  );
+  ), [params, addItem]);
 
-  const api = (order: OrderItemContainer) => orderApi(order, props);
+  const api = React.useCallback(
+    (order: OrderItemContainer) => orderApi(order, props),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [params.orderId, props.updateQuantity, props.removeItem]
+  );
   
   React.useEffect(() => {
-    props.getOrder(props.match.params.orderId);
-  }, [props.match.params.orderId]); // eslint-disable-line react-hooks/exhaustive-deps
+    getDictionary('units');
+    getDictionary('prices', params.product, 'productName');
+    getDictionary('products', params.category, 'categoryName');
+  }, [getDictionary, params]);
 
   return (
     <section className={styles.container}>
@@ -80,7 +97,7 @@ function ProductItem({ products, addItem, orderByProduct, productsByName, ...pro
         ))
       }
       {
-        products.map((product) => (
+        props.products.map((product) => (
           <Product
             key={product.id}
             onChange={addHandler}
@@ -92,18 +109,4 @@ function ProductItem({ products, addItem, orderByProduct, productsByName, ...pro
   );
 }
 
-const mapStateToProps = (state: AppState, props: Props) => ({
-  products: productItemSelector(state, props),
-  orders: ordersSelector(state, props),
-  orderByProduct: orderByProductSelector(state, props),
-  productsByName: productItemByNameSelector(state, props),
-});
-
-const mapDispatchToProps = {
-  getOrder: getOrderAction,
-  addItem: addItemAction,
-  updateQuantity: updateQuantityAction,
-  removeItem: removeItemAction,
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductItem);
+export default connector(ProductItem);

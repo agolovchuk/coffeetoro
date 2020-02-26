@@ -2,13 +2,27 @@ import { Dispatch, MiddlewareAPI } from 'redux';
 import { replace } from 'connected-react-router';
 import get from 'lodash/get';
 import * as OrderAction from 'domain/orders/actions';
-import { PaymentMethod } from 'domain/orders/Types';
+import * as DictionaryAction from 'domain/dictionary/actions';
+import { OrderItem, Order } from 'domain/orders/Types';
+import { Products, ProductItem, PriceItem } from 'domain/dictionary/Types';
 import IDB from 'lib/idbx/db';
 import * as C from './constants';
 import requestUpgrade from './migration';
-import { orderAdapter, oneOrderAdapter, orderItemAdapter } from './helpers';
+import * as adapters from './adapters';
+import { validateArray } from './helpers';
 
-type Action = OrderAction.Action;
+type Action = OrderAction.Action | DictionaryAction.Action;
+
+function promisifyReques<T>(req: IDBRequest<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    req.onsuccess = function() {
+      resolve(this.result);
+    }
+    req.onerror = function() {
+      reject(this.error);
+    }
+  });
+}
 
 export default function idbMiddlware() {
   const idb = new IDB('cachebox', requestUpgrade);
@@ -19,39 +33,67 @@ export default function idbMiddlware() {
         break;
 
       case OrderAction.GET_ORDER:
-        idb.getItem(
-          C.TABLE.orders.name,
-          C.TABLE.orders.field.orderIdPayment,
-          [action.payload.id, PaymentMethod.Opened],
-          oneOrderAdapter,
-        )
-          .then((order) => {
-            if (order) {
-              dispatch(OrderAction.getOrderSuccessAction(order));
-            } else {
-              dispatch(replace('/'));
+        idb.open().then((db) => {
+          const transaction = db.transaction([
+            C.TABLE.orders.name,
+            C.TABLE.orderItem.name,
+            C.TABLE.product.name,
+            C.TABLE.price.name,
+          ]);
+          let order: Order | null = null;
+          let orderItems: Record<string, OrderItem>;
+          let products: Products;
+          let prices: Record<string, PriceItem>;
+          transaction.oncomplete = () => {
+            db.close();
+            if (order !== null) {
+              dispatch(
+                OrderAction.getOrderSuccessAction({
+                  order,
+                  orderItems,
+                  products,
+                  prices
+                })
+              )
             }
-          });
-        break;
-
-      case OrderAction.GET_ORDER_SUCCESS:
-        idb.getDictionary(
-          C.TABLE.orderItem.name,
-          C.TABLE.orderItem.field.orderId,
-          action.payload.id,
-          orderItemAdapter,
-        )
-          .then((res) => {
-            if (res) dispatch(OrderAction.getOrderItemsSuccessAction(res));
+          };
+          const ordersRequest = transaction.objectStore(C.TABLE.orders.name).get(action.payload.id);
+          const orderRequest = transaction.objectStore(C.TABLE.orderItem.name).index('orderId').getAll(action.payload.id);
+          const priceStore = transaction.objectStore(C.TABLE.price.name);
+          const productStore = transaction.objectStore(C.TABLE.product.name).index('name');
+          promisifyReques<Order>(ordersRequest).then(res => {
+            order = adapters.oneOrderAdapter(res);
           })
+          promisifyReques<OrderItem[]>(orderRequest)
+            .then(res => {
+              orderItems = validateArray(adapters.orderItemAdapter)(res);
+              return Promise.all(
+                res.map(
+                  e => promisifyReques<PriceItem>(
+                    priceStore.get(e.priceId)
+                  )
+                )
+              );
+            })
+            .then(res => {
+              prices = validateArray(adapters.dictionaryAdapters['prices'])(res);
+              const productNames: string[] = res.reduce((a: string[], v) => a.includes(v.productName) ? a : a.concat(v.productName), []);
+              return Promise.all(
+                productNames.map(e => promisifyReques<ProductItem>(productStore.get(e)))
+              )
+            })
+            .then((res) => {
+              products = validateArray(adapters.dictionaryAdapters['products'])(res);
+            })
+        });
         break;
 
       case OrderAction.GET_ORDERS_LIST:
         idb.getDictionary(
           C.TABLE.orders.name,
+          adapters.orderAdapter,
           C.TABLE.orders.field.payment,
           0,
-          orderAdapter,
         )
           .then((res) => {
             if (res) dispatch(OrderAction.getOrdersListSuccessAction(res));
@@ -91,6 +133,23 @@ export default function idbMiddlware() {
         }))
           .then(() => { dispatch(replace('/')) });
         break;
+
+      case DictionaryAction.CRUD.getAllAction.type:
+        const { name, index, query } = action.payload;
+        const validator = adapters.dictionaryAdapters[name];
+        idb.getAll(name, validateArray(validator), index, query).then(res => {
+          if (res) dispatch(DictionaryAction.CRUD.getAllActionSuccess(name, res))
+        });
+        break;
+
+      case DictionaryAction.CRUD.createItemAction.type:
+        idb.addItem(action.payload.name, action.payload.data);
+        break;
+      
+      case DictionaryAction.CRUD.updateItemAction.type:
+        idb.updateItem(action.payload.name, action.payload.data);
+        break;
+
       default:
         break;
     }

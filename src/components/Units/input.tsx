@@ -1,40 +1,53 @@
 import * as React from 'react'
-import compose from 'lodash/fp/compose';
 import UnitsContext from './helpers';
 
 interface Props {
   className?: string;
   value: number;
   onChange: (value: number) => void;
+  id?: string;
+  max?: number;
 }
 
-function parseNumber(value: string): number {
-  const v = parseFloat(value);
-  if (isNaN(v)) return 0;
-  return v;
-}
-function changeHandler(adapter: (v: number) => number, setter: (v: number) => void) {
-  return (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    compose(
-      setter,
-      adapter,
-      parseNumber,
-    )(value);
-  }
+const VALID_STRING = /^\d+\.?\d{0,2}$/;
+const multiplier = 1000; // TODO:
+
+function changeDot(v: string) {
+  return v.replace(',', '.');
 }
 
-export default function MoneyInput({ className, value, onChange }: Props) {
+export default function MoneyInput({
+  max = Number.MAX_SAFE_INTEGER,
+  className,
+  value,
+  onChange,
+  ...props
+}: Props) {
+
+  const [displayValue, setDisplayValue] = React.useState((value / multiplier).toString());
+  const handleChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const v = changeDot(e.target.value);
+      const numberValue = Number.parseFloat(v);
+      if (!isNaN(numberValue) && VALID_STRING.test(v)) {
+        setDisplayValue(v);
+        onChange(numberValue * multiplier);
+      }
+      return;
+    }, [onChange]
+  )
+
   return (
     <UnitsContext.Consumer>
       {
-        data => (
+        () => (
           <input
+            {...props}
             type="text"
-            pattern="/b"
-            value={data.getPrice(value)}
-            onChange={changeHandler(data.toInnerMoney, onChange)}
+            inputMode="decimal"
             className={className}
+            onChange={handleChange}
+            value={displayValue}
           />
         )
       }

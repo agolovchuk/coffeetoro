@@ -1,29 +1,11 @@
+import { TypeOf } from 'io-ts';
+import * as contracts from './contracts';
 
+export type CategoryItem = TypeOf<typeof contracts.category>;
 
-interface CategoryItem {
-  id: string;
-  title: string;
-  name: string;
-  parentName: string | null;
-  sortIndex: number,
-  productsNest: boolean,
-}
+export type ProductItem = TypeOf<typeof contracts.product>;
 
-export interface ProductItem {
-  id: string;
-  title: string;
-  name: string;
-  categoryName: string;
-}
-
-type UnitType = 'wight' | 'countable';
-
-export interface IUnits {
-  id: string;
-  title: string;
-  name: string;
-  type: UnitType
-}
+export type UnitItem = TypeOf<typeof contracts.unit>;
 
 export interface VolumeItem {
   readonly id: string;
@@ -31,14 +13,7 @@ export interface VolumeItem {
   readonly name: string;
 }
 
-export interface PriceItem {
-  id: string;
-  productName: string;
-  volumeId: string;
-  valuation: number;
-  from: string;
-  to: string | null;
-}
+export type PriceItem = TypeOf<typeof contracts.price>;
 
 export interface SaleParams {
   readonly price: PriceItem;
@@ -52,15 +27,15 @@ export interface ProductForSale {
   readonly valuation: ReadonlyArray<SaleParams>;
 }
 
-export type Categories = ReadonlyArray<CategoryItem>;
-export type Products = ReadonlyArray<ProductItem>;
-export type Volume = Record<string, VolumeItem>;
-export type Prices = ReadonlyArray<PriceItem>;
+export type Categories = Record<string, CategoryItem>;
+export type Products = Record<string, ProductItem>;
+export type Units = Record<string, UnitItem>;
+export type Prices = Record<string, PriceItem>;
 
 export interface DictionaryState {
   categories: Categories;
   products: Products; 
-  volume: Volume;
+  units: Units;
   prices: Prices;
 };
 
