@@ -26,7 +26,7 @@ export function indexedPrice(prices: ReadonlyArray<PriceItem>) {
 function priceAdapter(units: Units) {
   return (e: PriceItem) => ({
     price: e,
-    volume: units[e.unitId].title
+    volume: units[e.unitId]?.title
   })
 }
 

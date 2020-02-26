@@ -1,31 +1,30 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
-import { connect } from 'react-redux';
-import { ordersListSelector, createOrderAction, Order, getOrdersListAction } from 'domain/orders';
+import { connect, ConnectedProps } from 'react-redux';
+import { ordersListSelector, createOrderAction, getOrdersListAction } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
 
 import styles from './orders.module.css';
 
-interface Props {
-  orders: ReadonlyArray<Order>;
-  createOrder: () => void;
-  getOrdersList: () => void;
-}
-
-const mapsStateToProps = (state: AppState) => ({
+const mapState = (state: AppState) => ({
   orders: ordersListSelector(state),
 });
 
-const mapDispatchToProps = {
+const mapDispatch = {
   createOrder: createOrderAction,
   getOrdersList: getOrdersListAction,
 }
 
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface Props extends PropsFromRedux {};
+
 function Orders({ orders, createOrder, getOrdersList }: Props) {
   
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  React.useEffect(() => { getOrdersList(); }, []);
+  React.useEffect(() => { getOrdersList(); }, [getOrdersList]);
 
   return (
     <React.Fragment>
@@ -52,4 +51,4 @@ function Orders({ orders, createOrder, getOrdersList }: Props) {
   )
 }
 
-export default connect(mapsStateToProps, mapDispatchToProps)(Orders);
+export default connector(Orders);

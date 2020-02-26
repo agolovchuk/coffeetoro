@@ -6,6 +6,7 @@ import {
   completeOrderAction,
   getOrderAction,
 } from 'domain/orders';
+import { CRUD } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import Order from 'components/Order';
 
@@ -20,6 +21,7 @@ const mapState = (state: AppState, props: PropsFromRouter) => ({
 });
 
 const mapDispatch = {
+  getDictionary: CRUD.getAllAction,
   onComplete: completeOrderAction,
   getOrder: getOrderAction,
 }
@@ -30,11 +32,13 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {};
 
-function OrderItem({ orders, match, onComplete, getOrder }: Props) {
+function OrderItem({ orders, match, onComplete, getOrder, getDictionary }: Props) {
   const { orderId } = match.params
-  React.useEffect(() => {
-    getOrder(orderId);
-  }, [getOrder, orderId]);
+  
+  React.useEffect(() => { getDictionary('units'); }, [getDictionary]);
+
+  React.useEffect(() => { getOrder(orderId); }, [getOrder, orderId]);
+
   return (
     <Order
       list={orders}

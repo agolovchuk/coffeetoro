@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import get from 'lodash/get';
 import { PropsMatch } from 'domain/routes';
 import Product from 'components/Product';
 import {
@@ -61,25 +62,27 @@ function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match
 }
 
 function ProductItem({ addItem, orderByProduct, productsByName, getDictionary, ...props }: Props) {
-  const { match: { params }} = props;
+  const { category, orderId, product } = props.match.params;
 
   const addHandler = React.useCallback((priceId: string) => addItem(
-    params.orderId,
+    orderId,
     priceId,
     1,
-  ), [params, addItem]);
+  ), [orderId, addItem]);
 
   const api = React.useCallback(
     (order: OrderItemContainer) => orderApi(order, props),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [params.orderId, props.updateQuantity, props.removeItem]
+    [orderId, props.updateQuantity, props.removeItem]
   );
   
   React.useEffect(() => {
-    getDictionary('units');
-    getDictionary('prices', params.product, 'productName');
-    getDictionary('products', params.category, 'categoryName');
-  }, [getDictionary, params]);
+    getDictionary('prices', product, 'productName');
+  }, [getDictionary, product]);
+
+  React.useEffect(() => {
+    getDictionary('products', category, 'categoryName');
+  }, [getDictionary, category]);
 
   return (
     <section className={styles.container}>
@@ -90,7 +93,7 @@ function ProductItem({ addItem, orderByProduct, productsByName, getDictionary, .
             onChange={() => null}
             title={order.product.title}
             name={order.product.name}
-            valuation={productsByName[order.product.name].valuation}
+            valuation={get(productsByName, [order.product.name, 'valuation'], [])}
             orderApi={api(order)}
             quantity={order.quantity}
           />

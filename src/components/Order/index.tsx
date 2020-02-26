@@ -24,6 +24,7 @@ function makeUrl(orderId: string) {
 function Order({ list, onComplete, orderId }: Props) {
   const amount = getSumm(list);
   const [isPiced, picMethod] = React.useState(false);
+  console.log(list, '>>>');
   return (
     <section className={styles.container}>
       <ul className={styles.list}>

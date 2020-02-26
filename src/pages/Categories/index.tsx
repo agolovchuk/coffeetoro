@@ -40,12 +40,11 @@ function pathMaker({ url }: match<ICategoryMatch>) {
   }
 }
 
-function Categories({ categories, match, ...props }: Props) {
+function Categories({ categories, getDictionary, match, ...props }: Props) {
 
   React.useEffect(() => {
-    props.getDictionary('categories');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    getDictionary('categories');
+  }, [getDictionary]);
 
   const getLink = pathMaker(match);
   return (

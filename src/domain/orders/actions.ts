@@ -138,7 +138,10 @@ interface OrderComplete {
   id: string;
   method: PaymentMethod;
 }
-export const completeOrderAction = createAction<PrepareAction<OrderComplete>, typeof COMPLETE>(COMPLETE, prepareAction);
+
+type PrepareComplete = (id: string, method: PaymentMethod) => { payload: OrderComplete };
+
+export const completeOrderAction = createAction<PrepareComplete, typeof COMPLETE>(COMPLETE, (id: string, method: PaymentMethod) => ({ payload: { id, method }}));
 
 // ===== async ==========
 interface GetOrder {
