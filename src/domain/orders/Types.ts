@@ -1,5 +1,11 @@
 import { ProductItem, VolumeItem } from '../dictionary';
 import { PriceItem } from '../dictionary/Types';
+import { Products, Prices } from 'domain/dictionary/Types';
+
+export interface OrderDictionary {
+  products: Products;
+  prices: Prices;
+}
 
 export enum PaymentMethod {
   Opened,
@@ -34,6 +40,7 @@ export interface OrderItemContainer {
 }
 
 export interface OrderState {
-  orderItems: Record<string, OrderItem>;
-  ordersList: Record<string, Order>;
+  readonly orderItems: Record<string, OrderItem>;
+  readonly ordersList: Record<string, Order>;
+  readonly orderDictionary: OrderDictionary;
 }

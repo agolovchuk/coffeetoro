@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { match } from 'react-router-dom';
+import { connect, ConnectedProps } from 'react-redux';
+import { PropsMatch } from 'domain/routes';
 import {
   ordersSelector,
-  OrderItemContainer,
   completeOrderAction,
-  PaymentMethod,
+  getOrderAction,
 } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
 import Order from 'components/Order';
@@ -14,13 +13,28 @@ interface IOrderParams {
   orderId: string;
 }
 
-interface Props {
-  orders: ReadonlyArray<OrderItemContainer>;
-  match: match<IOrderParams>;
-  onComplete: (id: string, method: PaymentMethod) => void;
+type PropsFromRouter = PropsMatch<IOrderParams>;
+
+const mapState = (state: AppState, props: PropsFromRouter) => ({
+  orders: ordersSelector(state, props),
+});
+
+const mapDispatch = {
+  onComplete: completeOrderAction,
+  getOrder: getOrderAction,
 }
 
-function OrderItem({ orders, match, onComplete }: Props) {
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface Props extends PropsFromRedux, PropsFromRouter {};
+
+function OrderItem({ orders, match, onComplete, getOrder }: Props) {
+  const { orderId } = match.params
+  React.useEffect(() => {
+    getOrder(orderId);
+  }, [getOrder, orderId]);
   return (
     <Order
       list={orders}
@@ -30,12 +44,4 @@ function OrderItem({ orders, match, onComplete }: Props) {
   )
 }
 
-const mapStateToProps = (state: AppState, props: Props) => ({
-  orders: ordersSelector(state, props),
-});
-
-const mapDispatchToProps = {
-  onComplete: completeOrderAction
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(OrderItem);
+export default connector(OrderItem);

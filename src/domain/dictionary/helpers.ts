@@ -3,7 +3,7 @@ import {
   ProductForSale,
   ProductItem,
   PriceItem,
-  Volume,
+  Units,
 } from './Types';
 
 interface ProductIndex {
@@ -19,26 +19,26 @@ export function indexedPrice(prices: ReadonlyArray<PriceItem>) {
   const def = new ObjectMap<ProductIndex, PriceItem>(productHash);
   return prices.reduce((a, v) => a.set({
     productName: v.productName,
-    volumeId: v.volumeId,
+    volumeId: v.unitId,
   }, v), def);
 }
 
-function priceAdapter(volume: Volume) {
+function priceAdapter(units: Units) {
   return (e: PriceItem) => ({
     price: e,
-    volume: volume[e.volumeId].title
+    volume: units[e.unitId].title
   })
 }
 
 function getProductForSale<T>(
   price: Map<string, ReadonlyArray<PriceItem>>,
-  volume: Volume,
+  units: Units,
   merger: (cont: Readonly<T>, p: ProductForSale) => Readonly<T>,
 ) {
   return (def: Readonly<T>, { id, title, name }: ProductItem) => {
     const vl = price.get(name);
     if (vl) {
-      const valuation = vl.map(priceAdapter(volume))
+      const valuation = vl.map(priceAdapter(units))
       return merger(def, { id, title, name, valuation })
     }
     return def;
@@ -48,22 +48,22 @@ function getProductForSale<T>(
 export function getProductsForSaleList(
   products: ReadonlyArray<ProductItem>,
   price: Map<string, ReadonlyArray<PriceItem>>,
-  volume: Volume,
+  units: Units,
   merger: (d: ReadonlyArray<ProductForSale>, s: ProductForSale) => ReadonlyArray<ProductForSale>,
 ): ReadonlyArray<ProductForSale> {
   const def = [] as ReadonlyArray<ProductForSale>;
-  const ad = getProductForSale(price, volume, merger);
+  const ad = getProductForSale(price, units, merger);
   return products.reduce((a, product) => ad(a, product), def);
 }
 
 export function getProductsForSale(
   products: ReadonlyArray<ProductItem>,
   price: Map<string, ReadonlyArray<PriceItem>>,
-  volume: Volume,
+  units: Units,
   merger: (d: Record<string, ProductForSale>, s: ProductForSale) => Record<string, ProductForSale>,
 ): Record<string, ProductForSale> {
   const def = {} as Record<string, ProductForSale>;
-  const ad = getProductForSale(price, volume, merger);
+  const ad = getProductForSale(price, units, merger);
   return products.reduce((a, product) => ad(a, product), def);
 }
 

@@ -1,20 +1,15 @@
-import * as t from 'typed-contracts';
-import { validate } from '../../lib/contracts';
+import * as t from 'io-ts';
 
-const order = t.isObject({
-  id: t.isString,
-  date: t.isString,
-  client: t.isString,
-  payment: t.isNumber,
-  owner: t.isString,
-})('order');
+export const order = t.interface({
+  id: t.string,
+  date: t.string,
+  client: t.string,
+  payment: t.number,
+  owner: t.string,
+});
 
-export const validateOrder = validate(order);
-
-const orderItem = t.isObject({
-  orderId: t.isString,
-  priceId: t.isString,
-  quantity: t.isNumber,
-})('orderItem');
-
-export const validateOrderItem = validate(orderItem);
+export const orderItem = t.interface({
+  orderId: t.string,
+  priceId: t.string,
+  quantity: t.number,
+});

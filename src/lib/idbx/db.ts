@@ -2,7 +2,7 @@ import get from 'lodash/get';
 import {
   RequestUpgrade,
   Fixtures,
-  DictionaryAdapter,
+  DataAdapterFactory,
   Query,
   Adapter
 } from './Types';
@@ -46,13 +46,13 @@ export default class IDB {
 
   async getDictionary<T>(
     table: string,
+    adapter: DataAdapterFactory<T>,
     indexName: string,
-    query: string | number,
-    adapter: DictionaryAdapter<T>,
-  ): Promise<Record<string, T> | null> {
+    query?: Query,
+  ): Promise<T | null> {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
-      let result: Record<string, T> | null = null;
+      let result: T | null = null;
       const request = os.call(db, table, C.READ_ONLY).index(indexName).openCursor(query);
       request.onsuccess = (event) => {
         const cursor = get(event, ['target', 'result']);
@@ -82,6 +82,19 @@ export default class IDB {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
       const request = os.call(db, table, C.READ_ONLY).index(indexName).get(query);
+      request.onsuccess = (event) => {
+        db.close();
+        resolve(adapter(get(event, ['target', 'result'])));
+      };
+      request.onerror = () => { db.close(); reject(); };
+    });
+  }
+
+  async getAll<T>(table: string, adapter: (res: null | unknown[] ) => T, indexName?: string, query?: Query): Promise<T | null> {
+    const db = await this.open();
+    return await new Promise((resolve, reject) => {
+      const OS = os.call(db, table, C.READ_ONLY);
+      const request = typeof indexName === 'string' ? OS.index(indexName).getAll(query) : OS.getAll(query);
       request.onsuccess = (event) => {
         db.close();
         resolve(adapter(get(event, ['target', 'result'])));

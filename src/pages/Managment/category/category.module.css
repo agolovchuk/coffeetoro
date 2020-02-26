@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  height: 100%;
+  padding: 0 10px;
+}
+.container > section {
+  flex: 1 1 100%;
+  padding-left: 20px;
+}
+.list li {
+  list-style-type: none;
+}

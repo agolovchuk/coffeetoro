@@ -1,0 +1,22 @@
+.container {
+  height: 40px;
+  line-height: 40px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+}
+.link {
+  text-decoration: none;
+  font-size: 18px;
+  display: block;
+  color: black;
+  padding: 0 15px;
+  flex: 1 1 100%;
+  margin-right: 12px;
+}
+.active {
+  background: #F8FAFC;
+  border: 1px solid #DCE0E3;
+}

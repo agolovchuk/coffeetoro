@@ -7,45 +7,54 @@ import { getProductsForSaleList, indexedPrice, getProductsForSale, sortByIndex }
 const categories = (state: DictionaryState) => state.categories;
 const products = (state: DictionaryState) => state.products;
 const prices = (state: DictionaryState) => state.prices;
-export const volume = (state: DictionaryState) => state.volume;
+export const units = (state: DictionaryState) => state.units;
+// export const volume = (state: DictionaryState) => state.volume;
+
+export const categoriesListSelector = createSelector(categories, c => Object.values(c).sort(sortByIndex));
+export const productsListSelector = createSelector(products, c => Object.values(c).sort(sortByIndex));
+export const pricesListSelector = createSelector(prices, c => Object.values(c).sort(sortByIndex));
+export const unitsListSelector = createSelector(units, c => Object.values(c).sort(sortByIndex));
+
+export const priceByNameSelector = createSelector(products, p => p);
+export const unitsByIdSelector = createSelector(units, u => u);
 
 export const currentCategorySelector = createSelector(
-  [categories, params],
-  (c, p) => c.filter(f => f.parentName === p.category).sort(sortByIndex),
+  [categoriesListSelector, params],
+  (c, p) => c.filter(f => f.name === p.category).sort(sortByIndex),
 )
 
 export const productsSelector = createSelector(
-  [products, params],
+  [productsListSelector, params],
   (pr, p) => pr.filter(f => f.categoryName === p.category),
 )
 
 export const productsWithNameSelector = createSelector(
-  [products, params],
+  [productsListSelector, params],
   (pr, p) => pr.filter(f => f.name === p.product),
 )
 
 export const productByName = createSelector(
-  [products],
+  [productsListSelector],
   p => arrayToMap(p, 'name'),
 )
 
 const priceByProductSelector = createSelector(
-  prices,
+  pricesListSelector,
   (p) => groupBy(p, 'productName')
 )
 
 export const indexedPriceSelector = createSelector(
-  [prices],
+  [pricesListSelector],
   p => indexedPrice(p),
 )
 
 export const priceByID = createSelector(
-  [prices],
+  [pricesListSelector],
   p => arrayToMap(p, 'id'),
 )
 
 export const productItemSelector = createSelector(
-  [productsWithNameSelector, priceByProductSelector, volume],
+  [productsWithNameSelector, priceByProductSelector, units],
   (pr, prs, v) => getProductsForSaleList(pr, prs, v, arrayMerge),
 )
 
@@ -55,6 +64,6 @@ const mergeByName = (o: Record<string, ProductForSale>, item: ProductForSale) =>
 }
 
 export const productItemByNameSelector = createSelector(
-  [productsWithNameSelector, priceByProductSelector, volume],
+  [productsWithNameSelector, priceByProductSelector, units],
   (pr, prs, v) => getProductsForSale(pr, prs, v, mergeByName),
 )

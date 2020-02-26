@@ -5,7 +5,7 @@ import styles from './tile.module.css';
 const logos = {
   coffee: require('./images/Coffee.svg'),
   tea: require('./images/Tea.svg'),
-  diserts: require('./images/Desert.svg'),
+  dessert: require('./images/Desert.svg'),
   drink: require('./images/Water.svg'),
 } as Record<string, any>
 

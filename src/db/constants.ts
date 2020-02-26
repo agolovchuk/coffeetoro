@@ -21,7 +21,7 @@ export const TABLE = {
     }
   },
   product: {
-    name: 'product',
+    name: 'products',
     field: {
       name: 'name',
       categoryName: 'categoryName',
@@ -29,21 +29,22 @@ export const TABLE = {
     }
   },
   category: {
-    name: 'category',
+    name: 'categories',
     field: {
       name: 'name',
     }
   },
   price: {
-    name: 'price',
+    name: 'prices',
     field: {
+      id: 'id',
       productName: 'productName',
       unitId: 'unitId',
       expiryDate: 'expiryDate',
     }
   },
   unit: {
-    name: 'unit',
+    name: 'units',
     field: {
       id: 'id',
       type: 'type',

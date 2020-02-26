@@ -1,0 +1,10 @@
+.container {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr 1fr;
+}
+.title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: normal;
+}

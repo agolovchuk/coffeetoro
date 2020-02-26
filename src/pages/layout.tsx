@@ -1,10 +1,12 @@
 import { connect } from 'react-redux';
 import { goBack } from 'connected-react-router';
 import { locationSelector } from 'domain/routes';
+import { userSelector } from 'domain/env';
 import { AppState } from 'domain/StoreType';
 import Layout from 'components/Layouts';
 
 const mapStateToProps = (state: AppState) => ({
+  user: userSelector(state),
   location: locationSelector(state),
 });
 
