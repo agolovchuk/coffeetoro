@@ -101,7 +101,7 @@ export default function idbMiddlware() {
         break;
 
       case OrderAction.ADD_ITEM:
-        idb.addItem(C.TABLE.orderItem.name, action.payload);
+        idb.addItem(C.TABLE.orderItem.name, action.payload.item);
         break;
 
       case OrderAction.UPDATE_QUANTITY:
@@ -112,7 +112,7 @@ export default function idbMiddlware() {
         idb.deleteItem(C.TABLE.orderItem.name, [action.payload.orderId, action.payload.priceId]);
         break;
 
-      case OrderAction.COMPLETE:
+      case OrderAction.completeOrderAction.type:
         idb.open().then(db => new Promise((resolve, reject) => {
           const request = db
             .transaction([C.TABLE.orders.name], C.READ_WRITE)

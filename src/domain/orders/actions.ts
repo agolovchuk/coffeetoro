@@ -11,7 +11,7 @@ export const ADD_ITEM = 'ORDER/ADD_ITEM';
 export const UPDATE_QUANTITY = 'ORDER/UPDATE_QUANTITY';
 export const UPDATE_ITEM = 'ORDER/UPDATE_ITEM';
 export const REMOVE_ITEM = 'ORDER/REMOVE_ITEM';
-export const COMPLETE = 'ORDER/COMPLETE';
+const COMPLETE = 'ORDER/COMPLETE';
 
 export const GET_ORDER = 'ORDER/GET_ORDER';
 const GET_ORDER_SUCCESS = 'ORDER/GET_ORDER/SUCCESS';
@@ -135,21 +135,11 @@ export function createOrderAction(client: string = 'incognito'): Thunk<CreateOrd
 }
 
 interface OrderComplete {
-  type: typeof COMPLETE;
-  payload: {
-    id: string;
-    method: PaymentMethod;
-  }
+  id: string;
+  method: PaymentMethod;
 }
-export function completeOrderAction(id: string, method: PaymentMethod): OrderComplete {
-  return {
-    type: COMPLETE,
-    payload: {
-      id,
-      method,
-    }
-  }
-}
+export const completeOrderAction = createAction<PrepareAction<OrderComplete>, typeof COMPLETE>(COMPLETE, prepareAction);
+
 // ===== async ==========
 interface GetOrder {
   type: typeof GET_ORDER;

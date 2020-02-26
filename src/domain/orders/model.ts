@@ -35,7 +35,7 @@ export const reducer = {
       case A.getOrderSuccessAction.type:
         return action.payload.orderItems;
 
-      case A.COMPLETE:
+      case A.completeOrderAction.type:
         return {};
 
       default:
@@ -54,8 +54,8 @@ export const reducer = {
       case A.GET_ORDERS_LIST_SUCCESS:
         return action.payload;
 
-      case A.COMPLETE:
-        return {};
+      case A.completeOrderAction.type:
+        return set([action.payload.id, 'payment'])(action.payload.method)(state);
 
       default:
         return state;
@@ -66,9 +66,11 @@ export const reducer = {
       products: action.payload.products,
       prices: action.payload.prices,
     }),
-    [A.ADD_ITEM]: (state, action: A.IAddItem) => compose(
-      set(action.payload.product.name)(action.payload.product),
-      set(action.payload.price.id)(action.payload.price)
+    [A.ADD_ITEM]: (state, action: A.IAddItem) => 
+     compose(
+      set(['products', action.payload.product.name])(action.payload.product),
+      set(['prices', action.payload.price.id])(action.payload.price)
     )(state),
+    [A.completeOrderAction.type]: () => ({ products: {}, prices: {} }),
   }),
 };
