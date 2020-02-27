@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { NavLink } from 'react-router-dom';
+import cx from 'classnames';
 import Profile from '../profile';
 import { IUser } from '../Types';
 import styles from './header.module.css';
@@ -16,9 +18,15 @@ function Header({ onBack, location, user }: Props) {
     <header className={styles.container}>
       <button
         type="button"
-        className={styles.back}
+        className={cx(styles.btn, styles.back)}
         onClick={onBack}
-        disabled={location.pathname === '/'}
+        disabled={location.pathname === '/orders'}
+      />
+      <NavLink
+        to="/orders"
+        exact
+        className={cx(styles.btn, styles.orders)}
+        activeClassName={styles.active}
       />
       <Profile
         className={styles.profile}

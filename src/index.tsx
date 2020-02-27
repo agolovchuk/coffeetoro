@@ -5,12 +5,15 @@ import { createHashHistory as createHistory } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { HashRouter as RouterProvider } from 'react-router-dom';
 import { IntlProvider } from 'react-intl';
+import * as Sentry from '@sentry/browser';
 import configureStore from './domain';
 import { UnitsContext, getValueFromStore } from 'components/Units';
 
 import './index.css';
 import App from './pages';
 import * as serviceWorker from './serviceWorker';
+
+Sentry.init({ dsn: "https://dc6380f693eb40398708c4e33628f825@sentry.io/2413900" });
 
 const history = createHistory();
 
