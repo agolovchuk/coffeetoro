@@ -63,6 +63,9 @@ describe('Quantity', () => {
     expect(onChange.args[0][0]).toEqual(6);
     input.simulate('change', { target: { value: 'f' } });
     expect(onChange.args[0][0]).toEqual(6);
+    expect(onChange.calledOnce).toBeTruthy();
+    input.simulate('change', { target: { value: '2' } });
+    expect(onChange.calledOnce).not.toBeTruthy();
   });
 
 });
