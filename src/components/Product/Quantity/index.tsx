@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
-import { quantify, valueNormalize } from './helper';
+import { quantify } from './helper';
 import styles from './quantity.module.css';
 
 interface Props {
@@ -9,9 +9,19 @@ interface Props {
   onRemove: () => void;
 }
 
-function Quantity({ quantity, onChange, onRemove }: Props) {
+function Quantity({ quantity, onChange }: Props) {
   const clickHandler = (m: number) => quantify(quantity, m, onChange);
-  const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => onChange(valueNormalize(e.currentTarget.value))
+
+  const changeHandler = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.currentTarget;
+      const v = Number(value);
+      if (isNaN(v)) return;
+      if (v === 0) return;
+      onChange(v);
+    }, [onChange],
+  );
+
   return (
     <div
       className={styles.container}
@@ -23,7 +33,7 @@ function Quantity({ quantity, onChange, onRemove }: Props) {
       />
       <input
         type="text"
-        pattern="\b"
+        inputMode="numeric"
         value={quantity}
         onChange={changeHandler}
         className={styles.field}
@@ -37,4 +47,4 @@ function Quantity({ quantity, onChange, onRemove }: Props) {
   )
 }
 
-export default Quantity;
+export default React.memo(Quantity);

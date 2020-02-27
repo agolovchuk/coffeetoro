@@ -8,10 +8,6 @@ export function quantify(quantity: number, m: number, handler: (q: number) => vo
   }
 }
 
-export function valueNormalize(value: string): number {
-  return Number(value);
-}
-
 export function maybyRemove(quantity: number, onRemove: () => void) {
   return () => {
     if (quantity === 0) {
