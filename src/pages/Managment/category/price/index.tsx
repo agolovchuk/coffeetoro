@@ -15,10 +15,9 @@ import {
   priceByNameSelector,
   unitsByIdSelector,
 } from 'domain/dictionary';
-import { ManagmentPopup, ItemList, Header } from '../components';
-
-import { getMax } from '../helper';
-import { EitherEdit } from '../Types';
+import { ManagmentPopup, ItemList, Header } from '../../components';
+import { getMax } from '../../helper';
+import { EitherEdit } from '../../Types';
 import styles from './price.module.css';
 
 function createItem(productName: string, sortIndex: number): PriceItem {
@@ -55,20 +54,21 @@ interface Props extends PropsFromRedux {
   match: match<{ category: string, product: string }>
 }
 
-function PriceManager({ prices, ...props }: Props) {
+function PriceManager({ prices, update, create, ...props }: Props) {
   const { product } = props.match.params
-
 
   const [item, setItem] = React.useState<EitherEdit<PriceItem> | null>(null);
 
-  const edit = ({ isEdit, valuation, ...value }: EitherEdit<PriceItem>) => {
-    if (isEdit) {
-      props.update('prices', {...value, valuation: Number(valuation)})
-    } else {
-      props.create('prices', {...value, valuation: Number(valuation)});
-    }
-    setItem(null);
-  }
+  const edit = React.useCallback(
+    ({ isEdit, valuation, ...value }: EitherEdit<PriceItem>) => {
+      if (isEdit) {
+        update('prices', {...value, valuation: Number(valuation)})
+      } else {
+        create('prices', {...value, valuation: Number(valuation)});
+      }
+      setItem(null);
+    }, [update, create],
+  )
 
   React.useEffect(() => {
     props.getDictionary('prices', product, 'productName');
