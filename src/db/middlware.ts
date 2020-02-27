@@ -55,6 +55,8 @@ export default function idbMiddlware() {
                   prices
                 })
               )
+            } else {
+              dispatch(replace('/'));
             }
           };
           const ordersRequest = transaction.objectStore(C.TABLE.orders.name).get(action.payload.id);

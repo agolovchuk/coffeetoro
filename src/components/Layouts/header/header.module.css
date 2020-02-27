@@ -25,3 +25,6 @@
   background-size: contain;
   margin-left: 20px;
 }
+.active {
+  opacity: 0.4;
+}
