@@ -1,30 +1,23 @@
 import * as React from 'react'
-import UnitsContext from './helpers';
-
-interface Props {
-  className?: string;
-  value: number;
-  onChange: (value: number) => void;
-  id?: string;
-  max?: number;
-}
 
 const VALID_STRING = /^\d+\.?\d{0,2}$/;
-const multiplier = 1000; // TODO:
+
+interface Props {
+  multiplier: number;
+  value: number;
+  onChange: (value: number) => void;
+  className?: string;
+  id?: string;
+}
 
 function changeDot(v: string) {
   return v.replace(',', '.');
 }
 
-export default function MoneyInput({
-  max = Number.MAX_SAFE_INTEGER,
-  className,
-  value,
-  onChange,
-  ...props
-}: Props) {
+function Input({ multiplier, value, onChange, className, ...props }: Props) {
 
   const [displayValue, setDisplayValue] = React.useState((value / multiplier).toString());
+
   const handleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
       const v = changeDot(e.target.value);
@@ -34,23 +27,36 @@ export default function MoneyInput({
         onChange(numberValue * multiplier);
       }
       return;
-    }, [onChange]
+    }, [onChange, multiplier]
+  );
+
+  const handleKey = React.useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>): void => {
+      const { keyCode } = e;
+      const { selectionStart, selectionEnd } = e.currentTarget;
+      const { length } = displayValue;
+      if (selectionStart === 0 && selectionEnd === length && keyCode === 8) {
+        setDisplayValue('');
+        onChange(0);
+      }
+      if (selectionStart === 1 && selectionStart === selectionEnd && keyCode === 8) {
+        setDisplayValue('');
+        onChange(0);
+      }
+    }, [displayValue, onChange]
   )
 
   return (
-    <UnitsContext.Consumer>
-      {
-        () => (
-          <input
-            {...props}
-            type="text"
-            inputMode="decimal"
-            className={className}
-            onChange={handleChange}
-            value={displayValue}
-          />
-        )
-      }
-    </UnitsContext.Consumer>
+    <input
+      {...props}
+      type="text"
+      inputMode="decimal"
+      className={className}
+      onChange={handleChange}
+      value={displayValue}
+      onKeyDown={handleKey}
+    />
   )
 }
+
+export default React.memo(Input);
