@@ -14,7 +14,7 @@ function Quantity({ quantity, onChange }: Props) {
 
   const changeHandler = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.currentTarget;
+      const { value } = e.target;
       const v = Number(value);
       if (isNaN(v)) return;
       if (v === 0) return;
