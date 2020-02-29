@@ -20,27 +20,21 @@ export const TABLE = {
       priceId: 'priceId',
     }
   },
-  product: {
-    name: 'products',
-    field: {
-      name: 'name',
-      categoryName: 'categoryName',
-      barcode: 'barcode',
-    }
-  },
   category: {
     name: 'categories',
     field: {
       name: 'name',
+      parentName: 'parentName',
     }
   },
   price: {
     name: 'prices',
     field: {
       id: 'id',
-      productName: 'productName',
+      categoryName: 'categoryName',
       unitId: 'unitId',
       expiryDate: 'expiryDate',
+      barcode: 'barcode',
     }
   },
   unit: {

@@ -90,7 +90,7 @@ export default class IDB {
     });
   }
 
-  async getAll<T>(table: string, adapter: (res: null | unknown[] ) => T, indexName?: string, query?: Query): Promise<T | null> {
+  async getAll<T>(table: string, adapter: (res: null | unknown[] ) => T, indexName?: string, query?: Query | null): Promise<T | null> {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
       const OS = os.call(db, table, C.READ_ONLY);

@@ -61,16 +61,16 @@ export const reducer = {
         return state;
     }
   },
-  orderDictionary: createReducer({ products: {}, prices: {} } as OrderDictionary, {
+  orderDictionary: createReducer({ categories: {}, prices: {} } as OrderDictionary, {
     [A.getOrderSuccessAction.type]: (_, action: ReturnType<typeof A.getOrderSuccessAction>) => ({
-      products: action.payload.products,
+      categories: action.payload.categories,
       prices: action.payload.prices,
     }),
     [A.ADD_ITEM]: (state, action: A.IAddItem) => 
      compose(
-      set(['products', action.payload.product.name])(action.payload.product),
+      set(['categories', action.payload.category.name])(action.payload.category),
       set(['prices', action.payload.price.id])(action.payload.price)
     )(state),
-    [A.completeOrderAction.type]: () => ({ products: {}, prices: {} }),
+    [A.completeOrderAction.type]: () => ({ categories: {}, prices: {} }),
   }),
 };

@@ -27,3 +27,14 @@ export function addList<T>(os: IDBObjectStore, list: ReadonlyArray<T>): Promise<
     addItem(list[0]);
   })
 }
+
+export function promisifyReques<T>(req: IDBRequest<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    req.onsuccess = function() {
+      resolve(this.result);
+    }
+    req.onerror = function() {
+      reject(this.error);
+    }
+  });
+}

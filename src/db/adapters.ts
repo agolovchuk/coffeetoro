@@ -1,8 +1,8 @@
 import { TypeOf } from 'io-ts';
 import * as orderContracts from 'domain/orders/contracts';
-import { valueOrThrow } from 'lib/contracts';
+import { valueOrThrow, dictionaryAdapterFactory } from 'lib/contracts';
 import * as dictionaryContracts from 'domain/dictionary/contracts';
-import { dictionaryAdapterFactory } from './helpers';
+import * as adapters from 'domain/dictionary/adapters'
 
 export const orderAdapter = dictionaryAdapterFactory(orderContracts.order, 'id');
 export const orderItemAdapter = dictionaryAdapterFactory(orderContracts.orderItem, 'priceId');
@@ -18,6 +18,5 @@ export function oneOrderAdapter(value: unknown): TypeOf<typeof orderContracts.or
 export const dictionaryAdapters = {
   prices: dictionaryAdapterFactory(dictionaryContracts.price, 'id'),
   units: dictionaryAdapterFactory(dictionaryContracts.unit, 'id'),
-  categories: dictionaryAdapterFactory(dictionaryContracts.category, 'name'),
-  products: dictionaryAdapterFactory(dictionaryContracts.product, 'name'),
+  categories: adapters.categories,
 };

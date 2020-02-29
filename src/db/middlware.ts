@@ -1,48 +1,37 @@
 import { Dispatch, MiddlewareAPI } from 'redux';
 import { replace } from 'connected-react-router';
 import get from 'lodash/get';
+import { IDB, promisifyReques } from 'lib/idbx';
+import requestUpgrade from './migration';
 import * as OrderAction from 'domain/orders/actions';
 import * as DictionaryAction from 'domain/dictionary/actions';
 import { OrderItem, Order } from 'domain/orders/Types';
-import { Products, ProductItem, PriceItem } from 'domain/dictionary/Types';
-import IDB from 'lib/idbx/db';
+import { PriceItem, CategoryItem } from 'domain/dictionary/Types';
 import * as C from './constants';
-import requestUpgrade from './migration';
 import * as adapters from './adapters';
-import { validateArray } from './helpers';
+import { validateArray } from 'lib/contracts';
 
 type Action = OrderAction.Action | DictionaryAction.Action;
 
-function promisifyReques<T>(req: IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    req.onsuccess = function() {
-      resolve(this.result);
-    }
-    req.onerror = function() {
-      reject(this.error);
-    }
-  });
-}
-
 export default function idbMiddlware() {
-  const idb = new IDB('cachebox', requestUpgrade);
-  return ({ getState, dispatch }: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
+  const Idb = new IDB('cachebox', requestUpgrade);
+  return ({ dispatch }: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
     switch (action.type) {
       case OrderAction.CREATE_ORDER:
-        idb.addItem(C.TABLE.orders.name, action.payload);
+        Idb.addItem(C.TABLE.orders.name, action.payload);
         break;
 
       case OrderAction.GET_ORDER:
-        idb.open().then((db) => {
+        Idb.open().then((db) => {
           const transaction = db.transaction([
             C.TABLE.orders.name,
             C.TABLE.orderItem.name,
-            C.TABLE.product.name,
             C.TABLE.price.name,
+            C.TABLE.category.name,
           ]);
           let order: Order | null = null;
           let orderItems: Record<string, OrderItem>;
-          let products: Products;
+          let categories: Record<string, CategoryItem>;
           let prices: Record<string, PriceItem>;
           transaction.oncomplete = () => {
             db.close();
@@ -51,8 +40,8 @@ export default function idbMiddlware() {
                 OrderAction.getOrderSuccessAction({
                   order,
                   orderItems,
-                  products,
-                  prices
+                  prices,
+                  categories,
                 })
               )
             } else {
@@ -62,7 +51,7 @@ export default function idbMiddlware() {
           const ordersRequest = transaction.objectStore(C.TABLE.orders.name).get(action.payload.id);
           const orderRequest = transaction.objectStore(C.TABLE.orderItem.name).index('orderId').getAll(action.payload.id);
           const priceStore = transaction.objectStore(C.TABLE.price.name);
-          const productStore = transaction.objectStore(C.TABLE.product.name).index('name');
+          const categoryStore = transaction.objectStore(C.TABLE.category.name);
           promisifyReques<Order>(ordersRequest).then(res => {
             order = adapters.oneOrderAdapter(res);
           })
@@ -79,19 +68,19 @@ export default function idbMiddlware() {
             })
             .then(res => {
               prices = validateArray(adapters.dictionaryAdapters['prices'])(res);
-              const productNames: string[] = res.reduce((a: string[], v) => a.includes(v.productName) ? a : a.concat(v.productName), []);
+              const categoryNames: string[] = res.reduce((a: string[], v) => a.includes(v.categoryName) ? a : a.concat(v.categoryName), []);
               return Promise.all(
-                productNames.map(e => promisifyReques<ProductItem>(productStore.get(e)))
+                categoryNames.map(e => promisifyReques<CategoryItem>(categoryStore.get(e)))
               )
             })
             .then((res) => {
-              products = validateArray(adapters.dictionaryAdapters['products'])(res);
+              categories = validateArray(adapters.dictionaryAdapters['categories'])(res.map(e => ({ ...e, count: 0 })));
             })
         });
         break;
 
       case OrderAction.GET_ORDERS_LIST:
-        idb.getDictionary(
+        Idb.getDictionary(
           C.TABLE.orders.name,
           adapters.orderAdapter,
           C.TABLE.orders.field.payment,
@@ -103,19 +92,19 @@ export default function idbMiddlware() {
         break;
 
       case OrderAction.ADD_ITEM:
-        idb.addItem(C.TABLE.orderItem.name, action.payload.item);
+        Idb.addItem(C.TABLE.orderItem.name, action.payload.item);
         break;
 
       case OrderAction.UPDATE_QUANTITY:
-        idb.updateItem(C.TABLE.orderItem.name, action.payload);
+        Idb.updateItem(C.TABLE.orderItem.name, action.payload);
         break;
 
       case OrderAction.REMOVE_ITEM:
-        idb.deleteItem(C.TABLE.orderItem.name, [action.payload.orderId, action.payload.priceId]);
+        Idb.deleteItem(C.TABLE.orderItem.name, [action.payload.orderId, action.payload.priceId]);
         break;
 
       case OrderAction.completeOrderAction.type:
-        idb.open().then(db => new Promise((resolve, reject) => {
+        Idb.open().then(db => new Promise((resolve, reject) => {
           const request = db
             .transaction([C.TABLE.orders.name], C.READ_WRITE)
             .objectStore(C.TABLE.orders.name)
@@ -139,17 +128,17 @@ export default function idbMiddlware() {
       case DictionaryAction.CRUD.getAllAction.type:
         const { name, index, query } = action.payload;
         const validator = adapters.dictionaryAdapters[name];
-        idb.getAll(name, validateArray(validator), index, query).then(res => {
+        Idb.getAll(name, validateArray(validator), index, query).then(res => {
           if (res) dispatch(DictionaryAction.CRUD.getAllActionSuccess(name, res))
         });
         break;
 
       case DictionaryAction.CRUD.createItemAction.type:
-        idb.addItem(action.payload.name, action.payload.data);
+        Idb.addItem(action.payload.name, action.payload.data);
         break;
       
       case DictionaryAction.CRUD.updateItemAction.type:
-        idb.updateItem(action.payload.name, action.payload.data);
+        Idb.updateItem(action.payload.name, action.payload.data);
         break;
 
       default:

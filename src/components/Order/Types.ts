@@ -5,10 +5,10 @@ interface IPrice {
 export interface OrderItemContainer {
   price: IPrice;
   quantity: number;
-  product: {
+  category: {
     title: string;
     name: string;
-    categoryName: string;
+    // categoryName: string;
   },
   volume: {
     title: string;

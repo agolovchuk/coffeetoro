@@ -3,29 +3,29 @@ import { params } from 'domain/routes';
 import { sortByDate } from 'lib/dateHelper';
 import { units } from '../dictionary/selectors';
 import { getOrderItem } from './helpers';
-import { OrderState } from './Types';
+import { OrderState, OrderItem } from './Types';
 
 export const ordersById = (state: OrderState) => state.ordersList;
 export const orderItems = (state: OrderState) => state.orderItems;
 const orderDictionary = (state: OrderState) => state.orderDictionary;
 
 const priceByID = createSelector(orderDictionary, d => d.prices);
-const productByName = createSelector(orderDictionary, d => d.products);
+const categoryByName = createSelector(orderDictionary, d => d.categories);
 
 // Filter order items list for specific order 
 const orderItemSelector = createSelector(
   [orderItems, params],
-  (o, p) => p.orderId ? Object.values(o) : [],
+  (o, p) => p.orderId ? Object.values(o) : [] as OrderItem[],
 )
 
 export const ordersSelector = createSelector(
-  [orderItemSelector, priceByID, productByName , units],
+  [orderItemSelector, priceByID, categoryByName , units],
   (o, p, pd, v) => getOrderItem(o, p, pd, v),
 );
 
 export const orderByProductSelector = createSelector(
   [ordersSelector, params],
-  (o, p) => o.filter(f => f.product.name === p.product),
+  (o, p) => o.filter(f => f.category.name === p.category),
 );
 
 export const ordersListSelector = createSelector(

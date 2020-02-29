@@ -17,22 +17,23 @@ function getSumm(list: ReadonlyArray<OrderItemContainer>): number {
 }
 
 function makeUrl(orderId: string) {
-  return ({categoryName, name }: Partial<OrderItemContainer["product"]>) =>
-    `/order/${orderId}/${categoryName}/product/${name}`;
+  return ({ name }: Partial<OrderItemContainer["category"]>) =>
+    ['/order', orderId, name, 'product'].join('/');
 }
 
 function Order({ list, onComplete, orderId }: Props) {
   const amount = getSumm(list);
   const [isPiced, picMethod] = React.useState(false);
+  const getUrl = React.useMemo(() => makeUrl(orderId), [orderId]);
   return (
     <section className={styles.container}>
       <ul className={styles.list}>
         {
           list.map(data =>
             <Item
-              key={data.product.name + data.volume.name}
+              key={data.category.name + data.volume.name}
               onRemove={() => null}
-              url={makeUrl(orderId)(data.product)}
+              url={getUrl(data.category)}
               {...data}
             />
           )

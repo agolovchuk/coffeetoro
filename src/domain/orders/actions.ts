@@ -2,7 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 import get from 'lodash/get';
 import { getId } from 'lib/id';
 import { Order, PaymentMethod, OrderItem } from './Types';
-import { Products, Prices, PriceItem, ProductItem } from 'domain/dictionary/Types';
+import { Prices, PriceItem, CategoryItem } from 'domain/dictionary/Types';
 import { Thunk } from '../StoreType';
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
@@ -33,13 +33,13 @@ export interface IAddItem {
   payload: {
     item: OrderItem,
     price: PriceItem,
-    product: ProductItem,
+    category: CategoryItem,
   }
-}
+} 
 
 export function addItemAction(orderId: string, priceId: string, quantity: number): Thunk<IAddItem, IAddItem> {
   return (dispatch, getState) => {
-    const { prices, products } = getState();
+    const { prices, categories } = getState();
     const price = get(prices, priceId);
     return dispatch({
       type: ADD_ITEM,
@@ -50,7 +50,7 @@ export function addItemAction(orderId: string, priceId: string, quantity: number
           quantity,
         },
         price,
-        product: get(products, price.productName),
+        category: get(categories, price.categoryName),
       }
     });
   }
@@ -162,7 +162,7 @@ export function getOrderAction(id: string): GetOrder {
 interface GetOrderSuccess {
   order: Order;
   orderItems: Record<string, OrderItem>;
-  products: Products;
+  categories: Record<string, CategoryItem>;
   prices: Prices;
 }
 

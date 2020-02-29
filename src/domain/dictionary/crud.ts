@@ -19,7 +19,7 @@ export interface Action<T> {
 interface QueyAction {
   payload: {
     name: DKeys,
-    query?: Query,
+    query?: Query | null,
     index?: string
   }
 }
@@ -30,9 +30,9 @@ type Reducer<T> = R<Record<string, T>, Action<T>>;
 
 type PrepareAction<T = Record<string, any>> = (name: DKeys, data: T) => Action<T>;
 
-type QueryAction = (name: DKeys, query?: Query, index?: string) => QueyAction;
+type QueryAction = (name: DKeys, query?: Query | null, index?: string) => QueyAction;
 
-function queryAction(name: DKeys, query?: Query, index?: string): QueyAction {
+function queryAction(name: DKeys, query?: Query | null, index?: string): QueyAction {
   return {
     payload: { name, query, index },
   }
@@ -70,6 +70,16 @@ export function getAll<T extends Record<string, T>>(name: DKeys): Reducer<T> {
   return actionWraper(
     name, 
     (_, action) => action.payload.data,
+  )
+};
+
+export function mergeAll<T extends Record<string, T>>(name: DKeys): Reducer<T> {
+  return actionWraper(
+    name, 
+    (state, action) => ({
+      ...state,
+      ...action.payload.data,
+    })
   )
 };
 

@@ -1,18 +1,18 @@
 import get from 'lodash/get';
 import { OrderItem, OrderItemContainer } from './Types';
-import { PriceItem, ProductItem, Units } from '../dictionary/Types';
+import { PriceItem, Units, CategoryItem } from '../dictionary/Types';
 
 function priceAdapter(
   order: OrderItem,
   priceByID: Record<string, PriceItem>,
-  productByName: Record<string, ProductItem>,
+  categoryByName: Record<string, CategoryItem>,
   units: Units,
 ) {
   const price = get(priceByID, order.priceId);
   return {
     quantity: order.quantity,
     price,
-    product: get(productByName, price.productName),
+    category: get(categoryByName, price.categoryName),
     volume: get(units, price.unitId),
   }
 }
@@ -20,9 +20,9 @@ function priceAdapter(
 export function getOrderItem(
   orders: ReadonlyArray<OrderItem>,
   prices: Record<string, PriceItem>,
-  products: Record<string, ProductItem>,
+  categories: Record<string, CategoryItem>,
   units: Units,
 ): ReadonlyArray<OrderItemContainer> {
   return orders
-    .map(o => (priceAdapter(o, prices, products, units )))
+    .map(o => (priceAdapter(o, prices, categories, units )))
 }

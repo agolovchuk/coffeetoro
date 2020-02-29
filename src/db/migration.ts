@@ -73,26 +73,13 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
         unique: true,   
       }
     );
+    osCategory.createIndex(
+      C.TABLE.category.field.parentName,
+      C.TABLE.category.field.parentName, {
+        unique: false, 
+      }
+    );
 
-// ========= Product =================================
-    const osProduct = this.result.createObjectStore(
-      C.TABLE.product.name, {
-        keyPath: C.TABLE.product.field.name,
-        autoIncrement: false,
-      }
-    );
-    osProduct.createIndex(
-      C.TABLE.product.field.name,
-      C.TABLE.product.field.name, {
-        unique: true
-      }
-    );
-    osProduct.createIndex(
-      C.TABLE.product.field.categoryName,
-      C.TABLE.product.field.categoryName, {
-        unique: false
-      }
-    );
 // ===================== Price ==========================
     const osPrice = this.result.createObjectStore(
       C.TABLE.price.name, {
@@ -101,14 +88,14 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
     osPrice.createIndex(
-      C.TABLE.price.field.productName,
-      C.TABLE.price.field.productName, {
+      C.TABLE.price.field.categoryName,
+      C.TABLE.price.field.categoryName, {
         unique: false,
       }
     );
     osPrice.createIndex(
       'priceId', [
-        C.TABLE.price.field.productName,
+        C.TABLE.price.field.categoryName,
         C.TABLE.price.field.unitId,
         C.TABLE.price.field.expiryDate,
       ], {
@@ -116,8 +103,8 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
     osPrice.createIndex(
-      C.TABLE.product.field.barcode,
-      C.TABLE.product.field.barcode, {
+      C.TABLE.price.field.barcode,
+      C.TABLE.price.field.barcode, {
         unique: false,
       }
     );
@@ -138,7 +125,6 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
   }
   return [
     { table: C.TABLE.category.name, data: Fixtures.categories },
-    { table: C.TABLE.product.name, data: Fixtures.products },
     { table: C.TABLE.unit.name, data: Fixtures.units },
   ];
 }

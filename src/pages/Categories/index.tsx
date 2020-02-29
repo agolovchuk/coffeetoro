@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { match } from 'react-router-dom';
-import { categoriesListSelector, CRUD } from 'domain/dictionary';
+import { currentCategoriesSelector, getCategoriesAction, CategoryItem } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import Grid from 'components/Grid';
-
-interface ICategoryItem {
-  name: string;
-  id: string;
-  title: string;
-}
 
 interface ICategoryMatch {
   readonly orderId: string;
@@ -20,12 +14,12 @@ interface PropsFromRouter {
   match: match<ICategoryMatch>;
 }
 
-const mapState = (state: AppState) => ({
-  categories: categoriesListSelector(state),
+const mapState = (state: AppState, props: PropsFromRouter) => ({
+  categories: currentCategoriesSelector(state, props),
 });
 
 const mapDispatch = {
-  getDictionary: CRUD.getAllAction,
+  getCategories: getCategoriesAction,
 }
 
 const connector = connect(mapState, mapDispatch);
@@ -34,22 +28,28 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {};
 
-function pathMaker({ url }: match<ICategoryMatch>) {
-  return (item: ICategoryItem) => {
-    return [url, item.name, 'product'].join('/')
+function pathMaker(orderId: string) {
+  const make = (...args: string[]) => ['/order', orderId, ...args].join('/');
+  return (item: CategoryItem) => {
+    if (item.count) return make(item.name, 'product');
+    return make(item.name);
   }
 }
 
-function Categories({ categories, getDictionary, match, ...props }: Props) {
+function Categories({ categories, match, getCategories }: Props) {
+
+  const { params: { category, orderId } } = match;
 
   React.useEffect(() => {
-    getDictionary('categories');
-  }, [getDictionary]);
+    getCategories('parentName', category || 'root');
+  }, [category, getCategories]);
 
-  const getLink = pathMaker(match);
+  const getLink = React.useMemo(() => pathMaker(orderId), [orderId]);
+
   return (
     <Grid
       list={categories}
+      getKey={e => e.name}
       getLink={getLink}
     />
   );

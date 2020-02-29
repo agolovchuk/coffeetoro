@@ -37,6 +37,7 @@ function ManagmentItems({ match }: Props) {
     <Grid
       list={LIST}
       getLink={createLink}
+      getKey={e => e.name}
     />
   );
 }

@@ -13,7 +13,7 @@ const connector = connect(mapStateToProps);
 
 interface Props extends PropsFromRedux {}
 
-function ManagmentUsers({ }: Props) {
+function ManagmentUsers() {
   return (
     <section>
       <h1>Users</h1>

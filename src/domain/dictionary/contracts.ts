@@ -10,7 +10,7 @@ export const unit = t.interface({
 
 export const price = t.interface({
   id: t.string,
-  productName: t.string,
+  categoryName: t.string,
   fromDate: t.string,
   expiryDate: t.union([t.string, t.null]),
   unitId: t.string,
@@ -20,16 +20,10 @@ export const price = t.interface({
 });
 
 export const category = t.interface({
-  id: t.string,
   name: t.string,
   title: t.string,
   sortIndex: t.number,
+  parentName: t.union([t.string, t.null]),
+  count: t.number,
 });
-
-export const product = t.interface({
-  id: t.string,
-  name: t.string,
-  title: t.string,
-  sortIndex: t.number,
-  categoryName: t.string,
-});
+ 

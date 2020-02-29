@@ -4,7 +4,7 @@ import { match } from 'react-router-dom';
 import { getId } from 'lib/id';
 import { Field } from 'react-final-form';
 import get from 'lodash/get';
-import { InputField, SelectField, PriceField } from 'components/Form/field';
+import { InputField, SelectField, PriceField, ISelectList } from 'components/Form/field';
 import { Price } from 'components/Units';
 import { AppState } from 'domain/StoreType';
 import {
@@ -14,16 +14,18 @@ import {
   PriceItem,
   priceByNameSelector,
   unitsByIdSelector,
+  currentCategorySelector,
+  UnitItem,
 } from 'domain/dictionary';
 import { ManagmentPopup, ItemList, Header } from '../../components';
 import { getMax } from '../../helper';
 import { EitherEdit } from '../../Types';
 import styles from './price.module.css';
 
-function createItem(productName: string, sortIndex: number): PriceItem {
+function createItem(categoryName: string, sortIndex: number): PriceItem {
   return {
     id: getId(16),
-    productName,
+    categoryName,
     fromDate: new Date().toISOString(),
     expiryDate: null,
     unitId: '1',
@@ -33,7 +35,12 @@ function createItem(productName: string, sortIndex: number): PriceItem {
   }
 }
 
-const mapState = (state: AppState) => ({
+interface PropsFromRouter {
+  match: match<{ category: string }>
+}
+
+const mapState = (state: AppState, props: PropsFromRouter) => ({
+  category: currentCategorySelector(state, props),
   prices: pricesListSelector(state),
   products: priceByNameSelector(state),
   units: unitsListSelector(state),
@@ -50,12 +57,18 @@ const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-interface Props extends PropsFromRedux {
-  match: match<{ category: string, product: string }>
+interface Props extends PropsFromRedux, PropsFromRouter {}
+
+function getPrentsList(current: PriceItem[], units: UnitItem[]) {
+  const c: string[] = current.reduce((a, v) => a.includes(v.unitId) ? a : a.concat(v.unitId), [] as string[]);
+  return (item: PriceItem) => {
+    const cu = c.filter(f => f !== item.unitId);
+    return units.reduce((a, {id, title }) => cu.includes(id) ? a : [...a, { name: id, title }], [] as ISelectList);
+  }
 }
 
-function PriceManager({ prices, update, create, ...props }: Props) {
-  const { product } = props.match.params
+function PriceManager({ prices, update, units, create, getDictionary, ...props }: Props) {
+  const { category } = props.match.params
 
   const [item, setItem] = React.useState<EitherEdit<PriceItem> | null>(null);
 
@@ -70,16 +83,18 @@ function PriceManager({ prices, update, create, ...props }: Props) {
     }, [update, create],
   )
 
+  const memoList = React.useMemo(() => getPrentsList(prices, units), [prices, units]);
+
   React.useEffect(() => {
-    props.getDictionary('prices', product, 'productName');
-    props.getDictionary('units');
-  }, [product]); // eslint-disable-line react-hooks/exhaustive-deps
+    getDictionary('prices', category, 'categoryName');
+    getDictionary('units');
+  }, [category, getDictionary]);
 
   return (
     <section className={styles.column}>
       <Header
-        title="Ценники"
-        onCreate={() => setItem(createItem(product, getMax(prices) + 1))}
+        title={`Ценники на "${props.category.title}"`}
+        onCreate={() => setItem(createItem(category, getMax(prices) + 1))}
       />
       <ItemList list={prices} getKey={c => c.id}>
         {
@@ -103,12 +118,12 @@ function PriceManager({ prices, update, create, ...props }: Props) {
           <ManagmentPopup
             initialValues={item}
             onCancel={() => setItem(null)}
-            title={`Цена на "${props.products[product].title}"`}
+            title={`Цена на "${props.category.title}"`}
             onSubmit={edit}
           >
             <Field name="unitId" render={({ input, meta }) => (
               <SelectField
-                list={props.units.map(e => ({ name: e.id, title: e.title }))}
+                list={memoList(item)}
                 id="unitId"
                 title="Единица измерения:"
                 {...input}

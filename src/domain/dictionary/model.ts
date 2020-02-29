@@ -1,10 +1,8 @@
 import {
   Categories,
-  Products,
   Units,
   Prices,
   CategoryItem,
-  ProductItem,
   PriceItem,
   UnitItem,
 } from './Types';
@@ -16,12 +14,8 @@ export const reducer = {
     [A.CRUD.createItemAction.type]: A.CRUD.creat<CategoryItem, 'name'>('categories', 'name'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('categories'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<CategoryItem, 'name'>('categories', 'name'),
-  }),
-
-  products: createReducer({} as Products, {
-    [A.CRUD.createItemAction.type]: A.CRUD.creat<ProductItem, 'name'>('products', 'name'),
-    [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('products'),
-    [A.CRUD.updateItemAction.type]: A.CRUD.creat<ProductItem, 'name'>('products', 'name'),
+    [A.GET_CATEGORIES_SUCCESS]: (state, action: A.GetCategoriesSuccess) => ({...state, ...action.payload }),
+    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.category })
   }),
 
   units: createReducer({} as Units, {
@@ -34,6 +28,7 @@ export const reducer = {
     [A.CRUD.createItemAction.type]: A.CRUD.creat<PriceItem, 'id'>('prices', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('prices'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<PriceItem, 'id'>('prices', 'id'),
+    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.prices })
   }),
 
 };

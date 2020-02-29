@@ -1,18 +1,15 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import get from 'lodash/get';
 import { PropsMatch } from 'domain/routes';
 import Product from 'components/Product';
 import {
   productItemSelector,
-  productItemByNameSelector,
-  CRUD,
+  getPricesAction,
 } from 'domain/dictionary';
 import {
   addItemAction,
   updateQuantityAction,
   removeItemAction,
-  ordersSelector,
   OrderItemContainer,
   orderByProductSelector,
 } from 'domain/orders';
@@ -22,23 +19,20 @@ import styles from './product.module.css';
 interface IMatchParams {
   readonly orderId: string;
   readonly category: string;
-  readonly product: string;
 }
 
 type PropsFromRouter = PropsMatch<IMatchParams>;
 
 const mapState = (state: AppState, props: PropsFromRouter) => ({
-  products: productItemSelector(state, props),
-  orders: ordersSelector(state, props),
+  product: productItemSelector(state, props),
   orderByProduct: orderByProductSelector(state, props),
-  productsByName: productItemByNameSelector(state, props),
 });
 
 const mapDispatch = {
   addItem: addItemAction,
   updateQuantity: updateQuantityAction,
   removeItem: removeItemAction,
-  getDictionary: CRUD.getAllAction,
+  getPrices: getPricesAction,
 }
 
 const connector = connect(mapState, mapDispatch);
@@ -61,8 +55,8 @@ function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match
   }
 }
 
-function ProductItem({ addItem, orderByProduct, productsByName, getDictionary, ...props }: Props) {
-  const { category, orderId, product } = props.match.params;
+function ProductItem({ addItem, orderByProduct, getPrices, ...props }: Props) {
+  const { category, orderId } = props.match.params;
 
   const addHandler = React.useCallback((priceId: string) => addItem(
     orderId,
@@ -77,37 +71,29 @@ function ProductItem({ addItem, orderByProduct, productsByName, getDictionary, .
   );
   
   React.useEffect(() => {
-    getDictionary('prices', product, 'productName');
-  }, [getDictionary, product]);
-
-  React.useEffect(() => {
-    getDictionary('products', category, 'categoryName');
-  }, [getDictionary, category]);
+    getPrices(category);
+  }, [getPrices, category]);
 
   return (
     <section className={styles.container}>
+      <h1 className={styles.title}>{props.product.title}</h1>
       {
         orderByProduct.map((order) => (
           <Product
-            key={order.product.name + order.volume.name}
+            key={order.price.id}
             onChange={() => null}
-            title={order.product.title}
-            name={order.product.name}
-            valuation={get(productsByName, [order.product.name, 'valuation'], [])}
+            title={order.category.title}
+            name={order.category.name}
+            valuation={props.product.valuation}
             orderApi={api(order)}
             quantity={order.quantity}
           />
         ))
       }
-      {
-        props.products.map((product) => (
-          <Product
-            key={product.id}
-            onChange={addHandler}
-            {...product}
-          />
-        ))
-      }
+      <Product
+        onChange={addHandler}
+        {...props.product}
+      />
     </section>
   );
 }

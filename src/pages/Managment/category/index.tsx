@@ -2,14 +2,14 @@ import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Route, match } from 'react-router-dom';
 import { Field } from 'react-final-form';
-import { getId } from 'lib/id';
-import { categoriesListSelector, CRUD, CategoryItem } from 'domain/dictionary';
+import groupBy from 'lodash/groupBy'
+import { categoriesListSelector, CRUD, CategoryItem, getCategoriesAction } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { ManagmentPopup, ItemList, MItem, Header } from '../components';
-import { InputField } from 'components/Form/field';
-import Product from './product'
+import { ManagmentPopup, MItem, Header } from '../components';
+import { InputField, SelectField } from 'components/Form/field';
 import Price from './price'
-import { getMax, getLink } from '../helper';
+import Tree from '../components/tree';
+import { getMax, getLink, getPrentsList } from '../helper';
 import { EitherEdit } from '../Types';
 import styles from './category.module.css';
 
@@ -21,14 +21,16 @@ const mapDispatch = {
   getDictionary: CRUD.getAllAction,
   create: CRUD.createItemAction,
   update: CRUD.updateItemAction,
+  getCategories: getCategoriesAction,
 }
 
 function createItem(sortIndex: number = 0): CategoryItem {
   return {
-    id: getId(10),
     name: '',
     title: '',
     sortIndex,
+    parentName: '',
+    count: 0,
   }
 }
 
@@ -42,7 +44,7 @@ interface Props extends PropsFromRedux {
   match: match;
 }
 
-function ProductManager({ categories, getDictionary, update, create, ...props }: Props) {
+function ProductManager({ categories, getCategories, update, create, ...props }: Props) {
 
   const [item, setItem] = React.useState<EitherCategory | null>(null);
 
@@ -58,18 +60,34 @@ function ProductManager({ categories, getDictionary, update, create, ...props }:
   );
 
   const createLink = ({ name }: { name: string }) => getLink(props.match.url, name);
-
-  React.useEffect(() => { getDictionary('categories'); }, [getDictionary]);
+  const group = groupBy(categories, 'parentName');
+  React.useEffect(() => { getCategories('name'); }, [getCategories]);
 
   return (
     <div className={styles.container}>
       <section className={styles.column}>
-        <Header
-          title="Категории"
-          onCreate={() => setItem(createItem(getMax(categories) + 1))}
-        />
+        <Tree
+          data={group}
+          getName={e => e ? e.name : 'root'}
+          getKey={e => e.name}
+        >
+          {
+            (data) => data ? (
+              <MItem
+                data={data}
+                getLink={createLink}
+                onEdit={(value) => setItem({ ...value, isEdit: true })}
+              />
+            ) : (
+              <Header
+                title="Категории"
+                onCreate={() => setItem(createItem(getMax(categories) + 1))}
+              />
+            )
+          }
+        </Tree>
         <ul className={styles.list}>
-          <ItemList list={categories} getKey={c => c.name}>
+          {/* <ItemList list={categories} getKey={c => c.name}>
             {
               (data) => (
                 <MItem
@@ -79,11 +97,10 @@ function ProductManager({ categories, getDictionary, update, create, ...props }:
                 />
               )
             }
-          </ItemList>
+          </ItemList> */}
         </ul>
       </section>
-      <Route path="/manager/category/:category" component={Product} />
-      <Route path="/manager/category/:category/:product" component={Price} />
+      <Route path="/manager/category/:category" component={Price} />
       {
         item !== null ? (
           <ManagmentPopup
@@ -92,6 +109,14 @@ function ProductManager({ categories, getDictionary, update, create, ...props }:
             onSubmit={edit}
             initialValues={item}
           >
+            <Field name="parentName" render={({ input, meta }) => (
+              <SelectField
+                list={getPrentsList(item.name, categories)}
+                id="parentName"
+                title="Родитель:"
+                {...input}
+              />
+            )}/>
             <Field name="title" render={({ input, meta }) => (
               <InputField id="title" title="Имя:" {...input} />
             )}/>

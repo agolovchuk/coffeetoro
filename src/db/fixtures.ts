@@ -1,79 +1,69 @@
-import { CategoryItem, ProductItem, UnitItem } from 'domain/dictionary/Types';
+import { CategoryItem, UnitItem } from 'domain/dictionary/Types';
 export const categories: ReadonlyArray<Partial<CategoryItem>> = [
   {
-    id: '1',
     title: 'Кофе',
     name: 'coffee',
     sortIndex: 1,
+    parentName: 'root',
   },
   {
-    id: '2',
     title: 'Чай',
     name: 'tea',
     sortIndex: 2,
+    parentName: 'root',
   },
   {
-    id: '3',
     title: 'Напитки',
     name: 'drink',
     sortIndex: 3,
+    parentName: 'root',
   },
   {
-    id: '4',
     title: 'Десерты',
     name: 'dessert',
     sortIndex: 4,
+    parentName: 'root',
   },
-];
-
-export const products: ReadonlyArray<Partial<ProductItem>> = [
   {
-    id: '1',
     title: 'Эспрессо',
     name: 'espresso',
-    categoryName: 'coffee',
+    parentName: 'coffee',
     sortIndex: 1,
   },
   {
-    id: '2',
     title: 'Американо',
     name: 'americano',
-    categoryName: 'coffee',
+    parentName: 'coffee',
     sortIndex: 2,
   },
   {
-    id: '3',
     title: 'Лунго',
     name: 'longo',
-    categoryName: 'coffee',
+    parentName: 'coffee',
     sortIndex: 3,
   },
   {
-    id: '4',
     title: 'Ристретто',
     name: 'ristretto',
-    categoryName: 'coffee',
+    parentName: 'coffee',
     sortIndex: 4,
   },
   {
-    id: '5',
     title: 'Доппио',
     name: 'doppio',
-    categoryName: 'coffee',
+    parentName: 'coffee',
     sortIndex: 5,
   },
   {
-    id: '6',
     title: 'Капучино',
     name: 'cappuccino',
-    categoryName: 'coffee',
+    parentName: 'coffee',
     sortIndex: 6,
   },
   {
-    id: '7',
     title: 'Латте',
     name: 'latte',
-    categoryName: 'coffee',
+    parentName: 'coffee',
     sortIndex: 7,
   },
 ];

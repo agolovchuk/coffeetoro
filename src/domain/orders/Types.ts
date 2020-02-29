@@ -1,9 +1,7 @@
-import { ProductItem, VolumeItem } from '../dictionary';
-import { PriceItem } from '../dictionary/Types';
-import { Products, Prices } from 'domain/dictionary/Types';
+import { PriceItem, CategoryItem, VolumeItem, Prices, Categories } from '../dictionary/Types';
 
 export interface OrderDictionary {
-  products: Products;
+  categories: Categories;
   prices: Prices;
 }
 
@@ -35,7 +33,7 @@ export interface Order {
 export interface OrderItemContainer {
   quantity: number,
   price: PriceItem,
-  product: ProductItem,
+  category: CategoryItem,
   volume: VolumeItem,
 }
 

@@ -50,7 +50,6 @@ function Product({ quantity = 1, ...props }: Props) {
       }
       <div className={cx(styles.warapper, { [styles.editable]: !props.orderApi })}>
         <div className={styles.params}>
-          <h3 className={styles.title}>{props.title}</h3>
 
         </div>
         <ul className={styles.valuation}>
