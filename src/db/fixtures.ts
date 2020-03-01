@@ -68,7 +68,7 @@ export const categories: ReadonlyArray<Partial<CategoryItem>> = [
   },
 ];
 
-export const units: ReadonlyArray<Partial<UnitItem>> = [
+export const units: ReadonlyArray<UnitItem> = [
   {
     id: '1',
     name: 'instance',
