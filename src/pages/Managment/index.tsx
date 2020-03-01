@@ -39,7 +39,7 @@ function ManagerRout() {
   return (
     <Switch>
       <Route path="/manager" component={ManagmentItems} exact />
-      <AsyncRoute path="/manager/category" importRender={asyncCategory} />
+      <AsyncRoute path={["/manager/category/:category", "/manager/category"]} importRender={asyncCategory} />
       <AsyncRoute path="/manager/users" importRender={asyncUsers} />
       <AsyncRoute path="/manager/maintenance" importRender={asyncMaintenance} />
     </Switch>

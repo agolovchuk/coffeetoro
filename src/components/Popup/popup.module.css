@@ -13,7 +13,7 @@
 @supports (-webkit-backdrop-filter: blur(10px)) {
   .container {
     backdrop-filter: blur(10px);
-    background: none;
+    background: rgba(0, 0, 0, 0.2);
   }
 }
 
@@ -33,4 +33,7 @@
 
 .popup {
   position: relative;
+  border: 1px solid #DCE0E3;
+  border-radius: 4px;
+  overflow: hidden;
 }

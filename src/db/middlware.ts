@@ -14,7 +14,7 @@ import { validateArray } from 'lib/contracts';
 type Action = OrderAction.Action | DictionaryAction.Action;
 
 export default function idbMiddlware() {
-  const Idb = new IDB('cachebox', requestUpgrade);
+  const Idb = new IDB(C.DB_NAME, requestUpgrade);
   return ({ dispatch }: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
     switch (action.type) {
       case OrderAction.CREATE_ORDER:
