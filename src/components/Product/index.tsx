@@ -59,6 +59,7 @@ function Product({ quantity = 1, ...props }: Props) {
                 key={e.price.id}
                 checked={Boolean(props.orderApi && props.orderApi.isChecked(e.price.id))}
                 onChange={changeHandler}
+                inOrder={Boolean(props.orderApi)}
                 {...e}
               />
             ))

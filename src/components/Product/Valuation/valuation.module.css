@@ -5,7 +5,6 @@
   position: relative;
   height: 100%;
 }
-
 .label {
   border-radius: 4px;
   display: block;
@@ -18,17 +17,19 @@
   justify-content: space-around;
   text-align: center;
 }
+.input:not(:checked) + .label.order {
+  color: #cccccc;
+}
 .input {
   position: absolute;
   opacity: 0.01;
   display: inline;
 }
-.input:checked + .label {
+.input:checked + .label.order {
   background: #95A8BC;
   color: #fff;
   border-color: #fff;
 }
-
 .price {
   font-size: 20px;
   font-weight: bold;

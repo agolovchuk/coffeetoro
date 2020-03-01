@@ -37,9 +37,9 @@ export interface IAddItem {
   }
 } 
 
-export function addItemAction(orderId: string, priceId: string, quantity: number): Thunk<IAddItem, IAddItem> {
+export function addItemAction(orderId: string, priceId: string): Thunk<IAddItem, IAddItem> {
   return (dispatch, getState) => {
-    const { prices, categories } = getState();
+    const { prices, categories, orderItems } = getState();
     const price = get(prices, priceId);
     return dispatch({
       type: ADD_ITEM,
@@ -47,7 +47,7 @@ export function addItemAction(orderId: string, priceId: string, quantity: number
         item: {
           orderId,
           priceId: get(price, 'id'),
-          quantity,
+          quantity: (get(orderItems, [priceId, 'quantity'], 0) + 1),
         },
         price,
         category: get(categories, price.categoryName),

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import nanoid from 'nanoid';
+import cx from 'classnames';
 import { Price } from 'components/Units';
 import styles from './valuation.module.css';
 
@@ -13,6 +14,7 @@ interface Props {
   volume: string;
   checked: boolean;
   onChange: (priceId: string) => void,
+  inOrder: boolean;
 }
 
 export default function Valuation({ volume, price, ...props }: Props) {
@@ -29,7 +31,7 @@ export default function Valuation({ volume, price, ...props }: Props) {
         onChange={changeHandler}
         className={styles.input}
       />
-      <label htmlFor={id} className={styles.label}>
+      <label htmlFor={id} className={cx(styles.label, {[styles.order]: props.inOrder })}>
         <div className={styles.price}>
           <Price value={price.valuation} sign notation="compact" />
         </div>
