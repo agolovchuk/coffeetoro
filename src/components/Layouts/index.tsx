@@ -11,7 +11,7 @@ interface Props {
   children: React.ReactNode;
   onBack: () => void;
   location: ILocation;
-  user: IUser;
+  user: IUser | null;
 }
 
 function Layout({ children, ...props}: Props) {

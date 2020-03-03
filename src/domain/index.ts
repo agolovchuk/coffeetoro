@@ -11,6 +11,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
 import { AppState } from './StoreType';
 import idbMiddlware from 'db/middlware';
+import { getEnv } from 'domain/env/helpers';
 
 const __DEV__ = (process.env.NODE_ENV === 'development');
 
@@ -20,7 +21,11 @@ declare global {
   }
 }
 
-export default function configureStore(history: History): Store<AppState> {
+export default async function configureStore(history: History): Promise<Store<AppState>> {
+
+  const initialState = {
+    env: await getEnv(),
+  } as AppState;
 
   let composeEnhancers = compose;
 
@@ -36,10 +41,12 @@ export default function configureStore(history: History): Store<AppState> {
     ...require('./dictionary').reducer,
     ...require('./env').reducer,
     ...require('./orders').reducer,
+    ...require('./users').reducer,
   });
 
   const store = createStore(
     reducers,
+    initialState,
     composeEnhancers(
       applyMiddleware(
         thunk,

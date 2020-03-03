@@ -4,15 +4,20 @@ export interface IUser {
   readonly id: string;
   readonly firstName: string | undefined;
   readonly lastName: string | undefined;
-  readonly nikName: string;
+  readonly name: string;
   readonly role: RoleType;
   readonly ava: string;
 }
 
 export interface IEnv {
+  id: 'default';
   multiplier: number;
   currency: string;
-  user: IUser;
+  user: IUser | null;
+}
+
+export type DBEnv = IEnv & {
+  user: string | null;
 }
 
 export interface EnvState {

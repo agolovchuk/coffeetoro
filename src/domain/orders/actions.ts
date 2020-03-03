@@ -128,10 +128,13 @@ function createOrder(client: string, owner: string): Order {
 }
 
 export function createOrderAction(client: string = 'incognito'): Thunk<CreateOrder, CreateOrder> {
-  return (dispatch, getState) => dispatch({
-    type: CREATE_ORDER,
-    payload: createOrder(client, getState().env.user.id),
-  })
+  return (dispatch, getState) => {
+    const userId: string = get(getState(), ['env', 'user', 'id']);
+    return dispatch({
+      type: CREATE_ORDER,
+      payload: createOrder(client, userId),
+    });
+  }
 }
 
 interface OrderComplete {

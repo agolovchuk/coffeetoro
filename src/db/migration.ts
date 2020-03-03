@@ -122,9 +122,37 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
 // ======================================================
+    const osUsers = this.result.createObjectStore(
+      C.TABLE.users.name, {
+        keyPath: C.TABLE.users.index.id,
+        autoIncrement: false,
+      }
+    );
+    osUsers.createIndex(
+      C.TABLE.users.index.id,
+      C.TABLE.users.index.id, {
+        unique: true,
+      }
+    );
+// ======================================================
+    const osEnv = this.result.createObjectStore(
+      C.TABLE.env.name, {
+        keyPath: C.TABLE.env.index.id,
+        autoIncrement: false,
+      }
+    );
+    osEnv.createIndex(
+      C.TABLE.env.index.id,
+      C.TABLE.env.index.id, {
+        unique: true,
+      }
+    );
+// ======================================================
   }
   return [
     { table: C.TABLE.category.name, data: Fixtures.categories },
     { table: C.TABLE.unit.name, data: Fixtures.units },
+    { table: C.TABLE.env.name, data: Fixtures.env },
+    { table: C.TABLE.users.name, data: Fixtures.users },
   ];
 }

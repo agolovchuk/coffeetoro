@@ -10,7 +10,7 @@ interface Props {
   location: {
     pathname: string;
   };
-  user: IUser;
+  user: IUser | null;
 }
 
 function Header({ onBack, location, user }: Props) {
@@ -28,10 +28,14 @@ function Header({ onBack, location, user }: Props) {
         className={cx(styles.btn, styles.orders)}
         activeClassName={styles.active}
       />
-      <Profile
-        className={styles.profile}
-        user={user}
-      />
+      {
+        user && (
+          <Profile
+            className={styles.profile}
+            user={user}
+          />
+        )
+      }
     </header>
   )
 }

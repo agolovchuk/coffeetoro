@@ -1,8 +1,7 @@
 import { Dispatch, MiddlewareAPI } from 'redux';
 import { replace } from 'connected-react-router';
 import get from 'lodash/get';
-import { IDB, promisifyReques } from 'lib/idbx';
-import requestUpgrade from './migration';
+import CDB, { promisifyReques } from './index';
 import * as OrderAction from 'domain/orders/actions';
 import * as DictionaryAction from 'domain/dictionary/actions';
 import { OrderItem, Order } from 'domain/orders/Types';
@@ -14,7 +13,7 @@ import { validateArray } from 'lib/contracts';
 type Action = OrderAction.Action | DictionaryAction.Action;
 
 export default function idbMiddlware() {
-  const Idb = new IDB(C.DB_NAME, requestUpgrade);
+  const Idb = new CDB();
   return ({ dispatch }: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
     switch (action.type) {
       case OrderAction.CREATE_ORDER:
@@ -116,9 +115,9 @@ export default function idbMiddlware() {
               cursor.update(v);
               cursor.continue();
             } else {
-              db.close();
               resolve();
             }
+            db.close();
           };
           request.onerror = () => { db.close(); reject() }
         }))

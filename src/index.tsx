@@ -15,22 +15,23 @@ import 'lib/loger';
 
 const history = createHistory();
 
-const store = configureStore(history);
+configureStore(history).then((store) => {
+  ReactDOM.render(
+    <Provider store={store}>
+      <IntlProvider locale="ru-UA">
+        <ConnectedRouter history={history}>
+          <RouterProvider>
+            <UnitsContext.Provider value={getValueFromStore(store)}>
+              <App />
+            </UnitsContext.Provider>
+          </RouterProvider>
+        </ConnectedRouter>
+      </IntlProvider>
+    </Provider>,
+    document.getElementById('root')
+  );
+});
 
-ReactDOM.render(
-  <Provider store={store}>
-    <IntlProvider locale="ru-UA">
-      <ConnectedRouter history={history}>
-        <RouterProvider>
-          <UnitsContext.Provider value={getValueFromStore(store)}>
-            <App />
-          </UnitsContext.Provider>
-        </RouterProvider>
-      </ConnectedRouter>
-    </IntlProvider>
-  </Provider>,
-  document.getElementById('root')
-);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

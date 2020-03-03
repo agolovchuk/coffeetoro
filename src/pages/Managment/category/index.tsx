@@ -91,6 +91,7 @@ function ProductManager({ categories, getCategories, update, create, ...props }:
               (data) => data ? (
                 <MItem
                   data={data}
+                  title={data.title}
                   getLink={createLink}
                   onEdit={(value) => setItem({ ...value, isEdit: true })}
                 />
