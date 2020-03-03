@@ -45,4 +45,16 @@ export const TABLE = {
       type: 'type',
     }
   },
+  users: {
+    name: 'users',
+    index: {
+      id: 'id',
+    }
+  },
+  env: {
+    name: 'env',
+    index: {
+      id: 'id',
+    }
+  }
 };

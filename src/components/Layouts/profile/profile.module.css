@@ -7,6 +7,7 @@
   -webkit-appearance: none;
   border: 0 none;
   background: none;
+  text-decoration: none;
 }
 .name {
   font-size: 20px;
@@ -15,9 +16,17 @@
   font-weight: normal;
 }
 .ava {
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
+}
+.noava {
+  color: #fff;
+  background-color: #3796f6;
+  font-size: 36px;
+  text-align: center;
+  line-height: 60px;
+  align-items: center;
 }
 .gear {
   width: 40px;
@@ -25,4 +34,12 @@
   display: block;
   align-self: center;
   background: url("./gear.svg") scroll no-repeat center center / cover;
+}
+.logout {
+  width: 40px;
+  height: 40px;
+  display: block;
+  align-self: center;
+  margin-left: 20px;
+  background: url("./logout.svg") scroll no-repeat center center / cover;
 }

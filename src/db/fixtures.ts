@@ -1,4 +1,7 @@
 import { CategoryItem, UnitItem } from 'domain/dictionary/Types';
+import { IEnv } from 'domain/env';
+import { User } from 'domain/users';
+
 export const categories: ReadonlyArray<Partial<CategoryItem>> = [
   {
     title: 'Кофе',
@@ -117,5 +120,26 @@ export const units: ReadonlyArray<UnitItem> = [
     title: '450 ml',
     type: 'countable',
     sortIndex: 7,
+  }
+];
+
+export const env: ReadonlyArray<IEnv> = [
+  {
+    id: 'default',
+    multiplier: 1000,
+    currency: 'UAH',
+    user: null,
+  }
+];
+
+export const users: ReadonlyArray<User> = [
+  {
+    hash: "djAxJrBFo+ufzDLOY7B6XMeH8A9CQF7l3OCtzalbuPZ8QlktbBDb1zYb8xf7eBnubncBfYDo",
+    role: "manager",
+    name: "Manager",
+    id: "_DOZWB_w",
+    firstName: "",
+    lastName: "",
+    ava: "",
   }
 ]

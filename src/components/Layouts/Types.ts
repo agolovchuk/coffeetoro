@@ -1,5 +1,5 @@
 export interface IUser {
-  nikName: string;
+  name: string;
   role: 'user' | 'manager';
   ava: string;
 }
