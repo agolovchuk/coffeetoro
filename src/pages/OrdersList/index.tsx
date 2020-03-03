@@ -4,6 +4,7 @@ import cx from 'classnames';
 import { connect, ConnectedProps } from 'react-redux';
 import { ordersListSelector, createOrderAction, getOrdersListAction } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
+import { FormattedMessage as FM } from 'react-intl';
 
 import styles from './orders.module.css';
 
@@ -34,7 +35,9 @@ function Orders({ orders, createOrder, getOrdersList }: Props) {
         onClick={() => createOrder()}
       />
       <section className={styles.content}>
-        <h2 className={styles.title}>Активные заказы</h2>
+        <FM id="activeOrders" defaultMessage="Active Orders">
+          { v => <h2 className={styles.title}>{ v }</h2> }
+        </FM>
         <ul className={styles.list}>
           {
             orders.map((e, i) => (

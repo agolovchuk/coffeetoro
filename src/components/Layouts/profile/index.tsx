@@ -3,6 +3,7 @@ import cx from 'classnames';
 import { Link } from 'react-router-dom';
 import { IUser } from '../Types';
 import styles from './profile.module.css';
+import Language from './lang';
 
 interface Props {
   className?: string;
@@ -12,6 +13,7 @@ interface Props {
 function Profile({ className, user }: Props) {
   return (
     <section className={cx(className, styles.container)}>
+      <Language/>
       <Link to="/manager" className={styles.gear} />
       <Link to="/logout" className={styles.logout} />
       <Link to="/user" className={styles.btn}>

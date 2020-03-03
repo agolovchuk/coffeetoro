@@ -8,6 +8,7 @@ import { getUsersAction, usersListSelector, User } from 'domain/users';
 import { loginAction, userSelector } from 'domain/env';
 import { Modal, Popup } from 'components/Popup';
 import styles from './auth.module.css';
+import { FormattedMessage as FM } from 'react-intl';
 
 const mapState = (state: AppState) => ({
   users: usersListSelector(state),
@@ -60,9 +61,9 @@ function Auth({ getUsers, users, login, replace, currentUser }: Props) {
             <div className={styles.header}>{user ? (
               <div>
                 <div className={styles.noava}>{user.name.slice(0, 1)}</div>
-                Hello {user.name}
+                <FM id="helloMessage" defaultMessage="Hello, {user}" values={{ user: user.name }}/>
               </div>
-              ) : null}</div>
+              ) : <FM id="selectUser" defaultMessage="Select user"/>}</div>
             {
               user === null ? (
                 <ul className={styles.users}>

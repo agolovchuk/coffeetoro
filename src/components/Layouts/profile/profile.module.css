@@ -43,3 +43,26 @@
   margin-left: 20px;
   background: url("./logout.svg") scroll no-repeat center center / cover;
 }
+.list{
+  display: flex;
+  height: 35px;
+  align-self: center;
+  margin: 10px;
+  border: 1px solid;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.item {
+  outline: none;
+  border: 0;
+  padding: 0 10px;
+  text-transform: uppercase;
+  line-height: 35px;
+  font-weight: 600;
+}
+.item:hover {
+  background-color: #7bcbb0;
+}
+.active {
+  background-color: #3796f6;
+}

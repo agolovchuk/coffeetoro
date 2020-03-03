@@ -3,6 +3,7 @@ import cx from 'classnames';
 import { Form } from 'react-final-form';
 import { Modal, Popup } from 'components/Popup';
 import styles from './popup.module.css';
+import { Decorator } from 'final-form';
 
 interface Props<T extends Record<string, any>> {
   title: string | React.ReactNode;
@@ -10,9 +11,10 @@ interface Props<T extends Record<string, any>> {
   children: React.ReactNode;
   initialValues: T,
   onSubmit: (value: T) => void;
+  decorators?: Decorator<T>[]
 }
 
-function ManagmentPopup<T>({ title, onCancel, children, initialValues, onSubmit }: Props<T>) {
+function ManagmentPopup<T>({ title, onCancel, children, initialValues, onSubmit, decorators }: Props<T>) {
   return (
     <Modal>
       <Popup onCancel={onCancel}>
@@ -22,6 +24,7 @@ function ManagmentPopup<T>({ title, onCancel, children, initialValues, onSubmit 
             <Form
               onSubmit={onSubmit}
               initialValues={initialValues}
+              decorators={decorators}
               render={({ handleSubmit }) => (
                 <form onSubmit={handleSubmit}>
                   {

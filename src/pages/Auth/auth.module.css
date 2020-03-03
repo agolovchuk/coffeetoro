@@ -28,6 +28,9 @@
   height: 40px;
   margin-bottom: 20px;
   font-size: 18px;
+  width: 100%;
+  border: 1px solid #8080806e;
+  border-radius: 3px;
 }
 .btn {
   background: url("./login.svg") scroll no-repeat center center #7BCBB0;
