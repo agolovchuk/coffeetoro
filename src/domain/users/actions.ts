@@ -5,6 +5,7 @@ import { AppState } from '../StoreType';
 import CDB, { promisifyReques } from 'db';
 import * as C from 'db/constants';
 import { pbkdf2, pbkdf2Verify } from './helpers';
+import * as adapters from './adapters'
 import { User } from './Types';
 
 const CREATE_USER = 'USERS/CREATE_USER';
@@ -93,32 +94,20 @@ interface UpdatePassword {
   password: string;
 }
 
-function updatePasswordAction(data: UpdatePassword) {
+function updatePasswordAction(data: UpdatePassword, onComplete: (e?: Error) => void) {
   return async() => {
     try {
       const dbx = new CDB();
-      const db = await dbx.open();
-
-      const usersOs = db.transaction(C.TABLE.users.name, C.READ_WRITE)
-        .objectStore(C.TABLE.users.name)
-        .index(C.TABLE.users.index.id);
-
-      const { hash } = await promisifyReques<User>(usersOs.get(data.id));
-      const isValid = await pbkdf2Verify(hash, data.old);
-      if (isValid) {
-        const newHash = await pbkdf2(data.password);
-        const request = usersOs.openCursor(data.id);
-        request.onsuccess = function() {
-          if (this.result) {
-            this.result.update({...this.result.value, hash: newHash });
-            this.result.continue();
-          }
-        }
-      } else {
-        
-      }
-      db.close();
+      const eitherUser = await dbx.getItem(C.TABLE.users.name, C.TABLE.users.index.id, data.id, adapters.userAdapters);
+      if (eitherUser === null) throw new Error('No user found');
+      const { hash, ...user } = eitherUser;
+      const isVerify = await pbkdf2Verify(hash, data.old);
+      if (!isVerify) throw new Error('Invalsid old password');
+      const newHash = await pbkdf2(data.password);
+      await dbx.updateItem(C.TABLE.users.name, { ...user, hash: newHash });
+      onComplete();
     } catch (err) {
+      onComplete(err);
       console.warn(err);
     }
   }

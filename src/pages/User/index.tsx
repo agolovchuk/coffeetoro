@@ -22,9 +22,24 @@ interface Props extends ConnectedProps<typeof connector> {};
 
 function UserPage({ user, updateUser, updatePassword }: Props) {
 
+  const [btnState, setBtnState] = React.useState(false);
+
+  const passwordForm = React.useRef<HTMLFormElement | null>(null);
+
   const updateHandler = React.useCallback((data) => { updateUser(data); }, [updateUser]);
 
-  const handleUpdatePassword = React.useCallback((data) => { updatePassword(data); }, [updatePassword]);
+  const onComplete = (e?: Error) => {
+    setBtnState(false);
+    if (passwordForm.current) {
+      passwordForm.current.reset();
+    }
+    // TODO: Improve exaption handler
+  }
+
+  const handleUpdatePassword = React.useCallback((data) => {
+    updatePassword(data, onComplete);
+    setBtnState(true);
+  }, [updatePassword]);
 
   if (user === null) throw new Error('No user');
   return (
@@ -46,7 +61,11 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
                 <InputField id="lastName" title="Last name:" {...input} />
               )}/>
               <div className={styles.btnGroup}>
-                <button className={styles.btn} type="submit">Save</button>
+                <button
+                  className={styles.btn}
+                  disabled={btnState}
+                  type="submit"
+                >Save</button>
               </div>
             </form>
           )}
@@ -59,7 +78,7 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
           onSubmit={handleUpdatePassword}
           initialValues={{ id: user.id }}
           render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={handleSubmit} className={styles.form} ref={passwordForm}>
               <Field name="id" type="hidden" render={({ input, meta }) => (
                 <input {...input} />
               )}/>
@@ -73,7 +92,11 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
                 <InputField id="confirm" title="Confirm password:" {...input} />
               )}/>
               <div className={styles.btnGroup}>
-                <button className={styles.btn} type="submit">Set Password</button>
+                <button
+                  className={styles.btn}
+                  disabled={btnState}
+                  type="submit"
+                >Set Password</button>
               </div>
             </form>
           )}
