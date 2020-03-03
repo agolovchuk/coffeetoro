@@ -4,7 +4,7 @@ import { Form, Field } from 'react-final-form';
 import { replace as replaceAction } from 'connected-react-router';
 import cx from 'classnames';
 import { AppState } from 'domain/StoreType';
-import { getUsersAction, usersListSelector, User } from 'domain/users';
+import { getUsersAction, usersListSelector } from 'domain/users';
 import { loginAction, userSelector } from 'domain/env';
 import { Modal, Popup } from 'components/Popup';
 import styles from './auth.module.css';
