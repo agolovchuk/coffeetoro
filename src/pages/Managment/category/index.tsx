@@ -12,6 +12,9 @@ import Tree from '../components/tree';
 import { getMax } from '../helper';
 import { EitherEdit } from '../Types';
 import styles from './category.module.css';
+import createDecorator from "final-form-calculate";
+import { translite } from "lib/commonHelpers";
+import { Decorator } from 'final-form';
 
 const mapState = (state: AppState) => ({
   categories: categoriesListSelector(state),
@@ -50,6 +53,13 @@ type EitherCategory = EitherEdit<CategoryItem>;
 interface Props extends PropsFromRedux {
   match: match<{category?: string}>;
 }
+
+const guessSlag = createDecorator({
+  field: 'title',
+  updates: {
+    name: (v: string) => translite(v || ''),
+  }
+}) as Decorator<CategoryItem>;
 
 function ProductManager({ categories, getCategories, update, create, ...props }: Props) {
   const { params } = props.match;
@@ -113,6 +123,7 @@ function ProductManager({ categories, getCategories, update, create, ...props }:
             onCancel={() => setItem(null)}
             onSubmit={edit}
             initialValues={item}
+            decorators={[ guessSlag ]}
           >
             <Field name="parentName" render={({ input, meta }) => (
               <SelectField

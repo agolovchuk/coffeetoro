@@ -1,4 +1,5 @@
 export type RoleType = 'user' | 'manager';
+export type LangType = 'en' | 'ru';
 
 export interface IUser {
   readonly id: string;
@@ -7,6 +8,7 @@ export interface IUser {
   readonly name: string;
   readonly role: RoleType;
   readonly ava: string;
+  readonly lang: LangType;
 }
 
 export interface IEnv {

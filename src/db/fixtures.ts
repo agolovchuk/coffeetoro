@@ -141,5 +141,6 @@ export const users: ReadonlyArray<User> = [
     firstName: "",
     lastName: "",
     ava: "",
+    lang: "ru",
   }
 ]

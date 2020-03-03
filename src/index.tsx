@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { createHashHistory as createHistory } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { HashRouter as RouterProvider } from 'react-router-dom';
-import { IntlProvider } from 'react-intl';
+import IntlProvider from 'components/Intl';
 import configureStore from './domain';
 import { UnitsContext, getValueFromStore } from 'components/Units';
 

@@ -8,4 +8,5 @@ export const user = t.interface({
   role: t.union([t.literal('user'), t.literal('manager')]),
   ava: t.string,
   hash: t.string,
+  lang: t.union([t.literal('en'), t.literal('ru')]),
 });
