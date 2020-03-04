@@ -1,9 +1,9 @@
 import {IntlProvider} from "react-intl";
 import React from "react";
 import {connect, ConnectedProps} from 'react-redux';
-import { langSelector, LangType } from 'domain/env';
+import { langSelector } from 'domain/env';
 import { AppState } from 'domain/StoreType';
-import * as messages from 'l10n';
+import { getMessages, Messages } from 'l10n';
 
 const mapState = (state: AppState) => ({
   lang: langSelector(state)
@@ -12,19 +12,27 @@ const mapState = (state: AppState) => ({
 const connector = connect(mapState);
 
 interface Props extends ConnectedProps<typeof connector> {
-  locale: string,
+  locale: string;
   children: React.ReactNode;
+  defaultMessage: Messages;
 }
 
-const getMessages = (lang: LangType): Record<string, string> => messages[lang] || {};
+function ConnectedIntlProvider({ lang, defaultMessage, locale, ...props }: Props) {
+  const [messages, setMessage] = React.useState<Messages>(defaultMessage);
 
-function ConnectedIntlProvider({ lang, locale, ...props }: Props) {
-  const m = getMessages(lang);
-  return <IntlProvider
+  React.useEffect(() => {
+    let isMounted = true;
+    getMessages(lang)?.then((m) => { if (isMounted) setMessage(m); });
+    return () => { isMounted = false; }
+  }, [lang]);
+
+  return (
+    <IntlProvider
       locale={locale}
-      messages={m}
+      messages={messages}
       {...props}
-  />
+    />
+  )
 }
 
 

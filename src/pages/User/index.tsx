@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Form, Field } from 'react-final-form';
-import { InputField } from 'components/Form/field';
+import { FormattedMessage as FM } from 'react-intl';
+import { InputField, SelectField, ISelectList } from 'components/Form/field';
 import { userSelector } from 'domain/env';
 import { updateUserAction, updatePasswordAction } from 'domain/users';
 import { AppState } from 'domain/StoreType';
@@ -10,6 +11,11 @@ import styles from './user.module.css';
 const mapState = (state: AppState) => ({
   user: userSelector(state),
 });
+
+const LANGS: ISelectList = [
+  { name: 'en', title: 'English' },
+  { name: 'ru', title: 'Русский' }
+]
 
 const mapDispatch = {
   updateUser: updateUserAction,
@@ -45,7 +51,13 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
   return (
     <section className={styles.conent}>
       <div className={styles.column}>
-      <h2 className={styles.title}>Manage your profile</h2>
+      <FM id="user.manageYourProfile" defaultMessage="Manage your profile">
+        {
+          (t: string) => (
+            <h2 className={styles.title}>{t}</h2>
+          )
+        }
+      </FM>
         <Form
           onSubmit={updateHandler}
           initialValues={user}
@@ -60,6 +72,9 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
               <Field name="lastName" render={({ input, meta }) => (
                 <InputField id="lastName" title="Last name:" {...input} />
               )}/>
+               <Field name="lang" render={({ input, meta }) => (
+                <SelectField list={LANGS} id="lang" title="Language:" {...input} />
+              )}/>
               <div className={styles.btnGroup}>
                 <button
                   className={styles.btn}
@@ -73,7 +88,13 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
         
       </div>
       <div className={styles.column}>
-        <h2 className={styles.title}>Update password</h2>
+        <FM id="user.updatePassword" defaultMessage="Update password">
+          {
+            (t: string) => (
+              <h2 className={styles.title}>{t}</h2>
+            )
+          }
+        </FM>
         <Form
           onSubmit={handleUpdatePassword}
           initialValues={{ id: user.id }}

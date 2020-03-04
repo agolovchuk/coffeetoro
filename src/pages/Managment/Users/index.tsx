@@ -13,7 +13,7 @@ import { Route } from 'react-router-dom';
 import OneUser from './user';
 import styles from './user.module.css';
 
-type UserType = Partial<User>;
+type UserType = User;
 
 const ROLES = [
   { name: 'user', title: 'Regular user'},
@@ -22,8 +22,14 @@ const ROLES = [
 
 function createItem(): UserType {
   return {
+    id: '',
     name: '',
     role: 'user',
+    firstName: '',
+    lastName: '',
+    ava: '',
+    lang: 'en',
+    hash: '',
   }
 }
 
@@ -46,9 +52,13 @@ function ManagmentUsers({ createUser, getUsers, users }: Props) {
 
   const [user, setUser] = React.useState<null | EitherEdit<UserType>>(null);
 
-  React.useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+  React.useEffect(() => { getUsers(); }, [getUsers]);
+
+  const onComplete = React.useCallback(() => setUser(null), [setUser])
+
+  const handleCreateUser = React.useCallback((newUser) => {
+    createUser(newUser, onComplete);
+  }, [createUser, onComplete]);
 
   const handleOpen = React.useCallback(() => {
     setUser(createItem());
@@ -78,7 +88,7 @@ function ManagmentUsers({ createUser, getUsers, users }: Props) {
             title="Create user"
             onCancel={() => setUser(null)}
             initialValues={user}
-            onSubmit={(value) => createUser(value)}
+            onSubmit={handleCreateUser}
           >
             <Field name="role" render={({ input, meta }) => (
               <SelectField

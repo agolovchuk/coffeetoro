@@ -8,7 +8,7 @@ import * as C from 'db/constants';
 export const LOGOUT = 'AUTH/LOGOUT';
 export const LOGIN = 'AUTH/LOGIN';
 
-interface Logout {
+export interface Logout {
   type: typeof LOGOUT;
 }
 
