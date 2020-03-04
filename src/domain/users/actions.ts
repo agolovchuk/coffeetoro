@@ -1,15 +1,14 @@
 import { ThunkAction } from 'redux-thunk';
-import { arrayToRecord } from 'lib/dataHelper';
 import { getId } from 'lib/id';
 import { AppState } from '../StoreType';
-import CDB, { promisifyReques } from 'db';
+import CDB from 'db';
 import * as C from 'db/constants';
 import { pbkdf2, pbkdf2Verify } from './helpers';
 import * as adapters from './adapters'
 import { User } from './Types';
 
-const CREATE_USER = 'USERS/CREATE_USER';
-const GET_USERS = 'USERS/GET_USERS';
+export const CREATE_USER = 'USERS/CREATE_USER';
+export const GET_USERS = 'USERS/GET_USERS';
 export const UPDATE_USER = 'USERS/UPDATE_USER';
 
 interface CreateUser {
@@ -17,23 +16,24 @@ interface CreateUser {
   payload: User,
 }
 
-function createUserAction(data: Partial<User>) {
-  return async() => {
-    const hash = await pbkdf2('1111');
-    const user = { hash, ...data, id: getId(8) };
+function createUserAction(data: User, onComplete: (e?: Error) => void): ThunkAction<void, AppState, unknown, CreateUser> {
+  return async(dispatch) => {
     try {
+      const hash = await pbkdf2('1111');
+      const user = { ...data, hash, id: getId(8) };
       const dbx = new CDB();
-      const db = await dbx.open();
-      const osUser = db.transaction([C.TABLE.users.name], C.READ_WRITE).objectStore(C.TABLE.users.name);
-      await promisifyReques(osUser.add(user));
-      db.close();
+      await dbx.addItem(C.TABLE.users.name, user);
+      dispatch({
+        type: CREATE_USER,
+        payload: user,
+      })
+      onComplete();
     } catch (err) {
+      onComplete(err);
       console.warn(err);
     }
   }
 }
-
-createUserAction.type = CREATE_USER;
 
 interface GetUsers {
   type: typeof GET_USERS;
@@ -44,20 +44,18 @@ function getUsersAction(): ThunkAction<void, AppState, unknown, GetUsers>  {
   return async(dispatch) => {
     try {
       const dbx = new CDB();
-      const db = await dbx.open();
-      const users = await promisifyReques<User[]>(db.transaction(C.TABLE.users.name).objectStore(C.TABLE.users.name).getAll());
-      db.close();
-      dispatch({
-        type: GET_USERS,
-        payload: arrayToRecord(users, 'name'),
-      })
+      const users = await dbx.getDictionary(C.TABLE.users.name, adapters.usersListAdapter, 'id');
+      if (users !== null) {
+        dispatch({
+          type: GET_USERS,
+          payload: users,
+        })
+      }
     } catch (err) {
       console.warn(err);
     }
   }
 }
-
-getUsersAction.type = GET_USERS;
 
 interface UpdateUser {
   type: typeof UPDATE_USER;
@@ -69,10 +67,14 @@ function updateUserAction(data: User): ThunkAction<void, AppState, unknown, Upda
     try {
       const dbx = new CDB();
       const db = await dbx.open();
-      const request = db.transaction(C.TABLE.users.name, C.READ_WRITE)
+      const transaction = db.transaction(C.TABLE.users.name, C.READ_WRITE);
+      transaction.oncomplete = function () { db.close(); }
+
+      const request = transaction
         .objectStore(C.TABLE.users.name)
         .index(C.TABLE.users.index.id)
         .openCursor(data.id);
+
       request.onsuccess = function() {
         if (this.result) {
           this.result.update({...this.result.value, ...data});
@@ -80,7 +82,6 @@ function updateUserAction(data: User): ThunkAction<void, AppState, unknown, Upda
         } else {
           dispatch({ type: UPDATE_USER, payload: data });
         }
-        db.close();
       }
     } catch (err) {
       console.warn(err);
