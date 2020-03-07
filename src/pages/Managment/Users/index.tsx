@@ -9,8 +9,6 @@ import MItem from '../components/item';
 import Header from '../components/header';
 import ManagmentPopup from '../components/popup';
 import { EitherEdit } from '../Types';
-import { Route } from 'react-router-dom';
-import OneUser from './user';
 import styles from './user.module.css';
 
 type UserType = User;
@@ -81,7 +79,6 @@ function ManagmentUsers({ createUser, getUsers, users }: Props) {
           }
         </ItemList>
       </section>
-      <Route path={'/manager/users/:user'} component={OneUser} exact />
       {
         user && (
           <ManagmentPopup

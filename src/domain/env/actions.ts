@@ -1,12 +1,15 @@
 import { ThunkAction } from 'redux-thunk';
+import get from'lodash/get';
 import { AppState } from '../StoreType';
-import { IUser } from './Types';
+import { IUser, FirebaseConfig } from './Types';
 import CDB, { promisifyReques } from 'db';
 import { pbkdf2Verify } from 'domain/users/helpers'
 import * as C from 'db/constants';
+import { envSelector } from './selectors';
 
 export const LOGOUT = 'AUTH/LOGOUT';
 export const LOGIN = 'AUTH/LOGIN';
+export const UPDATE_FIREBASE_CONFIG = 'ENV/UPDATE_FIREBASE_CONFIG';
 
 export interface Logout {
   type: typeof LOGOUT;
@@ -78,9 +81,34 @@ function loginAction({ id, password, onError }: UserAuth): ThunkAction<void, App
 
 loginAction.type = LOGIN;
 
+interface UpdateFirebaseConfig {
+  type: typeof UPDATE_FIREBASE_CONFIG;
+  payload: FirebaseConfig | null;
+}
+
+export function updateFirebaseConfigAction(config: FirebaseConfig | null): ThunkAction<void, AppState, unknown, UpdateFirebaseConfig> {
+  return async(dispatch, getState) => {
+    const env = envSelector(getState());
+    try {
+      const idb = new CDB();
+      await idb.updateItem(C.TABLE.env.name, {
+        ...env,
+        user: get(env, ['user', 'id'], null),
+        firebaseConfig: config,
+      });
+      dispatch({
+        type: UPDATE_FIREBASE_CONFIG,
+        payload: config,
+      });
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
 export {
   loginAction,
   logoutAction,
 }
 
-export type Action = Login | Logout;
+export type Action = Login | Logout | UpdateFirebaseConfig;

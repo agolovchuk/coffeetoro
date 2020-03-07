@@ -1,3 +1,4 @@
+import set from 'lodash/fp/set';
 import {
   Categories,
   Units,
@@ -25,7 +26,7 @@ export const reducer = {
   }),
 
   prices: createReducer({} as Prices, {
-    [A.CRUD.createItemAction.type]: A.CRUD.creat<PriceItem, 'id'>('prices', 'id'),
+    [A.CREATE_PRICE]: (state, action: A.CreatePrice) => set(action.payload.id)(action.payload)(state),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('prices'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<PriceItem, 'id'>('prices', 'id'),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.prices })

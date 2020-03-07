@@ -1,6 +1,7 @@
 import { ThunkAction } from 'redux-thunk';
 import { validateArray } from 'lib/contracts';
 import CDB, { promisifyReques } from 'db';
+import * as C from 'db/constants';
 import { AppState } from '../StoreType';
 import * as CRUD from './crud';
 import { CategoryItem, PriceItem } from './Types';
@@ -11,6 +12,7 @@ export { CRUD }
 export const GET_CATEGORIES_SUCCESS = 'DICTIONARY/GET_CATEGORIES_SUCCESS';
 export const GET_PRICES_SUCCESS = 'DICTIONARY/GET_PRICES_SUCCESS';
 export const GET_PRICES_FAILURE = 'DICTIONARY/GET_PRICES_FAILURE';
+export const CREATE_PRICE = 'DICTIONARY/CREATE_PRICE';
 
 export interface GetCategoriesSuccess {
   type: typeof GET_CATEGORIES_SUCCESS;
@@ -82,6 +84,26 @@ export function getPricesAction(categoryName: string): ThunkAction<void, AppStat
   }
 }
 
+export interface CreatePrice {
+  type: typeof CREATE_PRICE;
+  payload: PriceItem;
+}
+
+export function createPriceAction(item: PriceItem): ThunkAction<void, AppState, unknown, CreatePrice>  {
+  return async(dispatch) => {
+    try {
+      const Idb = new CDB();
+      await Idb.addItem(C.TABLE.price.name, item);
+      dispatch({
+        type: CREATE_PRICE,
+        payload: item,
+      })
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
 export type Action = ReturnType<typeof CRUD.createItemAction>
   | ReturnType<typeof CRUD.getAllAction>
   | ReturnType<typeof CRUD.getAllActionSuccess>
@@ -89,4 +111,5 @@ export type Action = ReturnType<typeof CRUD.createItemAction>
   | GetCategoriesSuccess
   | GetPricesSuccess
   | GetPricesFailure
+  | CreatePrice
   ;

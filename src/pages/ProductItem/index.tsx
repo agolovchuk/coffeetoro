@@ -57,7 +57,6 @@ function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match
 
 function ProductItem({ addItem, orderByProduct, getPrices, ...props }: Props) {
   const { category, orderId } = props.match.params;
-  console.log(orderId, '@@@@@');
 
   const addHandler = React.useCallback(
     (priceId: string) => addItem(orderId, priceId), [orderId, addItem]

@@ -129,6 +129,7 @@ export const env: ReadonlyArray<IEnv> = [
     multiplier: 1000,
     currency: 'UAH',
     user: null,
+    firebaseConfig: null,
   }
 ];
 

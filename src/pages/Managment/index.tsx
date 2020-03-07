@@ -25,6 +25,12 @@ function asyncMaintenance(): Promise<unknown> {
   });
 }
 
+function asyncConfig(): Promise<unknown> {
+  return import('./Config').then((res) => {
+    return res.default;
+  });
+}
+
 const mapStateToProps = (state: AppState) => ({
   user: userSelector(state),
 })
@@ -42,6 +48,7 @@ function ManagerRout() {
       <AsyncRoute path={["/manager/category/:category", "/manager/category"]} importRender={asyncCategory} />
       <AsyncRoute path="/manager/users" importRender={asyncUsers} />
       <AsyncRoute path="/manager/maintenance" importRender={asyncMaintenance} />
+      <AsyncRoute path="/manager/config" importRender={asyncConfig} />
     </Switch>
   );
 }

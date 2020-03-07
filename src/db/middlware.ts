@@ -1,6 +1,5 @@
 import { Dispatch, MiddlewareAPI } from 'redux';
 import { replace } from 'connected-react-router';
-import get from 'lodash/get';
 import CDB, { promisifyReques } from './index';
 import * as OrderAction from 'domain/orders/actions';
 import * as DictionaryAction from 'domain/dictionary/actions';
@@ -100,28 +99,6 @@ export default function idbMiddlware() {
 
       case OrderAction.REMOVE_ITEM:
         Idb.deleteItem(C.TABLE.orderItem.name, [action.payload.orderId, action.payload.priceId]);
-        break;
-
-      case OrderAction.completeOrderAction.type:
-        Idb.open().then(db => new Promise((resolve, reject) => {
-          const request = db
-            .transaction([C.TABLE.orders.name], C.READ_WRITE)
-            .objectStore(C.TABLE.orders.name)
-            .openCursor(action.payload.id)
-          request.onsuccess = function success(event) {
-            const cursor = get(event, ['target', 'result']);
-            if (cursor) {
-              const v = Object.assign({}, cursor.value, { payment: action.payload.method });
-              cursor.update(v);
-              cursor.continue();
-            } else {
-              resolve();
-            }
-            db.close();
-          };
-          request.onerror = () => { db.close(); reject() }
-        }))
-          .then(() => { dispatch(replace('/')) });
         break;
 
       case DictionaryAction.CRUD.getAllAction.type:

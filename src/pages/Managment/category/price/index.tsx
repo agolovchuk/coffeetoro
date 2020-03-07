@@ -16,6 +16,7 @@ import {
   unitsByIdSelector,
   currentCategorySelector,
   UnitItem,
+  createPriceAction,
 } from 'domain/dictionary';
 import { ManagmentPopup, ItemList, Header } from '../../components';
 import { getMax } from '../../helper';
@@ -49,7 +50,7 @@ const mapState = (state: AppState, props: PropsFromRouter) => ({
 
 const mapDispatch = {
   getDictionary: CRUD.getAllAction,
-  create: CRUD.createItemAction,
+  create: createPriceAction,
   update: CRUD.updateItemAction,
 };
 
@@ -77,7 +78,7 @@ function PriceManager({ prices, update, units, create, getDictionary, ...props }
       if (isEdit) {
         update('prices', {...value, valuation: Number(valuation)})
       } else {
-        create('prices', {...value, valuation: Number(valuation)});
+        create( {...value, valuation: Number(valuation)});
       }
       setItem(null);
     }, [update, create],

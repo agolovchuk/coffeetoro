@@ -1,5 +1,8 @@
 import { createAction } from '@reduxjs/toolkit';
 import get from 'lodash/get';
+import { replace } from 'connected-react-router';
+import CDB from 'db';
+import * as C from 'db/constants';
 import { getId } from 'lib/id';
 import { Order, PaymentMethod, OrderItem } from './Types';
 import { Prices, PriceItem, CategoryItem } from 'domain/dictionary/Types';
@@ -11,7 +14,7 @@ export const ADD_ITEM = 'ORDER/ADD_ITEM';
 export const UPDATE_QUANTITY = 'ORDER/UPDATE_QUANTITY';
 export const UPDATE_ITEM = 'ORDER/UPDATE_ITEM';
 export const REMOVE_ITEM = 'ORDER/REMOVE_ITEM';
-const COMPLETE = 'ORDER/COMPLETE';
+export const COMPLETE = 'ORDER/COMPLETE';
 
 export const GET_ORDER = 'ORDER/GET_ORDER';
 const GET_ORDER_SUCCESS = 'ORDER/GET_ORDER/SUCCESS';
@@ -138,13 +141,27 @@ export function createOrderAction(client: string = 'incognito'): Thunk<CreateOrd
 }
 
 interface OrderComplete {
-  id: string;
-  method: PaymentMethod;
+  type: typeof COMPLETE;
+  payload: Order;
 }
 
-type PrepareComplete = (id: string, method: PaymentMethod) => { payload: OrderComplete };
-
-export const completeOrderAction = createAction<PrepareComplete, typeof COMPLETE>(COMPLETE, (id: string, method: PaymentMethod) => ({ payload: { id, method }}));
+export function completeOrderAction(id: string, method: PaymentMethod): Thunk<void, OrderComplete | any> {
+  return async(dispatch, getState) => {
+    const order = get(getState(), ['ordersList', id]);
+    const completeOrder = {...order, payment: method };
+    dispatch(replace('/orders'));
+    try {
+      const dbx = new CDB();
+      await dbx.updateItem(C.TABLE.orders.name, completeOrder);
+      dispatch({
+        type: COMPLETE,
+        payload: completeOrder,
+      });
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
 
 // ===== async ==========
 interface GetOrder {
@@ -209,7 +226,7 @@ export type Action = ReturnType<ReturnType<typeof createOrderAction>>
   | ReturnType<ReturnType<typeof updateItemAction>>
   | ReturnType<typeof removeItemAction>
   | ReturnType<typeof getOrderAction>
-  | ReturnType<typeof completeOrderAction>
+  | OrderComplete
   | ReturnType<typeof getOrderSuccessAction>
   | ReturnType<typeof getOrdersListAction>
   | ReturnType<typeof getOrdersListSuccessAction>

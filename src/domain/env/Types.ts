@@ -1,5 +1,9 @@
-export type RoleType = 'user' | 'manager';
-export type LangType = 'en' | 'ru';
+import { TypeOf } from 'io-ts';
+import { role, lang, env, firebaseConfig } from './contracts';
+
+export type RoleType = TypeOf<typeof role>;
+export type LangType = TypeOf<typeof lang>;
+export type FirebaseConfig = TypeOf<typeof firebaseConfig>;
 
 export interface IUser {
   readonly id: string;
@@ -11,12 +15,7 @@ export interface IUser {
   readonly lang: LangType;
 }
 
-export interface IEnv {
-  id: 'default';
-  multiplier: number;
-  currency: string;
-  user: IUser | null;
-}
+export type IEnv = TypeOf<typeof env>;
 
 export type DBEnv = IEnv & {
   user: string | null;

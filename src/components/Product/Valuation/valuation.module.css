@@ -4,6 +4,7 @@
   line-height: 1.667;
   position: relative;
   height: 100%;
+  padding: 5px;
 }
 .label {
   border-radius: 4px;
@@ -16,6 +17,7 @@
   flex-direction: column;
   justify-content: space-around;
   text-align: center;
+  border: 1px solid #95A8BC;
 }
 .input:not(:checked) + .label.order {
   color: #cccccc;
@@ -28,7 +30,7 @@
 .input:checked + .label.order {
   background: #95A8BC;
   color: #fff;
-  border-color: #fff;
+  border-color: #95A8BC;
 }
 .price {
   font-size: 20px;

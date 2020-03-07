@@ -16,6 +16,11 @@ interface Props {
 const LIST: List[] = [
   {
     id: '00',
+    name: 'config',
+    title: 'System Config',
+  },
+  {
+    id: '00',
     name: 'maintenance',
     title: 'Maintenance',
   },
