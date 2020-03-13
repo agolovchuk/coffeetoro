@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { date } from 'io-ts-types/lib/date';
 
 export const unit = t.interface({
   id: t.string,
@@ -11,8 +12,8 @@ export const unit = t.interface({
 export const price = t.interface({
   id: t.string,
   categoryName: t.string,
-  fromDate: t.string,
-  expiryDate: t.union([t.string, t.null]),
+  fromDate: date,
+  expiryDate: t.union([date, t.null]),
   unitId: t.string,
   valuation: t.number,
   barcode: t.string,

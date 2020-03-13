@@ -27,7 +27,7 @@ function createItem(categoryName: string, sortIndex: number): PriceItem {
   return {
     id: getId(16),
     categoryName,
-    fromDate: new Date().toISOString(),
+    fromDate: new Date(),
     expiryDate: null,
     unitId: '1',
     valuation: 0,

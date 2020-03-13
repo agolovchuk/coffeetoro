@@ -14,6 +14,26 @@ interface Props {
 }
 
 function Header({ onBack, location, user }: Props) {
+
+  const [isFS, setFS] = React.useState(document.fullscreen);
+
+  const handleEvent = React.useCallback(() => { setFS(document.fullscreen); }, []);
+
+  const handleFullScreen =  React.useCallback(() => {
+    if (document.fullscreen) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  }, []);
+
+  React.useEffect(() => {
+    document.addEventListener('fullscreenchange', handleEvent);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleEvent);
+    }
+  }, [handleEvent]);
+
   return (
     <header className={styles.container}>
       <button
@@ -27,6 +47,11 @@ function Header({ onBack, location, user }: Props) {
         exact
         className={cx(styles.btn, styles.orders)}
         activeClassName={styles.active}
+      />
+      <button
+        className={cx(styles.btn, styles.fullscreen, {[styles.isfs]: isFS })}
+        onClick={handleFullScreen}
+        type="button"
       />
       {
         user && (

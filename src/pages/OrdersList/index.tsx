@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import { connect, ConnectedProps } from 'react-redux';
-import { ordersListSelector, createOrderAction, getOrdersListAction } from 'domain/orders';
+import { ordersListSelector, createOrderAction, getOrdersListAction, Order } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
 import { FormattedMessage as FM } from 'react-intl';
 
@@ -28,7 +28,7 @@ function Orders({ orders, createOrder, getOrdersList }: Props) {
   React.useEffect(() => { getOrdersList(); }, [getOrdersList]);
 
   return (
-    <React.Fragment>
+    <div className={styles.wrapper}>
       <button
         className={cx(styles.btn, styles.create)}
         type="button"
@@ -40,7 +40,7 @@ function Orders({ orders, createOrder, getOrdersList }: Props) {
         </FM>
         <ul className={styles.list}>
           {
-            orders.map((e, i) => (
+            orders.map((e: Order, i) => (
               <li key={e.id}>
                 <Link className={cx(styles.btn, styles.place)} to={`/order/${e.id}`}>
                   <span className={styles.index}>{i + 1}</span>
@@ -50,7 +50,7 @@ function Orders({ orders, createOrder, getOrdersList }: Props) {
           }
         </ul>
       </section>
-    </React.Fragment>
+    </div>
   )
 }
 
