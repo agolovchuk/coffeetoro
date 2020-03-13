@@ -5,6 +5,7 @@
 .container > section {
   flex: 1 1 100%;
   padding-left: 20px;
+  overflow-y: auto;
 }
 .container > section:first-child {
   padding-left: 15px;

@@ -19,11 +19,18 @@ export default function fbMiddlware({ dispatch, getState }: MiddlewareAPI<Dispat
         case OrderAction.COMPLETE:
           const params = { match: { params: { orderId: action.payload.id } }};
           const items = OrderSekectot.orderArchiveSelector(getState(), params )
-          database.ref('orders/' + action.payload.id).set({ ...action.payload, items });
+          database.ref('orders/' + action.payload.id).set({
+            ...action.payload,
+            items,
+            date: action.payload.date.toISOString(),
+          });
           break;
 
         case DictionaryAction.CREATE_PRICE:
-          database.ref('price/' + action.payload.id).set(action.payload);
+          database.ref('price/' + action.payload.id).set({
+            ...action.payload,
+            fromDate: action.payload.fromDate.toISOString(),
+          });
           break;
 
         default:

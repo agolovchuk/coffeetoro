@@ -123,7 +123,7 @@ interface CreateOrder {
 function createOrder(client: string, owner: string): Order {
   return {
     id: getId(10),
-    date: new Date().toISOString(),
+    date: new Date(),
     payment: PaymentMethod.Opened,
     client: client,
     owner,

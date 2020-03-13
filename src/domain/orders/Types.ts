@@ -1,3 +1,5 @@
+import { TypeOf } from 'io-ts';
+import { order, orderItem } from './contracts';
 import { PriceItem, CategoryItem, VolumeItem, Prices, Categories } from '../dictionary/Types';
 
 export interface OrderDictionary {
@@ -16,19 +18,9 @@ export enum Status {
   Archive,
 }
 
-export interface OrderItem {
-  readonly orderId: string,
-  readonly priceId: string;
-  readonly quantity: number;
-}
+export type OrderItem = TypeOf<typeof orderItem>;
 
-export interface Order {
-  readonly id: string;
-  readonly date: string;
-  readonly client: string;
-  readonly payment: PaymentMethod;
-  readonly owner: string;
-}
+export type Order = TypeOf<typeof order>;
 
 export interface OrderItemContainer {
   quantity: number,
