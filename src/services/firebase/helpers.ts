@@ -11,7 +11,6 @@ export function addPriceHandler<A extends Action>(dispatch: Dispatch<A>) {
       if (typeof s.key === 'string') {
         const { fromDate, expiryDate, ...data} = s.val();
         const p = await dbx.getItem(C.TABLE.price.name, priceAdapter, s.key);
-        console.log(p, s.val(), s.key)
         if (p === null) {
           await dbx.addItem(C.TABLE.price.name, {
             ...data,
