@@ -17,8 +17,8 @@ function getSumm(list: ReadonlyArray<OrderItemContainer>): number {
 }
 
 function makeUrl(orderId: string) {
-  return ({ name }: Partial<OrderItemContainer["category"]>) =>
-    ['/order', orderId, name, 'product'].join('/');
+  return ({ id }: Partial<OrderItemContainer["category"]>) =>
+    ['/order', orderId, id, 'product'].join('/');
 }
 
 function Order({ list, onComplete, orderId }: Props) {

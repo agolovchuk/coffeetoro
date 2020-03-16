@@ -6,6 +6,7 @@ export interface OrderItemContainer {
   price: IPrice;
   quantity: number;
   category: {
+    id: string;
     title: string;
     name: string;
     // categoryName: string;
