@@ -66,9 +66,9 @@ export default function idbMiddlware() {
             })
             .then(res => {
               prices = validateArray(adapters.dictionaryAdapters['prices'])(res);
-              const categoryNames: string[] = res.reduce((a: string[], v) => a.includes(v.categoryName) ? a : a.concat(v.categoryName), []);
+              const categoryId: string[] = res.reduce((a: string[], v) => a.includes(v.categoryId) ? a : a.concat(v.categoryId), []);
               return Promise.all(
-                categoryNames.map(e => promisifyReques<CategoryItem>(categoryStore.get(e)))
+                categoryId.map(e => promisifyReques<CategoryItem>(categoryStore.get(e)))
               )
             })
             .then((res) => {

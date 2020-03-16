@@ -18,7 +18,7 @@ import styles from './product.module.css';
 
 interface IMatchParams {
   readonly orderId: string;
-  readonly category: string;
+  readonly categoryId: string;
 }
 
 type PropsFromRouter = PropsMatch<IMatchParams>;
@@ -56,7 +56,7 @@ function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match
 }
 
 function ProductItem({ addItem, orderByProduct, getPrices, ...props }: Props) {
-  const { category, orderId } = props.match.params;
+  const { categoryId, orderId } = props.match.params;
 
   const addHandler = React.useCallback(
     (priceId: string) => addItem(orderId, priceId), [orderId, addItem]
@@ -69,8 +69,8 @@ function ProductItem({ addItem, orderByProduct, getPrices, ...props }: Props) {
   );
   
   React.useEffect(() => {
-    getPrices(category);
-  }, [getPrices, category]);
+    getPrices(categoryId);
+  }, [getPrices, categoryId]);
 
   return (
     <section className={styles.container}>

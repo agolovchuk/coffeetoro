@@ -9,8 +9,8 @@ function CacheBox() {
   return (
     <div className={styles.container}>
       <Switch>
-        <Route path={['/order/:orderId', '/order/:orderId/:category']} exact component={Categories} />
-        <Route path="/order/:orderId/:category/product" exact component={ProductItem} />
+        <Route path={['/order/:orderId', '/order/:orderId/:categoryId']} exact component={Categories} />
+        <Route path="/order/:orderId/:categoryId/product" exact component={ProductItem} />
       </Switch>
       <Route path="/order/:orderId" component={OrderItem} />
     </div>

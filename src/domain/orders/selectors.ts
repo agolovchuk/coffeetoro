@@ -10,7 +10,7 @@ export const orderItems = (state: OrderState) => state.orderItems;
 const orderDictionary = (state: OrderState) => state.orderDictionary;
 
 const priceByID = createSelector(orderDictionary, d => d.prices);
-const categoryByName = createSelector(orderDictionary, d => d.categories);
+const categoryById = createSelector(orderDictionary, d => d.categories);
 const corderItemsListSelectors = createSelector(orderItems, o => Object.values(o));
 
 // Filter order items list for specific order 
@@ -24,13 +24,13 @@ export const orderArchiveSelector = createSelector(
 );
 
 export const ordersSelector = createSelector(
-  [orderItemSelector, priceByID, categoryByName , units],
+  [orderItemSelector, priceByID, categoryById , units],
   (o, p, pd, v) => getOrderItem(o, p, pd, v),
 );
 
 export const orderByProductSelector = createSelector(
   [ordersSelector, params],
-  (o, p) => o.filter(f => f.category.name === p.category),
+  (o, p) => o.filter(f => f.category.id === p.categoryId),
 );
 
 export const ordersListSelector = createSelector(

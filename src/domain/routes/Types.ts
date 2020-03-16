@@ -3,7 +3,7 @@ import { match } from 'react-router-dom';
 export interface Params {
   readonly orderId?: string;
   readonly type?: string;
-  readonly category?: string;
+  readonly categoryId?: string;
   readonly product?: string;
 }
 

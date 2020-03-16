@@ -1,0 +1,25 @@
+/** Column */
+.column_wrapper {
+  display: flex;
+}
+.column_item {
+  flex: 1 1 100%;
+}
+/** Button */
+.btn {
+  padding: 0 30px;
+  font-size: 18px;
+  height: 40px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn__posetive {
+  border: 1px solid #7BCBB0;
+  background-color: #7BCBB0;
+  color: #fff;
+}
+.btn__alt {
+  background-color: #3796f6;
+  border: 1px solid #3796f6;
+  color: #fff;
+}

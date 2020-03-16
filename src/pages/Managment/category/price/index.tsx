@@ -17,16 +17,17 @@ import {
   currentCategorySelector,
   UnitItem,
   createPriceAction,
+  updatePriceAction,
 } from 'domain/dictionary';
 import { ManagmentPopup, ItemList, Header } from '../../components';
 import { getMax } from '../../helper';
 import { EitherEdit } from '../../Types';
 import styles from './price.module.css';
 
-function createItem(categoryName: string, sortIndex: number): PriceItem {
+function createItem(categoryId: string, sortIndex: number): PriceItem {
   return {
     id: getId(16),
-    categoryName,
+    categoryId,
     fromDate: new Date(),
     expiryDate: null,
     unitId: '1',
@@ -37,7 +38,7 @@ function createItem(categoryName: string, sortIndex: number): PriceItem {
 }
 
 interface PropsFromRouter {
-  match: match<{ category: string }>
+  match: match<{ categoryId: string }>
 }
 
 const mapState = (state: AppState, props: PropsFromRouter) => ({
@@ -51,7 +52,7 @@ const mapState = (state: AppState, props: PropsFromRouter) => ({
 const mapDispatch = {
   getDictionary: CRUD.getAllAction,
   create: createPriceAction,
-  update: CRUD.updateItemAction,
+  update: updatePriceAction,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -68,17 +69,16 @@ function getPrentsList(current: PriceItem[], units: UnitItem[]) {
   }
 }
 
-function PriceManager({ prices, update, units, create, getDictionary, ...props }: Props) {
-  const { category } = props.match.params
+function PriceManager({ prices, update, units, create, getDictionary, category, ...props }: Props) {
 
   const [item, setItem] = React.useState<EitherEdit<PriceItem> | null>(null);
 
   const edit = React.useCallback(
     ({ isEdit, valuation, ...value }: EitherEdit<PriceItem>) => {
       if (isEdit) {
-        update('prices', {...value, valuation: Number(valuation)})
+        update({...value, valuation: Number(valuation)})
       } else {
-        create( {...value, valuation: Number(valuation)});
+        create({...value, valuation: Number(valuation)});
       }
       setItem(null);
     }, [update, create],
@@ -86,16 +86,22 @@ function PriceManager({ prices, update, units, create, getDictionary, ...props }
 
   const memoList = React.useMemo(() => getPrentsList(prices, units), [prices, units]);
 
+  const createPrice = React.useCallback(() => {
+    setItem(createItem(category.id, getMax(prices) + 1));
+  }, [category, prices]);
+
   React.useEffect(() => {
-    getDictionary('prices', category, 'categoryName');
+    getDictionary('prices', category.id, 'categoryId');
     getDictionary('units');
   }, [category, getDictionary]);
+
+  console.log(props, '>>>');
 
   return (
     <section className={styles.column}>
       <Header
-        title={`Ценники на "${props.category.title}"`}
-        onCreate={() => setItem(createItem(category, getMax(prices) + 1))}
+        title={`Ценники на "${category.title}"`}
+        onCreate={createPrice}
       />
       <ItemList list={prices} getKey={c => c.id}>
         {
@@ -119,7 +125,7 @@ function PriceManager({ prices, update, units, create, getDictionary, ...props }
           <ManagmentPopup
             initialValues={item}
             onCancel={() => setItem(null)}
-            title={`Цена на "${props.category.title}"`}
+            title={`Цена на "${category.title}"`}
             onSubmit={edit}
           >
             <Field name="unitId" render={({ input, meta }) => (

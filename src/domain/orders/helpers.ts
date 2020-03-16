@@ -5,7 +5,7 @@ import { PriceItem, Units, CategoryItem } from '../dictionary/Types';
 function priceAdapter(
   order: OrderItem,
   priceByID: Record<string, PriceItem>,
-  categoryByName: Record<string, CategoryItem>,
+  categoryById: Record<string, CategoryItem>,
   units: Units,
 ) {
   const price = get(priceByID, order.priceId);
@@ -13,7 +13,7 @@ function priceAdapter(
   return {
     quantity: order.quantity,
     price,
-    category: get(categoryByName, get(price, 'categoryName')),
+    category: get(categoryById, get(price, 'categoryId')),
     volume: get(units, get(price, 'unitId')),
   }
 }
@@ -31,7 +31,7 @@ export function getOrderItem(
 interface OrderItemArchive {
   quantity: number;
   valuation: number;
-  categoryName: string;
+  categoryId: string;
   priceId: string;
 }
 
@@ -40,7 +40,7 @@ export function orderItemsArchive(
   prices: Record<string, PriceItem>,
 ): ReadonlyArray<OrderItemArchive> {
   return orders.map(({ quantity, priceId }) => {
-    const { valuation, categoryName } = prices[priceId];
-    return { quantity, valuation, categoryName, priceId }
+    const { valuation, categoryId } = prices[priceId];
+    return { quantity, valuation, categoryId, priceId }
   });
 }

@@ -3,8 +3,6 @@ import {
   Categories,
   Units,
   Prices,
-  CategoryItem,
-  PriceItem,
   UnitItem,
 } from './Types';
 import { createReducer } from '@reduxjs/toolkit';
@@ -12,9 +10,9 @@ import * as A from './actions';
 
 export const reducer = {
   categories: createReducer({} as Categories, {
-    [A.CRUD.createItemAction.type]: A.CRUD.creat<CategoryItem, 'name'>('categories', 'name'),
+    [A.CREATE_CATEGORY]: (state, action: A.CreateCategory) => set(action.payload.name)(action.payload)(state),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('categories'),
-    [A.CRUD.updateItemAction.type]: A.CRUD.creat<CategoryItem, 'name'>('categories', 'name'),
+    [A.UPDATE_CATEGORY]: (state, action: A.UpdateCategory) => set(action.payload.name)(action.payload)(state),
     [A.GET_CATEGORIES_SUCCESS]: (state, action: A.GetCategoriesSuccess) => ({...state, ...action.payload }),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.category })
   }),
@@ -28,7 +26,7 @@ export const reducer = {
   prices: createReducer({} as Prices, {
     [A.CREATE_PRICE]: (state, action: A.CreatePrice) => set(action.payload.id)(action.payload)(state),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('prices'),
-    [A.CRUD.updateItemAction.type]: A.CRUD.creat<PriceItem, 'id'>('prices', 'id'),
+    [A.UPDATE_PRICE]: (state, action: A.UpdatePrice) => set(action.payload.id)(action.payload)(state),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.prices })
   }),
 

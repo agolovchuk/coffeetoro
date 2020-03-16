@@ -2,6 +2,7 @@ import * as React from 'react';
 import Header from './header';
 import styles from './layout.module.css';
 import { IUser } from './Types';
+import './layout.css'
 
 interface ILocation {
   pathname: string;

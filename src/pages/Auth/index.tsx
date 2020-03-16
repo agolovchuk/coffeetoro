@@ -33,6 +33,8 @@ interface Props extends ConnectedProps<typeof connector> {};
 
 function Auth({ getUsers, users, login, replace, currentUser }: Props) {
 
+  const passwordInput = React.useRef<HTMLInputElement | null>(null);
+
   React.useEffect(() => {
     if (currentUser !== null) {
       replace('/orders');
@@ -42,6 +44,12 @@ function Auth({ getUsers, users, login, replace, currentUser }: Props) {
   }, [getUsers, currentUser, replace]);
 
   const [user, setUser] = React.useState<null | StateUser>(null);
+
+  React.useLayoutEffect(() => {
+    if (passwordInput.current) {
+      passwordInput.current.focus();
+    }
+  }, [user]);
 
   const [error, setError] = React.useState<null | string>(null);
 
@@ -90,7 +98,7 @@ function Auth({ getUsers, users, login, replace, currentUser }: Props) {
                       )}/>
                       <div className={styles.fieldWrapper}>
                         <Field name="password" type="password" render={({ input, meta }) => (
-                          <input className={cx(styles.field, {[styles.fieldError]: error })} {...input} />
+                          <input ref={passwordInput} className={cx(styles.field, {[styles.fieldError]: error })} {...input} />
                         )}/>
                         <button type="submit" className={styles.btn} />
                         {

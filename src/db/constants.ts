@@ -23,16 +23,17 @@ export const TABLE = {
   },
   category: {
     name: 'categories',
-    field: {
+    index: {
+      id: 'id',
       name: 'name',
-      parentName: 'parentName',
+      parentId: 'parentId',
     }
   },
   price: {
     name: 'prices',
-    field: {
+    index: {
       id: 'id',
-      categoryName: 'categoryName',
+      categoryId: 'categoryId',
       unitId: 'unitId',
       expiryDate: 'expiryDate',
       barcode: 'barcode',

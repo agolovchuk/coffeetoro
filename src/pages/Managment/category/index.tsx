@@ -3,10 +3,20 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Route, match } from 'react-router-dom';
 import { Field } from 'react-final-form';
 import groupBy from 'lodash/groupBy'
-import { categoriesListSelector, CRUD, CategoryItem, getCategoriesAction } from 'domain/dictionary';
+import get from 'lodash/get'
+import {
+  CRUD,
+  categoriesListSelector,
+  updateCategory,
+  CategoryItem,
+  getCategoriesAction,
+  createCategoryAction,
+  categoryByNameSelector,
+} from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { ManagmentPopup, MItem, Header } from '../components';
 import { InputField, SelectField } from 'components/Form/field';
+import { getId } from 'lib/id';
+import { ManagmentPopup, MItem, Header } from '../components';
 import Price from './price'
 import Tree from '../components/tree';
 import { getMax } from '../helper';
@@ -18,21 +28,23 @@ import { Decorator } from 'final-form';
 
 const mapState = (state: AppState) => ({
   categories: categoriesListSelector(state),
+  categoryByName: categoryByNameSelector(state),
 });
 
 const mapDispatch = {
   getDictionary: CRUD.getAllAction,
-  create: CRUD.createItemAction,
-  update: CRUD.updateItemAction,
+  create: createCategoryAction,
+  update: updateCategory,
   getCategories: getCategoriesAction,
 }
 
-function createItem(sortIndex: number = 0, parentName: string = ''): CategoryItem {
+function createItem(sortIndex: number = 0, parentId: string = 'root'): CategoryItem {
   return {
+    id: getId(10),
     name: '',
     title: '',
     sortIndex,
-    parentName,
+    parentId,
     count: 0,
   }
 }
@@ -40,7 +52,11 @@ function createItem(sortIndex: number = 0, parentName: string = ''): CategoryIte
 export function getPrentsList<T extends CategoryItem>(list: ReadonlyArray<T>) {
   const l = list.filter(f => f.count === 0);
   return (current: string) => {
-    return [{ name: 'root', title: '(коневой уровень)'}, ...l.filter(f => f.name !== current)];
+    return [
+      { name: 'root', title: '(коневой уровень)'},
+      ...l.filter(f => f.id !== current)
+        .map(({ id, title }) => ({ name: id, title })),
+    ];
   }
 }
 
@@ -61,32 +77,34 @@ const guessSlag = createDecorator({
   }
 }) as Decorator<CategoryItem>;
 
-function ProductManager({ categories, getCategories, update, create, ...props }: Props) {
+function ProductManager({ categories, getCategories, update, create, categoryByName, ...props }: Props) {
   const { params } = props.match;
   const [item, setItem] = React.useState<EitherCategory | null>(null);
 
   const edit = React.useCallback(
     ({ isEdit, ...value }: EitherCategory) => {
       if (isEdit) {
-        update('categories', value)
+        update(value)
       } else {
-        create('categories', value);
+        create(value);
       }
       setItem(null);
     }, [update, create],
   );
 
-  const createLink = ({ name }: CategoryItem) => ['/manager', 'category', name].join('/');
+  const createLink = ({ id }: CategoryItem) => ['/manager', 'category', id].join('/');
 
-  const group = groupBy(categories, 'parentName');
+  const group = React.useMemo(() => groupBy(categories, 'parentId'), [categories]);
+
   React.useEffect(() => { getCategories('name'); }, [getCategories]);
 
   const optionList = React.useMemo(() => getPrentsList(categories), [categories]);
 
   const createCategory = React.useCallback(() => {
-    const cat = createItem(getMax(categories) + 1, params.category);
+    const categoryId = params.category ? get(categoryByName, [params.category, 'id']) : undefined;
+    const cat = createItem(getMax(categories) + 1, categoryId);
     setItem(cat);
-  }, [params, categories]);
+  }, [params, categories, categoryByName]);
 
   return (
     <div className={styles.container}>
@@ -94,8 +112,8 @@ function ProductManager({ categories, getCategories, update, create, ...props }:
         <div className={styles.view}>
           <Tree
             data={group}
-            getName={e => e ? e.name : 'root'}
-            getKey={e => e.name}
+            getName={e => e ? e.id : 'root'}
+            getKey={e => e.id}
           >
             {
               (data) => data ? (
@@ -115,7 +133,7 @@ function ProductManager({ categories, getCategories, update, create, ...props }:
           </Tree>
         </div>
       </section>
-      <Route path="/manager/category/:category" component={Price} />
+      <Route path="/manager/category/:categoryId" component={Price} />
       {
         item !== null ? (
           <ManagmentPopup
@@ -125,10 +143,10 @@ function ProductManager({ categories, getCategories, update, create, ...props }:
             initialValues={item}
             decorators={[ guessSlag ]}
           >
-            <Field name="parentName" render={({ input, meta }) => (
+            <Field name="parentId" render={({ input, meta }) => (
               <SelectField
                 list={optionList(item.name)}
-                id="parentName"
+                id="parentId"
                 title="Родитель:"
                 {...input}
               />

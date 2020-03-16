@@ -17,21 +17,23 @@ export const unitsListSelector = createSelector(units, c => Object.values(c).sor
 
 export const unitsByIdSelector = createSelector(units, u => u);
 
+export const categoryByNameSelector = createSelector(categories, c => c);
+
 export const currentCategorySelector = createSelector(
   [categories, params],
-  (c, p) => p.category ? get(c, p.category, {} as CategoryItem) : {} as CategoryItem,
+  (c, p) => p.categoryId ? get(c, p.categoryId, {} as CategoryItem) : {} as CategoryItem,
 )
 
 export const currentCategoriesSelector = createSelector(
   [categoriesListSelector, params],
-  (c, p) => c.filter(f => f.parentName === (p.category || 'root')),
+  (c, p) => c.filter(f => f.parentId === (p.categoryId || 'root')),
 )
 
 export const priceByNameSelector = createSelector(prices, p => p);
 
 const priceCategorySelector = createSelector(
   [pricesListSelector, params],
-  (pr, p) => pr.filter(f => f.categoryName === p.category),
+  (pr, p) => pr.filter(f => f.categoryId === p.categoryId),
 )
 
 export const productItemSelector = createSelector(

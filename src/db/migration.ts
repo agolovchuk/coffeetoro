@@ -63,19 +63,19 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
 // ======== Category ==================================
     const osCategory = this.result.createObjectStore(
       C.TABLE.category.name, {
-        keyPath: C.TABLE.category.field.name,
+        keyPath: C.TABLE.category.index.id,
         autoIncrement: false,
       }
     );
     osCategory.createIndex(
-      C.TABLE.category.field.name,
-      C.TABLE.category.field.name, {
+      C.TABLE.category.index.name,
+      C.TABLE.category.index.name, {
         unique: true,   
       }
     );
     osCategory.createIndex(
-      C.TABLE.category.field.parentName,
-      C.TABLE.category.field.parentName, {
+      C.TABLE.category.index.parentId,
+      C.TABLE.category.index.parentId, {
         unique: false, 
       }
     );
@@ -83,28 +83,28 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
 // ===================== Price ==========================
     const osPrice = this.result.createObjectStore(
       C.TABLE.price.name, {
-        keyPath: C.TABLE.price.field.id,
+        keyPath: C.TABLE.price.index.id,
         autoIncrement: false,
       }
     );
     osPrice.createIndex(
-      C.TABLE.price.field.categoryName,
-      C.TABLE.price.field.categoryName, {
+      C.TABLE.price.index.categoryId,
+      C.TABLE.price.index.categoryId, {
         unique: false,
       }
     );
     osPrice.createIndex(
       'priceId', [
-        C.TABLE.price.field.categoryName,
-        C.TABLE.price.field.unitId,
-        C.TABLE.price.field.expiryDate,
+        C.TABLE.price.index.categoryId,
+        C.TABLE.price.index.unitId,
+        C.TABLE.price.index.expiryDate,
       ], {
         unique: true
       }
     );
     osPrice.createIndex(
-      C.TABLE.price.field.barcode,
-      C.TABLE.price.field.barcode, {
+      C.TABLE.price.index.barcode,
+      C.TABLE.price.index.barcode, {
         unique: false,
       }
     );
@@ -150,7 +150,7 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
 // ======================================================
   }
   return [
-    { table: C.TABLE.category.name, data: Fixtures.categories },
+    // { table: C.TABLE.category.name, data: Fixtures.categories },
     { table: C.TABLE.unit.name, data: Fixtures.units },
     { table: C.TABLE.env.name, data: Fixtures.env },
     { table: C.TABLE.users.name, data: Fixtures.users },

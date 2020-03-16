@@ -15,7 +15,6 @@ function Profile({ className, user }: Props) {
       {
         user.role === 'manager' && (<Link to="/manager" className={styles.gear} />)
       }
-      <Link to="/logout" className={styles.logout} />
       <Link to="/user" className={styles.btn}>
         <h3 className={styles.name}>{user.name}</h3>
         {
@@ -26,6 +25,7 @@ function Profile({ className, user }: Props) {
           )
         }
       </Link>
+      <Link to="/logout" className={styles.logout} />
     </section>
   )
 }

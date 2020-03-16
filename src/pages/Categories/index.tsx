@@ -7,7 +7,7 @@ import Grid from 'components/Grid';
 
 interface ICategoryMatch {
   readonly orderId: string;
-  readonly category?: string;
+  readonly categoryId?: string;
 }
 
 interface PropsFromRouter {
@@ -31,25 +31,25 @@ interface Props extends PropsFromRedux, PropsFromRouter {};
 function pathMaker(orderId: string) {
   const make = (...args: string[]) => ['/order', orderId, ...args].join('/');
   return (item: CategoryItem) => {
-    if (item.count) return make(item.name, 'product');
-    return make(item.name);
+    if (item.count) return make(item.id, 'product');
+    return make(item.id);
   }
 }
 
 function Categories({ categories, match, getCategories }: Props) {
 
-  const { params: { category, orderId } } = match;
+  const { params: { categoryId, orderId } } = match;
 
   React.useEffect(() => {
-    getCategories('parentName', category || 'root');
-  }, [category, getCategories]);
+    getCategories('parentId', categoryId || 'root');
+  }, [categoryId, getCategories]);
 
   const getLink = React.useMemo(() => pathMaker(orderId), [orderId]);
 
   return (
     <Grid
       list={categories}
-      getKey={e => e.name}
+      getKey={e => e.id}
       getLink={getLink}
     />
   );

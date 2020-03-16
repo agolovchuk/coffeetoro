@@ -53,7 +53,7 @@ export function addItemAction(orderId: string, priceId: string): Thunk<IAddItem,
           quantity: (get(orderItems, [priceId, 'quantity'], 0) + 1),
         },
         price,
-        category: get(categories, price.categoryName),
+        category: get(categories, price.categoryId),
       }
     });
   }

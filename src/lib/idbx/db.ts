@@ -78,10 +78,11 @@ export default class IDB {
     });
   }
 
-  async getItem<T>(table: string, indexName: string, query: Query, adapter: Adapter<T>): Promise<T | null> {
+  async getItem<T>(table: string, adapter: Adapter<T>, query: Query, indexName?: string): Promise<T | null> {
     const db = await this.open();
     return await new Promise((resolve, reject) => {
-      const request = os.call(db, table, C.READ_ONLY).index(indexName).get(query);
+      const objectStore = os.call(db, table, C.READ_ONLY);
+      const request = indexName ? objectStore.index(indexName).get(query) : objectStore.get(query);
       request.onsuccess = (event) => {
         db.close();
         resolve(adapter(get(event, ['target', 'result'])));

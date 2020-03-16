@@ -99,7 +99,7 @@ function updatePasswordAction(data: UpdatePassword, onComplete: (e?: Error) => v
   return async() => {
     try {
       const dbx = new CDB();
-      const eitherUser = await dbx.getItem(C.TABLE.users.name, C.TABLE.users.index.id, data.id, adapters.userAdapters);
+      const eitherUser = await dbx.getItem(C.TABLE.users.name, adapters.userAdapters, data.id, C.TABLE.users.index.id);
       if (eitherUser === null) throw new Error('No user found');
       const { hash, ...user } = eitherUser;
       const isVerify = await pbkdf2Verify(hash, data.old);
