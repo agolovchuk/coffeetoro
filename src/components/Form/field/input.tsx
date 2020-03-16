@@ -13,6 +13,7 @@ interface Props<T extends HTMLElement = HTMLElement> {
   value: string;
   checked?: boolean;
   multiple?: boolean;
+  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
 }
 
 function InputField({ id, title, ...rest }: Props) {

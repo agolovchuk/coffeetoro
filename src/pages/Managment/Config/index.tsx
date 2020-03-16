@@ -68,16 +68,16 @@ function ConfigManagment({ firebaseConfig, updateConfig }: Props) {
                 <form onSubmit={handleSubmit}>
                     <div>
                       <Field name="apiKey" render={({ input, meta }) => (
-                        <InputField id="apiKey" title="Api Key:" {...input} />
+                        <InputField id="apiKey" title="Api Key:" {...input} inputMode="none" />
                       )}/>
                       <Field name="authDomain" render={({ input, meta }) => (
-                        <InputField id="authDomain" title="Auth Domain:" {...input} />
+                        <InputField id="authDomain" title="Auth Domain:" {...input} inputMode="none" />
                       )}/>
                       <Field name="databaseURL" render={({ input, meta }) => (
-                        <InputField id="databaseURL" title="Database URL:" {...input} />
+                        <InputField id="databaseURL" title="Database URL:" {...input} inputMode="none" />
                       )}/>
                       <Field name="storageBucket" render={({ input, meta }) => (
-                        <InputField id="storageBucket" title="Storage Bucket:" {...input} />
+                        <InputField id="storageBucket" title="Storage Bucket:" {...input} inputMode="none" />
                       )}/>
                     </div>
                   <div className={styles.btnGroup}>

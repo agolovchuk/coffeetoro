@@ -9,10 +9,15 @@ export function addPriceHandler<A extends Action>(dispatch: Dispatch<A>) {
   return async(s: firebase.database.DataSnapshot) => {
     try {
       if (typeof s.key === 'string') {
-        const data = s.val();
+        const { fromDate, expiryDate, ...data} = s.val();
         const p = await dbx.getItem(C.TABLE.price.name, priceAdapter, s.key);
+        console.log(p, s.val(), s.key)
         if (p === null) {
-          await dbx.addItem(C.TABLE.price.name, {...data, fromDate: new Date(data.fromDate) });
+          await dbx.addItem(C.TABLE.price.name, {
+            ...data,
+            fromDate: new Date(fromDate),
+            expiryDate: expiryDate ? new Date(expiryDate) : null,
+          });
         }
       } 
     } catch (err) {
@@ -26,7 +31,7 @@ export function changePriceHandler<A extends Action>(dispatch: Dispatch<A>) {
   return async(s: firebase.database.DataSnapshot) => {
     try {
       if (typeof s.key === 'string') {
-        const data = s.val();
+        const { fromDate, expiryDate, ...data} = s.val();
         const p = await dbx.getItem(C.TABLE.price.name, priceAdapter, s.key);
         if (p !== null) {
           const { fromDate, ...dbp } = p;
@@ -34,7 +39,11 @@ export function changePriceHandler<A extends Action>(dispatch: Dispatch<A>) {
             return;
           }
         }
-        await dbx.updateItem(C.TABLE.price.name, {...data, fromDate: new Date(data.fromDate) });
+        await dbx.updateItem(C.TABLE.price.name, {
+          ...data,
+          fromDate: new Date(fromDate),
+          expiryDate: expiryDate ? new Date(expiryDate) : null,
+        });
       }
     } catch (err) {
       console.warn(err);
