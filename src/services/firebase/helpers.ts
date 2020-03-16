@@ -12,7 +12,7 @@ export function addPriceHandler<A extends Action>(dispatch: Dispatch<A>) {
         const data = s.val();
         const p = await dbx.getItem(C.TABLE.price.name, priceAdapter, s.key);
         if (p === null) {
-          await dbx.addItem(C.TABLE.price.name, {...data, fromDate: new Date() });
+          await dbx.addItem(C.TABLE.price.name, {...data, fromDate: new Date(data.fromDate) });
         }
       } 
     } catch (err) {
@@ -34,7 +34,7 @@ export function changePriceHandler<A extends Action>(dispatch: Dispatch<A>) {
             return;
           }
         }
-        await dbx.updateItem(C.TABLE.price.name, {...data, fromDate: new Date() });
+        await dbx.updateItem(C.TABLE.price.name, {...data, fromDate: new Date(data.fromDate) });
       }
     } catch (err) {
       console.warn(err);

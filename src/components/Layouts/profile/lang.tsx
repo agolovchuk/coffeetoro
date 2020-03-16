@@ -20,7 +20,7 @@ function Lang({ user, updateUserAction }: ConnectedProps<typeof connector>) {
   const update = ( newLang: LangType ) => {
     if (user.lang !== newLang) {
       const data = { ...user, lang: newLang } as User;
-      updateUserAction(data);
+      updateUserAction(data, () => {});
     }
   };
   return (

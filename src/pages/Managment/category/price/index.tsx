@@ -95,8 +95,6 @@ function PriceManager({ prices, update, units, create, getDictionary, category, 
     getDictionary('units');
   }, [category, getDictionary]);
 
-  console.log(props, '>>>');
-
   return (
     <section className={styles.column}>
       <Header

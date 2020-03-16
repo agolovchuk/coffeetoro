@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { createUserAction, getUsersAction, usersListSelector, User } from 'domain/users';
+import { createUserAction, updateUserAction, getUsersAction, usersListSelector, User } from 'domain/users';
 import { AppState } from 'domain/StoreType';
 import { Field } from 'react-final-form';
 import { InputField, SelectField } from 'components/Form/field';
@@ -37,6 +37,7 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatch = {
   createUser: createUserAction,
+  updateUser: updateUserAction,
   getUsers: getUsersAction,
 }
 
@@ -46,7 +47,7 @@ const connector = connect(mapStateToProps, mapDispatch);
 
 interface Props extends PropsFromRedux {}
 
-function ManagmentUsers({ createUser, getUsers, users }: Props) {
+function ManagmentUsers({ createUser, getUsers, users, updateUser }: Props) {
 
   const [user, setUser] = React.useState<null | EitherEdit<UserType>>(null);
 
@@ -54,9 +55,13 @@ function ManagmentUsers({ createUser, getUsers, users }: Props) {
 
   const onComplete = React.useCallback(() => setUser(null), [setUser])
 
-  const handleCreateUser = React.useCallback((newUser) => {
-    createUser(newUser, onComplete);
-  }, [createUser, onComplete]);
+  const handleCreateUser = React.useCallback(({ isEdit, ...newUser}: EitherEdit<UserType>) => {
+    if (isEdit) {
+      updateUser(newUser, onComplete);
+    } else {
+      createUser(newUser, onComplete);
+    }
+  }, [createUser, onComplete, updateUser]);
 
   const handleOpen = React.useCallback(() => {
     setUser(createItem());

@@ -62,7 +62,7 @@ interface UpdateUser {
   payload: User;
 }
 
-function updateUserAction(data: User): ThunkAction<void, AppState, unknown, UpdateUser> {
+function updateUserAction(data: User, onComplete: (e?: Error) => void): ThunkAction<void, AppState, unknown, UpdateUser> {
   return async (dispatch) => {
     try {
       const dbx = new CDB();
@@ -81,9 +81,11 @@ function updateUserAction(data: User): ThunkAction<void, AppState, unknown, Upda
           this.result.continue();
         } else {
           dispatch({ type: UPDATE_USER, payload: data });
+          onComplete();
         }
       }
     } catch (err) {
+      onComplete(err);
       console.warn(err);
     }
   }

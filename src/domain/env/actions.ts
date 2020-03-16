@@ -100,6 +100,9 @@ export function updateFirebaseConfigAction(config: FirebaseConfig | null): Thunk
         type: UPDATE_FIREBASE_CONFIG,
         payload: config,
       });
+      if (config?.apiKey?.length) {
+        window.location.href = '/';
+      }
     } catch (err) {
       console.warn(err);
     }

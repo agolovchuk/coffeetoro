@@ -32,7 +32,7 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
 
   const passwordForm = React.useRef<HTMLFormElement | null>(null);
 
-  const updateHandler = React.useCallback((data) => { updateUser(data); }, [updateUser]);
+  const updateHandler = React.useCallback((data) => { updateUser(data, () => {}); }, [updateUser]);
 
   const onComplete = (e?: Error) => {
     setBtnState(false);
