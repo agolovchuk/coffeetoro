@@ -68,7 +68,7 @@ export const reducer = {
     }),
     [A.ADD_ITEM]: (state, action: A.IAddItem) => 
      compose(
-      set(['categories', action.payload.category.name])(action.payload.category),
+      set(['categories', action.payload.category.id])(action.payload.category),
       set(['prices', action.payload.price.id])(action.payload.price)
     )(state),
     [A.COMPLETE]: () => ({ categories: {}, prices: {} }),
