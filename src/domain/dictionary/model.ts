@@ -10,9 +10,9 @@ import * as A from './actions';
 
 export const reducer = {
   categories: createReducer({} as Categories, {
-    [A.CREATE_CATEGORY]: (state, action: A.CreateCategory) => set(action.payload.name)(action.payload)(state),
+    [A.CREATE_CATEGORY]: (state, action: A.CreateCategory) => set(action.payload.id)(action.payload)(state),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('categories'),
-    [A.UPDATE_CATEGORY]: (state, action: A.UpdateCategory) => set(action.payload.name)(action.payload)(state),
+    [A.UPDATE_CATEGORY]: (state, action: A.UpdateCategory) => set(action.payload.id)(action.payload)(state),
     [A.GET_CATEGORIES_SUCCESS]: (state, action: A.GetCategoriesSuccess) => ({...state, ...action.payload }),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.category })
   }),

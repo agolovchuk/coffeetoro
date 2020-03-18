@@ -4,6 +4,8 @@ import { Route, match } from 'react-router-dom';
 import { Field } from 'react-final-form';
 import groupBy from 'lodash/groupBy'
 import get from 'lodash/get'
+import createDecorator from "final-form-calculate";
+import { Decorator } from 'final-form';
 import {
   CRUD,
   categoriesListSelector,
@@ -22,9 +24,8 @@ import Tree from '../components/tree';
 import { getMax } from '../helper';
 import { EitherEdit } from '../Types';
 import styles from './category.module.css';
-import createDecorator from "final-form-calculate";
 import { translite } from "lib/commonHelpers";
-import { Decorator } from 'final-form';
+import { getPrentsList, getParents } from './helpers';
 
 const mapState = (state: AppState) => ({
   categories: categoriesListSelector(state),
@@ -46,17 +47,6 @@ function createItem(sortIndex: number = 0, parentId: string = 'root'): CategoryI
     sortIndex,
     parentId,
     count: 0,
-  }
-}
-
-export function getPrentsList<T extends CategoryItem>(list: ReadonlyArray<T>) {
-  const l = list.filter(f => f.count === 0);
-  return (current: string) => {
-    return [
-      { name: 'root', title: '(коневой уровень)'},
-      ...l.filter(f => f.id !== current)
-        .map(({ id, title }) => ({ name: id, title })),
-    ];
   }
 }
 
@@ -98,7 +88,10 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
 
   React.useEffect(() => { getCategories('name'); }, [getCategories]);
 
-  const optionList = React.useMemo(() => getPrentsList(categories), [categories]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const optionList = React.useMemo(() => getPrentsList(categories, group), [categories]);
+
+  const getKey = React.useMemo(() => getParents(categories), [categories])
 
   const createCategory = React.useCallback(() => {
     const categoryId = params.category ? get(categoryByName, [params.category, 'id']) : undefined;
@@ -113,7 +106,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
           <Tree
             data={group}
             getName={e => e ? e.id : 'root'}
-            getKey={e => e.id}
+            getKey={getKey}
           >
             {
               (data) => data ? (
@@ -145,7 +138,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
           >
             <Field name="parentId" render={({ input, meta }) => (
               <SelectField
-                list={optionList(item.name)}
+                list={optionList(item.id)}
                 id="parentId"
                 title="Родитель:"
                 {...input}
