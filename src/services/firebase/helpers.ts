@@ -120,7 +120,7 @@ export const changeTMCHandler = handlerFactory(
   async (data) => { tmcDB.put(data); }
 );
 
-const processCardsDB = dbWrapper(C.TABLE.tmc.name, adapters.processCardsAdapter);
+const processCardsDB = dbWrapper(C.TABLE.processCards.name, adapters.processCardsAdapter);
 
 export const addPCHandler = handlerFactory(
   processCardsDB,

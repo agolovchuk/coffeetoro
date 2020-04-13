@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cx from 'classnames';
 import styles from './field.module.css';
 import Field from './field';
 
@@ -6,18 +7,20 @@ interface Props<T extends HTMLElement = HTMLElement> {
   id: string;
   title: string;
   name: string;
-  onBlur: (event?: React.FocusEvent<T>) => void;
+  onBlur?: (event?: React.FocusEvent<T>) => void;
   onChange: (event: React.ChangeEvent<T> | any) => void;
-  onFocus: (event?: React.FocusEvent<T>) => void;
+  onFocus?: (event?: React.FocusEvent<T>) => void;
   type?: string;
   value: string;
   checked?: boolean;
   multiple?: boolean;
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
-  onComplete?: (term: string) => void
+  onComplete?: (term: string) => void;
+  labelClassName?: string;
+  inputClassName?: string;
 }
 
-function InputField({ id, title, onComplete, ...rest }: Props) {
+const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName, onComplete, ...rest }: Props, ref: any) => {
 
   const handleKey = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>): void => {
@@ -30,16 +33,17 @@ function InputField({ id, title, onComplete, ...rest }: Props) {
   );
 
   return (
-    <Field id={id} title={title}>
+    <Field id={id} title={title} labelClassName={labelClassName}>
       <input
         id={id}
+        ref={ref}
         {...rest}
-        className={styles.field}
+        className={cx(styles.field, inputClassName)}
         inputMode="none"
         onKeyDown={handleKey}
       />
     </Field>
-  )
-}
+  );
+})
 
 export default InputField;

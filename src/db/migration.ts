@@ -100,6 +100,12 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
     osPrice.createIndex(
+      C.TABLE.price.index.barcode,
+      C.TABLE.price.index.barcode, {
+        unique: true,
+      }
+    );
+    osPrice.createIndex(
       C.TABLE.price.index.priceId, [
         C.TABLE.price.index.parentId,
         C.TABLE.price.index.expiry,

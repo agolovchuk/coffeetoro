@@ -47,6 +47,19 @@ export default class CDB extends IDB {
     super(DB_NAME, requestUpgrade);
   }
 
+  getPriceByBarcode = async (barcode: string) => {
+    const idb = await this.open();
+    const transaction = idb.transaction([TABLE.price.name, TABLE.tmc.name], READ_ONLY);
+    transaction.oncomplete = () => { idb.close(); };
+    const osPrice = transaction.objectStore(TABLE.price.name).index(TABLE.price.index.barcode);
+    const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
+    const [price, article] = await Promise.all([
+      promisifyReques<PriceTMC | undefined>(osPrice.get(barcode)),
+      promisifyReques<TMCItem | undefined>(osTMC.get(barcode)),
+    ]);
+    return { price, article };  
+  }
+
   getArticleByBarcode = async (barcode: string): Promise<TMCItem & { unit: UnitItem } | null> => {
     const idb = await this.open();
     const transaction = idb.transaction([TABLE.tmc.name, TABLE.unit.name], READ_ONLY);

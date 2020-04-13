@@ -8,4 +8,4 @@ import { UsersState } from './users'
 
 export interface AppState extends DictionaryState, OrderState, EnvState, RouterState, UsersState {};
 
-export type ThunkAction<A extends Action> = Thunk<void, AppState, undefined, A>;
+export type ThunkAction<A extends Action, R = void> = Thunk<R, AppState, undefined, A>;

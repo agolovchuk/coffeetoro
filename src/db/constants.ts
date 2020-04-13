@@ -36,6 +36,7 @@ export const TABLE = {
       parentId: 'parentId',
       expiry: 'expiry',
       type: 'type',
+      barcode: 'barcode',
       priceId: 'priceId', // Syntetic index
     }
   },

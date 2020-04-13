@@ -2,7 +2,6 @@ import { Dispatch, MiddlewareAPI } from 'redux';
 import CDB from './index';
 import * as OrderAction from 'domain/orders/actions';
 import * as DictionaryAction from 'domain/dictionary/actions';
-import * as C from './constants';
 import * as adapters from './adapters';
 import { validateArray } from 'lib/contracts';
 

@@ -5,6 +5,7 @@ import {
   ordersSelector,
   completeOrderAction,
   getOrderAction,
+  fastAddAction,
 } from 'domain/orders';
 import { CRUD } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
@@ -24,6 +25,7 @@ const mapDispatch = {
   getDictionary: CRUD.getAllAction,
   onComplete: completeOrderAction,
   getOrder: getOrderAction,
+  fastAdd: fastAddAction,
 }
 
 const connector = connect(mapState, mapDispatch);
@@ -32,18 +34,25 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {};
 
-function OrderItem({ orders, match, onComplete, getOrder, getDictionary }: Props) {
+function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd }: Props) {
   const { orderId } = match.params
-  
+
   React.useEffect(() => { getDictionary('units'); }, [getDictionary]);
 
   React.useEffect(() => { getOrder(orderId); }, [getOrder, orderId]);
+
+  const handlFastAdd = (barcode: string, cb: (r: boolean) => void) => {
+    if (barcode.length > 0) {
+      fastAdd(match.params.orderId, barcode).then(cb);
+    }
+  }
 
   return (
     <Order
       list={orders}
       onComplete={(method) => onComplete(match.params.orderId, method)}
       orderId={match.params.orderId}
+      onFastAdd={handlFastAdd}
     />
   )
 }

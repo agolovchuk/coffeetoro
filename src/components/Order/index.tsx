@@ -1,15 +1,17 @@
 import * as React from 'react';
+import { Price } from 'components/Units';
+import BarCode from 'components/Form/BarCode';
+import { PaymentMethod } from 'domain/orders/Types';
 import Item from './item';
+import Payment from './payment';
 import styles from './order.module.css';
 import { OrderItemContainer } from './Types';
-import { Price } from 'components/Units';
-import { PaymentMethod } from 'domain/orders/Types';
-import Payment from './payment';
 
 interface Props {
-  orderId: string,
-  list: ReadonlyArray<OrderItemContainer>,
-  onComplete: (method: PaymentMethod) => void,
+  orderId: string;
+  list: ReadonlyArray<OrderItemContainer>;
+  onComplete: (method: PaymentMethod) => void;
+  onFastAdd: (barcode: string, cb: (r: boolean) => void) => void;
 }
 
 function getSumm(list: ReadonlyArray<OrderItemContainer>): number {
@@ -21,7 +23,7 @@ function makeUrl(orderId: string) {
     ['/order', orderId, id, 'product'].join('/');
 }
 
-function Order({ list, onComplete, orderId }: Props) {
+function Order({ list, onComplete, orderId, onFastAdd }: Props) {
   const amount = getSumm(list);
   const [isPiced, picMethod] = React.useState(false);
   const getUrl = React.useMemo(() => makeUrl(orderId), [orderId]);
@@ -40,6 +42,7 @@ function Order({ list, onComplete, orderId }: Props) {
         }
       </ul>
       <div className={styles.footer}>
+        <BarCode onComplete={onFastAdd} />
         <dl className={styles.amount}>
           <dt>Итого: <b>{list.length}</b> позиций</dt>
           <dd><Price value={amount} sign /></dd>

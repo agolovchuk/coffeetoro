@@ -37,7 +37,41 @@ export interface IAddItem {
     articles: Record<string, TMCItem>;
     processCards: Record<string, ProcessCardItem>;
   }
-} 
+}
+
+export function fastAddAction(orderId: string, barcode: string): ThunkAction<IAddItem, Promise<boolean>> {
+  return async(dispatch, getState) => {
+    const { orderItems } = getState();
+    try {
+      const idb = new CDB();
+      const { price, article } = await idb.getPriceByBarcode(barcode);
+      if (typeof price === 'undefined' || typeof article === 'undefined') {
+        return false
+      }
+      const item = {
+        orderId,
+        priceId: price.id,
+        quantity: (get(orderItems, [price.id, 'quantity'], 0) + 1),
+      };
+      dispatch({
+        type: ADD_ITEM,
+        payload: {
+          item,
+          price,
+          articles: {
+            [price.barcode]: article,
+          },
+          processCards: {},
+        }
+      });
+      await idb.addItem(C.TABLE.orderItem.name, item);
+      return true;
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  }
+}
 
 export function addItemAction(orderId: string, priceId: string): ThunkAction<IAddItem> {
   return async(dispatch, getState) => {

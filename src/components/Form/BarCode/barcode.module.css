@@ -1,0 +1,7 @@
+.barcode {
+  min-width: auto; 
+}
+.barLabel {
+  min-width: auto;
+  flex-basis: auto;
+}

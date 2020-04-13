@@ -1,7 +1,6 @@
 import get from 'lodash/get';
 import { OrderItem, OrderItemContainer } from './Types';
 import { PriceItem, PriceExtendet, TMCItem, ProcessCardItem } from '../dictionary/Types';
-import find from 'lodash/find';
 
 function priceAdapter(
   order: OrderItem,
