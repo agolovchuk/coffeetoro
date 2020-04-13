@@ -3,6 +3,7 @@ import compose from 'lodash/fp/compose';
 import set from 'lodash/fp/set';
 import update from 'lodash/fp/update';
 import omit from 'lodash/fp/omit';
+import merge from 'lodash/fp/merge';
 import { Order, OrderItem, OrderDictionary } from './Types';
 import * as A from './actions';
 
@@ -14,25 +15,13 @@ export const reducer = {
 
       case A.UPDATE_QUANTITY:
         return update([action.payload.priceId, 'quantity'])
-          (p => action.payload.quantity)
+          (_ => action.payload.quantity)
           (state);
 
       case A.REMOVE_ITEM:
         return omit(action.payload.priceId)(state);
 
-      case A.UPDATE_ITEM:
-        return compose(
-          omit(action.payload.prevPriceId),
-          set(action.payload.nextPriceId)({
-            priceId: action.payload.nextPriceId,
-            quantity: action.payload.quantity,
-          })
-        )(state)
-
-      case A.GET_ORDER_ITEMS_SUCCESS:
-        return action.payload;
-
-      case A.getOrderSuccessAction.type:
+      case A.GET_ORDER:
         return action.payload.orderItems;
 
       case A.COMPLETE:
@@ -48,10 +37,10 @@ export const reducer = {
       case A.CREATE_ORDER:
         return set(action.payload.id)(action.payload)(state);
 
-      case A.getOrderSuccessAction.type:
+      case A.GET_ORDER:
         return set(action.payload.order.id)(action.payload.order)(state);
 
-      case A.GET_ORDERS_LIST_SUCCESS:
+      case A.GET_ORDERS_LIST:
         return action.payload;
 
       case A.COMPLETE:
@@ -61,16 +50,18 @@ export const reducer = {
         return state;
     }
   },
-  orderDictionary: createReducer({ categories: {}, prices: {} } as OrderDictionary, {
-    [A.getOrderSuccessAction.type]: (_, action: ReturnType<typeof A.getOrderSuccessAction>) => ({
-      categories: action.payload.categories,
+  orderDictionary: createReducer({ prices: {}, articles: {}, processCards: {} } as OrderDictionary, {
+    [A.GET_ORDER]: (_, action: A.GetOrder) => ({
       prices: action.payload.prices,
+      articles: action.payload.articles,
+      processCards: action.payload.processCards,
     }),
     [A.ADD_ITEM]: (state, action: A.IAddItem) => 
      compose(
-      set(['categories', action.payload.category.id])(action.payload.category),
+      update('processCards')(merge(action.payload.processCards)),
+      update('articles')(merge(action.payload.articles)),
       set(['prices', action.payload.price.id])(action.payload.price)
     )(state),
-    [A.COMPLETE]: () => ({ categories: {}, prices: {} }),
+    [A.COMPLETE]: () => ({ prices: {}, articles: {}, processCards: {} }),
   }),
 };

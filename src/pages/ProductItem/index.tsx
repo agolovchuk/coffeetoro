@@ -4,7 +4,8 @@ import { PropsMatch } from 'domain/routes';
 import Product from 'components/Product';
 import {
   productItemSelector,
-  getPricesAction,
+  getPricesByCategoryAction,
+  getCategoryAction,
 } from 'domain/dictionary';
 import {
   addItemAction,
@@ -32,7 +33,8 @@ const mapDispatch = {
   addItem: addItemAction,
   updateQuantity: updateQuantityAction,
   removeItem: removeItemAction,
-  getPrices: getPricesAction,
+  getPrices: getPricesByCategoryAction,
+  getCategory: getCategoryAction,
 }
 
 const connector = connect(mapState, mapDispatch);
@@ -55,7 +57,7 @@ function orderApi(order: OrderItemContainer, { updateQuantity, removeItem, match
   }
 }
 
-function ProductItem({ addItem, orderByProduct, getPrices, ...props }: Props) {
+function ProductItem({ addItem, getPrices, orderByProduct, getCategory, ...props }: Props) {
   const { categoryId, orderId } = props.match.params;
 
   const addHandler = React.useCallback(
@@ -70,7 +72,8 @@ function ProductItem({ addItem, orderByProduct, getPrices, ...props }: Props) {
   
   React.useEffect(() => {
     getPrices(categoryId);
-  }, [getPrices, categoryId]);
+    getCategory(categoryId);
+  }, [getPrices, categoryId, getCategory]);
 
   return (
     <section className={styles.container}>
@@ -80,8 +83,8 @@ function ProductItem({ addItem, orderByProduct, getPrices, ...props }: Props) {
           <Product
             key={order.price.id}
             onChange={() => null}
-            title={order.category.title}
-            name={order.category.name}
+            title={order.price.title}
+            // name={order.category.name}
             valuation={props.product.valuation}
             orderApi={api(order)}
             quantity={order.quantity}

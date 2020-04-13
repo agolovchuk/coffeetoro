@@ -9,16 +9,27 @@ export const unit = t.interface({
   sortIndex: t.number,
 });
 
-export const price = t.interface({
+const priceContainer = {
   id: t.string,
-  categoryId: t.string,
-  fromDate: date,
-  expiryDate: t.union([date, t.null]),
-  unitId: t.string,
+  parentId: t.string,
+  add: date,
+  expiry: t.union([date, t.null]),
   valuation: t.number,
-  barcode: t.string,
   sortIndex: t.number,
-});
+}
+
+export const price = t.union([
+  t.interface({
+    ...priceContainer,
+    type: t.literal('tmc'),
+    barcode: t.string,
+  }),
+  t.interface({
+    ...priceContainer,
+    type: t.literal('pc'),
+    refId: t.string,
+  }),
+]);
 
 export const category = t.interface({
   id: t.string,
@@ -26,6 +37,25 @@ export const category = t.interface({
   title: t.string,
   sortIndex: t.number,
   parentId: t.string,
-  count: t.number,
+});
+
+export const tmc = t.interface({
+  id: t.string,
+  parentId: t.string,
+  title: t.string,
+  description: t.string,
+  barcode: t.union([t.string, t.undefined]),
+  unitId: t.string,
+  add: t.string,
+  update: t.union([t.string, t.null]),
+});
+
+export const pc = t.interface({
+  id: t.string,
+  parentId: t.string,
+  title: t.string,
+  description: t.string,
+  add: t.string,
+  update: t.union([t.string, t.null]),
 });
  

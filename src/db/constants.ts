@@ -33,10 +33,10 @@ export const TABLE = {
     name: 'prices',
     index: {
       id: 'id',
-      categoryId: 'categoryId',
-      unitId: 'unitId',
-      expiryDate: 'expiryDate',
-      barcode: 'barcode',
+      parentId: 'parentId',
+      expiry: 'expiry',
+      type: 'type',
+      priceId: 'priceId', // Syntetic index
     }
   },
   unit: {
@@ -57,5 +57,20 @@ export const TABLE = {
     index: {
       id: 'id',
     }
-  }
+  },
+  tmc: {
+    name: 'tmc',
+    index: {
+      id: 'id',
+      parentId: 'parentId',
+      barcode: 'barcode',
+    }
+  },
+  processCards: {
+    name: 'processCards',
+    index: {
+      id: 'id',
+      parentId: 'parentId',
+    }
+  },
 };

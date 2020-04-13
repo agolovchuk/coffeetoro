@@ -25,5 +25,6 @@
   flex: 1 1 100%;
   min-width: 220px;
 }
-.select {
+.field:read-only {
+  outline: none;
 }

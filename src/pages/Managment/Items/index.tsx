@@ -20,17 +20,27 @@ const LIST: List[] = [
     title: 'System Config',
   },
   {
-    id: '00',
+    id: '01',
     name: 'maintenance',
     title: 'Maintenance',
   },
   {
-    id: '0',
+    id: '02',
     name: 'users',
     title: 'Users',
   },
   {
-    id: '1',
+    id: '3',
+    name: 'tmc',
+    title: 'TMC'
+  },
+  {
+    id: '4',
+    name: 'pc',
+    title: 'Process Card'
+  },
+  {
+    id: '5',
     name: 'category',
     title: 'Category...'
   }

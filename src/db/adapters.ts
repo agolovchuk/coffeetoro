@@ -18,5 +18,7 @@ export function oneOrderAdapter(value: unknown): TypeOf<typeof orderContracts.or
 export const dictionaryAdapters = {
   prices: dictionaryAdapterFactory(dictionaryContracts.price, 'id'),
   units: dictionaryAdapterFactory(dictionaryContracts.unit, 'id'),
+  tmc: dictionaryAdapterFactory(dictionaryContracts.tmc, 'id'),
+  processCards: dictionaryAdapterFactory(dictionaryContracts.pc, 'id'),
   categories: adapters.categories,
 };

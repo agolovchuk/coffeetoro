@@ -1,10 +1,9 @@
-import { ThunkAction } from 'redux-thunk';
 import { validateArray } from 'lib/contracts';
 import CDB, { promisifyReques } from 'db';
 import * as C from 'db/constants';
-import { AppState } from '../StoreType';
+import { ThunkAction } from '../StoreType';
 import * as CRUD from './crud';
-import { CategoryItem, PriceItem } from './Types';
+import { CategoryItem, PriceItem, CountedCategoryItem, TMCItem, ProcessCardItem } from './Types';
 import * as adapters from './adapters';
 
 export { CRUD }
@@ -12,19 +11,22 @@ export { CRUD }
 export const GET_CATEGORIES_SUCCESS = 'DICTIONARY/GET_CATEGORIES_SUCCESS';
 export const GET_PRICES_SUCCESS = 'DICTIONARY/GET_PRICES_SUCCESS';
 export const GET_PRICES_FAILURE = 'DICTIONARY/GET_PRICES_FAILURE';
+
 export const CREATE_PRICE = 'DICTIONARY/CREATE_PRICE';
 export const UPDATE_PRICE = 'DICTIONARY/UPDATE_PRICE';
+
+export const GET_CATEGORY = 'DICTIONARY/GET_CATEGORY';
 export const CREATE_CATEGORY = 'DICTIONARY/CREATE_CATEGORY';
 export const UPDATE_CATEGORY = 'DICTIONARY/UPDATE_CATEGORY';
 
 export interface GetCategoriesSuccess {
   type: typeof GET_CATEGORIES_SUCCESS;
-  payload: Record<string, CategoryItem>;
+  payload: Record<string, CountedCategoryItem>;
 }
 
 type CategoryIndex = 'name' | 'parentId';
 
-export function getCategoriesAction(index: CategoryIndex, query?: string): ThunkAction<void, AppState, unknown, GetCategoriesSuccess> {
+export function getCategoriesAction(index: CategoryIndex, query?: string): ThunkAction<GetCategoriesSuccess> {
   return async(dispatch) => {
     const Idb = new CDB();
     const db = await Idb.open();
@@ -43,16 +45,16 @@ export function getCategoriesAction(index: CategoryIndex, query?: string): Thunk
     const priceStore = transaction.objectStore('prices');
     categories = await promisifyReques<CategoryItem[]>(categoryStore.index(index).getAll(query));
     counters = await Promise.all(
-      categories.map(({ id }) => promisifyReques<number>(priceStore.index('categoryId').count(id)))
+      categories.map(({ id }) => promisifyReques<number>(priceStore.index('parentId').count(id)))
     )
   };
 };
 
-export function getChildrenCategoryAction(name: string): ThunkAction<void, AppState, unknown, GetCategoriesSuccess> {
+export function getChildrenCategoryAction(name: string): ThunkAction<GetCategoriesSuccess> {
   return async(dispatch) => {
     try {
-      const dbx = new CDB();
-      const db = await dbx.open();
+      const idb = new CDB();
+      const db = await idb.open();
       let categories: CategoryItem[];
       let counters: number[];
       const transaction = db.transaction(['categories', 'prices']);
@@ -81,7 +83,8 @@ export interface GetPricesSuccess {
   type: typeof GET_PRICES_SUCCESS;
   payload: {
     prices: Record<string, PriceItem>;
-    category: Record<string, CategoryItem>;
+    articles: Record<string, TMCItem>;
+    processCards: Record<string, ProcessCardItem>
   }
 }
 
@@ -90,38 +93,32 @@ export interface GetPricesFailure {
   err: any;
 }
 
-export function getPricesAction(categoryId: string): ThunkAction<void, AppState, unknown, GetPricesSuccess | GetPricesFailure> {
+export function getPricesByCategoryAction(categoryId: string): ThunkAction<GetPricesSuccess> {
   return async(dispatch) => {
-    const Idb = new CDB();
-    let c: CategoryItem;
-    let p: PriceItem[] = [];
     try {
-      const db = await Idb.open();
-      const transaction = db.transaction(['categories', 'prices']);
-      transaction.oncomplete = function() {
-        db.close();
-        const category = adapters.categories({}, { ...c, count: p.length });
-        const prices = validateArray(adapters.prices)(p);
-        if (category === null) throw new TypeError('Category null');
-          dispatch({ type: GET_PRICES_SUCCESS, payload: { prices, category } });
-      }
-      const categoryStore = transaction.objectStore('categories');
-      const priceStore = transaction.objectStore('prices');
-  
-      c = await promisifyReques<CategoryItem>(categoryStore.get(categoryId));
-      p = await promisifyReques<PriceItem[]>(priceStore.index('categoryId').getAll(categoryId));
+      const idb = new CDB();
+      const { prices, articles, processCards } = await idb.getPricesByCategory(categoryId);
+      dispatch({
+        type: GET_PRICES_SUCCESS,
+        payload: {
+          prices: adapters.pricesToDictionary(prices),
+          articles: adapters.articlesToDictionary(articles),
+          processCards: adapters.pcToDictionary(processCards),
+        }
+      });
     } catch (err) {
-      dispatch({ type: GET_PRICES_FAILURE, err });
+      console.warn(err);
     }
   }
 }
+
 
 export interface CreatePrice {
   type: typeof CREATE_PRICE;
   payload: PriceItem;
 }
 
-export function createPriceAction(item: PriceItem): ThunkAction<void, AppState, unknown, CreatePrice>  {
+export function createPriceAction(item: PriceItem): ThunkAction<CreatePrice>  {
   return async(dispatch) => {
     try {
       const Idb = new CDB();
@@ -141,7 +138,7 @@ export interface UpdatePrice {
   payload: PriceItem;
 }
 
-export function updatePriceAction(item: PriceItem): ThunkAction<void, AppState, unknown, UpdatePrice> {
+export function updatePriceAction(item: PriceItem): ThunkAction<UpdatePrice> {
   return async(dispatch) => {
     try {
       const Idb = new CDB();
@@ -158,17 +155,17 @@ export function updatePriceAction(item: PriceItem): ThunkAction<void, AppState, 
 
 export interface CreateCategory {
   type: typeof CREATE_CATEGORY;
-  payload: CategoryItem;
+  payload: CountedCategoryItem;
 }
 
-export function createCategoryAction(item: CategoryItem): ThunkAction<void, AppState, unknown, CreateCategory> {
+export function createCategoryAction({ count, ...item }: CountedCategoryItem): ThunkAction<CreateCategory> {
   return async(dispatch) => {
     try {
       const Idb = new CDB();
       await Idb.addItem(C.TABLE.category.name, item);
       dispatch({
         type: CREATE_CATEGORY,
-        payload: item,
+        payload: { ...item, count },
       });
     } catch (err) {
       console.warn(err);
@@ -178,18 +175,40 @@ export function createCategoryAction(item: CategoryItem): ThunkAction<void, AppS
 
 export interface UpdateCategory {
   type: typeof UPDATE_CATEGORY;
-  payload: CategoryItem;
+  payload: CountedCategoryItem;
 };
 
-export function updateCategory(item: CategoryItem): ThunkAction<void, AppState, unknown, UpdateCategory> {
+export function updateCategory({ count, ...item }: CountedCategoryItem): ThunkAction<UpdateCategory> {
   return async(dispatch) => {
     try {
       const Idb = new CDB();
       await Idb.updateItem(C.TABLE.category.name, item);
       dispatch({
         type: UPDATE_CATEGORY,
-        payload: item,
+        payload: { ...item, count },
       });
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
+export interface GetCategory {
+  type: typeof GET_CATEGORY;
+  payload: CategoryItem;
+}
+
+export function getCategoryAction(id: string): ThunkAction<GetCategory> {
+  return async(dispatch) => {
+    try {
+      const Idb = new CDB();
+      const category = await Idb.getItem(C.TABLE.category.name, adapters.categoryAdapter, id);
+      if (category) {
+        dispatch({
+          type: GET_CATEGORY,
+          payload: category,
+        })
+      }
     } catch (err) {
       console.warn(err);
     }
@@ -205,6 +224,7 @@ export type Action = ReturnType<typeof CRUD.createItemAction>
   | GetPricesFailure
   | UpdatePrice
   | CreatePrice
+  | GetCategory
   | CreateCategory
   | UpdateCategory
   ;

@@ -1,61 +1,69 @@
-import { createAction } from '@reduxjs/toolkit';
 import get from 'lodash/get';
 import { replace } from 'connected-react-router';
 import CDB from 'db';
 import * as C from 'db/constants';
 import { getId } from 'lib/id';
+import { arrayToRecord } from 'lib/dataHelper';
 import { Order, PaymentMethod, OrderItem } from './Types';
-import { Prices, PriceItem, CategoryItem } from 'domain/dictionary/Types';
-import { Thunk } from '../StoreType';
+import {
+  PriceItem,
+  pricesToDictionary,
+  pcToDictionary,
+  TMCItem,
+  ProcessCardItem,
+  articlesByBarcodeSelector,
+} from 'domain/dictionary';
+import { ThunkAction } from '../StoreType';
+import * as adapters from './adapters';
+import { prepereDictionary } from './helpers';
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
 
 export const ADD_ITEM = 'ORDER/ADD_ITEM';
 export const UPDATE_QUANTITY = 'ORDER/UPDATE_QUANTITY';
-export const UPDATE_ITEM = 'ORDER/UPDATE_ITEM';
 export const REMOVE_ITEM = 'ORDER/REMOVE_ITEM';
 export const COMPLETE = 'ORDER/COMPLETE';
 
 export const GET_ORDER = 'ORDER/GET_ORDER';
-const GET_ORDER_SUCCESS = 'ORDER/GET_ORDER/SUCCESS';
 
 export const GET_ORDERS_LIST = 'ORDER/GET_ORDERS_LIST';
-export const GET_ORDERS_LIST_SUCCESS = 'ORDER/GET_ORDERS_LIST_SUCCESS';
 export const GET_ORDER_ITEMS_SUCCESS = 'ORDER/GET_ORDER_ITEMS_SUCCESS';
-
-type PrepareAction<T> = (payload: T) => { payload: T };
-
-function prepareAction<T>(payload: T) { 
-  return {
-    payload
-  };
-}
 
 export interface IAddItem {
   type: typeof ADD_ITEM;
   payload: {
-    item: OrderItem,
-    price: PriceItem,
-    category: CategoryItem,
+    item: OrderItem;
+    price: PriceItem;
+    articles: Record<string, TMCItem>;
+    processCards: Record<string, ProcessCardItem>;
   }
 } 
 
-export function addItemAction(orderId: string, priceId: string): Thunk<IAddItem, IAddItem> {
-  return (dispatch, getState) => {
-    const { prices, categories, orderItems } = getState();
+export function addItemAction(orderId: string, priceId: string): ThunkAction<IAddItem> {
+  return async(dispatch, getState) => {
+    const { prices, orderItems, processCards } = getState();
+    const tmc = articlesByBarcodeSelector(getState());
     const price = get(prices, priceId);
-    return dispatch({
-      type: ADD_ITEM,
-      payload: {
-        item: {
-          orderId,
-          priceId: get(price, 'id'),
-          quantity: (get(orderItems, [priceId, 'quantity'], 0) + 1),
-        },
-        price,
-        category: get(categories, price.categoryId),
-      }
-    });
+    const item = {
+      orderId,
+      priceId,
+      quantity: (get(orderItems, [priceId, 'quantity'], 0) + 1),
+    };
+    try {
+      const idb = new CDB();
+      await idb.addItem(C.TABLE.orderItem.name, item);
+      const dict = prepereDictionary(price, tmc, processCards);
+      dispatch({
+        type: ADD_ITEM,
+        payload: {
+          item,
+          price,
+          ...dict,
+        }
+      });
+    } catch (err) {
+      console.warn(err);
+    }
   }
 }
 
@@ -64,37 +72,20 @@ interface UpdateQuantity {
   payload: OrderItem;
 }
 
-export function updateQuantityAction(orderId: string, priceId: string, quantity: number): UpdateQuantity {
-  return {
-    type: UPDATE_QUANTITY,
-    payload: {
-      orderId,
-      priceId,
-      quantity,
+export function updateQuantityAction(orderId: string, priceId: string, quantity: number): ThunkAction<UpdateQuantity> {
+  return async(dispatch) => {
+    const item = { orderId, priceId, quantity };
+    try {
+      const idb = new CDB();
+      await idb.updateItem(C.TABLE.orderItem.name, item);
+      dispatch({
+        type: UPDATE_QUANTITY,
+        payload: item,
+      });
+    } catch (err) {
+      console.warn(err);
     }
   }
-}
-
-interface UpdateItem {
-  type: typeof UPDATE_ITEM;
-  payload: {
-    orderId: string;
-    prevPriceId: string;
-    nextPriceId: string;
-    quantity: number;
-  }
-}
-
-export function updateItemAction(orderId: string, prevPriceId: string, nextPriceId: string): Thunk<UpdateItem, UpdateItem> {
-  return (dispatch, getState) => dispatch({
-    type: UPDATE_ITEM,
-    payload: {
-      orderId,
-      prevPriceId,
-      nextPriceId,
-      quantity: get(getState(), ['ordersList', orderId, 'items', prevPriceId, 'quantity'], 0)
-    }
-  });
 }
 
 interface RemoveItem {
@@ -105,12 +96,20 @@ interface RemoveItem {
   };
 }
 
-export function removeItemAction(orderId: string, priceId: string): RemoveItem {
-  return {
-    type: REMOVE_ITEM,
-    payload: {
-      priceId,
-      orderId,
+export function removeItemAction(orderId: string, priceId: string): ThunkAction<RemoveItem> {
+  return async(dispatch) => {
+    try {
+      const idb = new CDB();
+      await idb.deleteItem(C.TABLE.orderItem.name, [orderId, priceId]);
+      dispatch({
+        type: REMOVE_ITEM,
+        payload: {
+          priceId,
+          orderId,
+        }
+      })
+    } catch (err) {
+      console.warn(err);
     }
   }
 }
@@ -125,18 +124,25 @@ function createOrder(client: string, owner: string): Order {
     id: getId(10),
     date: new Date(),
     payment: PaymentMethod.Opened,
-    client: client,
+    client,
     owner,
   };
 }
 
-export function createOrderAction(client: string = 'incognito'): Thunk<CreateOrder, CreateOrder> {
-  return (dispatch, getState) => {
+export function createOrderAction(client: string = 'incognito'): ThunkAction<CreateOrder> {
+  return async(dispatch, getState) => {
     const userId: string = get(getState(), ['env', 'user', 'id']);
-    return dispatch({
-      type: CREATE_ORDER,
-      payload: createOrder(client, userId),
-    });
+    const order = createOrder(client, userId);
+    try {
+      const idb = new CDB();
+      await idb.addItem(C.TABLE.orders.name, order);
+      dispatch({
+        type: CREATE_ORDER,
+        payload: order,
+      });
+    } catch (err) {
+      console.warn(err);
+    }
   }
 }
 
@@ -145,14 +151,14 @@ interface OrderComplete {
   payload: Order;
 }
 
-export function completeOrderAction(id: string, method: PaymentMethod): Thunk<void, OrderComplete | any> {
+export function completeOrderAction(id: string, method: PaymentMethod): ThunkAction<OrderComplete | any> {
   return async(dispatch, getState) => {
     const order = get(getState(), ['ordersList', id]);
     const completeOrder = {...order, payment: method };
     dispatch(replace('/orders'));
     try {
-      const dbx = new CDB();
-      await dbx.updateItem(C.TABLE.orders.name, completeOrder);
+      const idb = new CDB();
+      await idb.updateItem(C.TABLE.orders.name, completeOrder);
       dispatch({
         type: COMPLETE,
         payload: completeOrder,
@@ -164,71 +170,69 @@ export function completeOrderAction(id: string, method: PaymentMethod): Thunk<vo
 }
 
 // ===== async ==========
-interface GetOrder {
+export interface GetOrder {
   type: typeof GET_ORDER;
   payload: {
-    id: string;
+    order: Order;
+    orderItems: Record<string, OrderItem>;
+    prices: Record<string, PriceItem>;
+    articles: Record<string, TMCItem>;
+    processCards: Record<string, ProcessCardItem>;
   }
 }
-export function getOrderAction(id: string): GetOrder {
-  return {
-    type: GET_ORDER,
-    payload: {
-      id,
+export function getOrderAction(id: string): ThunkAction<GetOrder> {
+  return async(dispatch) => {
+    try {
+      const idb = new CDB();
+      const { order, ...res } = await idb.getOrder(id);
+      dispatch({
+        type: GET_ORDER,
+        payload: {
+          order,
+          orderItems: adapters.orderItemsToRecord(res.orderItems),
+          prices: pricesToDictionary(res.prices),
+          articles: arrayToRecord(res.articles, 'barcode'),
+          processCards: pcToDictionary(res.processCards),
+        }
+      });
+    } catch (err) {
+      console.warn(err);
     }
   }
-}
-
-interface GetOrderSuccess {
-  order: Order;
-  orderItems: Record<string, OrderItem>;
-  categories: Record<string, CategoryItem>;
-  prices: Prices;
-}
-
-export const getOrderSuccessAction = createAction<PrepareAction<GetOrderSuccess>, typeof GET_ORDER_SUCCESS>(GET_ORDER_SUCCESS, prepareAction);
+} 
 
 // +++++++++++++++++++++
 interface GetOrdersList {
   type: typeof GET_ORDERS_LIST;
-}
-export function getOrdersListAction(): GetOrdersList {
-  return {
-    type: GET_ORDERS_LIST,
-  }
-}
-interface GetOrdersListSuccess {
-  type: typeof GET_ORDERS_LIST_SUCCESS;
   payload: Record<string, Order>;
 }
-export function getOrdersListSuccessAction(orders: Record<string, Order>): GetOrdersListSuccess {
-  return {
-    type: GET_ORDERS_LIST_SUCCESS,
-    payload: orders,
+export function getOrdersListAction(): ThunkAction<GetOrdersList> {
+  return async(dispatch) => {
+    try {
+      const idb = new CDB();
+      const orders = await idb.getAll(
+        C.TABLE.orders.name,
+        adapters.ordersAdapter,
+        C.TABLE.orders.field.payment,
+        0,
+      );
+      if (orders) {
+        dispatch({
+          type: GET_ORDERS_LIST,
+          payload: orders
+        })
+      }
+    } catch (err) {
+      console.warn(err);
+    }
   }
 }
-// +++++++++++++++++++++
-interface GetOrderItemsSuccess {
-  type: typeof GET_ORDER_ITEMS_SUCCESS;
-  payload: Record<string, OrderItem>;
-}
-export function getOrderItemsSuccessAction(items: Record<string, OrderItem>): GetOrderItemsSuccess {
-  return {
-    type: GET_ORDER_ITEMS_SUCCESS,
-    payload: items,
-  }
-}
-// +++++++++++++++++++++
 
-export type Action = ReturnType<ReturnType<typeof createOrderAction>>
-  | ReturnType<ReturnType<typeof addItemAction>>
-  | ReturnType<typeof updateQuantityAction>
-  | ReturnType<ReturnType<typeof updateItemAction>>
-  | ReturnType<typeof removeItemAction>
-  | ReturnType<typeof getOrderAction>
+export type Action = CreateOrder
+  | IAddItem
+  | UpdateQuantity
+  | RemoveItem
+  | GetOrder
   | OrderComplete
-  | ReturnType<typeof getOrderSuccessAction>
-  | ReturnType<typeof getOrdersListAction>
-  | ReturnType<typeof getOrdersListSuccessAction>
-  | ReturnType<typeof getOrderItemsSuccessAction>
+  | GetOrdersList
   ;

@@ -31,6 +31,18 @@ function asyncConfig(): Promise<unknown> {
   });
 }
 
+function asyncTMC(): Promise<unknown> {
+  return import('./TMC').then((res) => {
+    return res.default;
+  });
+}
+
+function asyncPC(): Promise<unknown> {
+  return import('./PC').then((res) => {
+    return res.default;
+  });
+}
+
 const mapStateToProps = (state: AppState) => ({
   user: userSelector(state),
 })
@@ -49,6 +61,8 @@ function ManagerRout() {
       <AsyncRoute path="/manager/users" importRender={asyncUsers} />
       <AsyncRoute path="/manager/maintenance" importRender={asyncMaintenance} />
       <AsyncRoute path="/manager/config" importRender={asyncConfig} />
+      <AsyncRoute path="/manager/tmc" importRender={asyncTMC} />
+      <AsyncRoute path="/manager/pc" importRender={asyncPC} />
     </Switch>
   );
 }

@@ -1,6 +1,5 @@
-import { ThunkAction } from 'redux-thunk';
 import get from'lodash/get';
-import { AppState } from '../StoreType';
+import { ThunkAction } from '../StoreType';
 import { IUser, FirebaseConfig } from './Types';
 import CDB, { promisifyReques } from 'db';
 import { pbkdf2Verify } from 'domain/users/helpers'
@@ -15,12 +14,12 @@ export interface Logout {
   type: typeof LOGOUT;
 }
 
-function logoutAction(): ThunkAction<void, AppState, unknown, Logout> {
+function logoutAction(): ThunkAction<Logout> {
   return async (dispatch, getState) => {
-    const dbx = new CDB();
+    const idb = new CDB();
     const { env } = getState();
     try {
-      const db = await dbx.open();
+      const db = await idb.open();
       const updateRequest = db
         .transaction(C.TABLE.env.name, C.READ_WRITE)
         .objectStore(C.TABLE.env.name).put({ ...env, user: null });
@@ -49,11 +48,11 @@ interface Login {
   payload: IUser;
 }
 
-function loginAction({ id, password, onError }: UserAuth): ThunkAction<void, AppState, unknown, Login | any> {
+function loginAction({ id, password, onError }: UserAuth): ThunkAction<Login | any> {
   return async(dispatch, getState) => {
-    const dbx = new CDB();
+    const idb = new CDB();
     try {
-      const db = await dbx.open();
+      const db = await idb.open();
       const checkRequest = db
         .transaction(C.TABLE.users.name)
         .objectStore(C.TABLE.users.name)
@@ -86,7 +85,7 @@ interface UpdateFirebaseConfig {
   payload: FirebaseConfig | null;
 }
 
-export function updateFirebaseConfigAction(config: FirebaseConfig | null): ThunkAction<void, AppState, unknown, UpdateFirebaseConfig> {
+export function updateFirebaseConfigAction(config: FirebaseConfig | null): ThunkAction<UpdateFirebaseConfig> {
   return async(dispatch, getState) => {
     const env = envSelector(getState());
     try {

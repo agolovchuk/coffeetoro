@@ -11,6 +11,7 @@ import {
   categoriesListSelector,
   updateCategory,
   CategoryItem,
+  CountedCategoryItem,
   getCategoriesAction,
   createCategoryAction,
   categoryByNameSelector,
@@ -39,7 +40,7 @@ const mapDispatch = {
   getCategories: getCategoriesAction,
 }
 
-function createItem(sortIndex: number = 0, parentId: string = 'root'): CategoryItem {
+function createItem(sortIndex: number = 0, parentId: string = 'root'): CountedCategoryItem {
   return {
     id: getId(10),
     name: '',
@@ -54,7 +55,7 @@ const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-type EitherCategory = EitherEdit<CategoryItem>;
+type EitherCategory = EitherEdit<CountedCategoryItem>;
 
 interface Props extends PropsFromRedux {
   match: match<{category?: string}>;
@@ -65,7 +66,7 @@ const guessSlag = createDecorator({
   updates: {
     name: (v: string) => translite(v || ''),
   }
-}) as Decorator<CategoryItem>;
+}) as Decorator<CountedCategoryItem>;
 
 function ProductManager({ categories, getCategories, update, create, categoryByName, ...props }: Props) {
   const { params } = props.match;

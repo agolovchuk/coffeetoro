@@ -3,37 +3,46 @@ import { connect, ConnectedProps } from 'react-redux';
 import { match } from 'react-router-dom';
 import { getId } from 'lib/id';
 import { Field } from 'react-final-form';
-import get from 'lodash/get';
-import { InputField, SelectField, PriceField, ISelectList } from 'components/Form/field';
+import {
+  SelectField,
+  PriceField,
+  Condition,
+} from 'components/Form/field';
 import { Price } from 'components/Units';
 import { AppState } from 'domain/StoreType';
 import {
-  pricesListSelector,
-  unitsListSelector,
-  CRUD,
-  PriceItem,
+  extendetPricesSelector,
+  PriceBase,
+  PriceTMC,
   priceByNameSelector,
-  unitsByIdSelector,
   currentCategorySelector,
-  UnitItem,
   createPriceAction,
   updatePriceAction,
+  getPricesByCategoryAction,
 } from 'domain/dictionary';
 import { ManagmentPopup, ItemList, Header } from '../../components';
 import { getMax } from '../../helper';
+import ArticleSelector from './articles';
+import ProccessCardSelector from './process';
 import { EitherEdit } from '../../Types';
+import { getTitle } from '../../helper';
 import styles from './price.module.css';
 
-function createItem(categoryId: string, sortIndex: number): PriceItem {
+const TYPE = [
+  { name: 'tmc', title: 'TMC' },
+  { name: 'pc', title: 'Process Card' },
+]
+
+function createItem(parentId: string, sortIndex: number): PriceTMC {
   return {
     id: getId(16),
-    categoryId,
-    fromDate: new Date(),
-    expiryDate: null,
-    unitId: '1',
+    parentId,
+    add: new Date(),
+    expiry: null,
     valuation: 0,
-    barcode: '',
     sortIndex,
+    type: 'tmc',
+    barcode: '',
   }
 }
 
@@ -43,14 +52,12 @@ interface PropsFromRouter {
 
 const mapState = (state: AppState, props: PropsFromRouter) => ({
   category: currentCategorySelector(state, props),
-  prices: pricesListSelector(state),
+  prices: extendetPricesSelector(state, props),
   products: priceByNameSelector(state),
-  units: unitsListSelector(state),
-  unitsById: unitsByIdSelector(state),
 })
 
 const mapDispatch = {
-  getDictionary: CRUD.getAllAction,
+  getPrices: getPricesByCategoryAction,
   create: createPriceAction,
   update: updatePriceAction,
 };
@@ -61,20 +68,12 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {}
 
-function getPrentsList(current: PriceItem[], units: UnitItem[]) {
-  const c: string[] = current.reduce((a, v) => a.includes(v.unitId) ? a : a.concat(v.unitId), [] as string[]);
-  return (item: PriceItem) => {
-    const cu = c.filter(f => f !== item.unitId);
-    return units.reduce((a, {id, title }) => cu.includes(id) ? a : [...a, { name: id, title }], [] as ISelectList);
-  }
-}
+function PriceManager({ prices, update, create, category, getPrices }: Props) {
 
-function PriceManager({ prices, update, units, create, getDictionary, category, ...props }: Props) {
-
-  const [item, setItem] = React.useState<EitherEdit<PriceItem> | null>(null);
+  const [item, setItem] = React.useState<EitherEdit<PriceBase> | null>(null);
 
   const edit = React.useCallback(
-    ({ isEdit, valuation, ...value }: EitherEdit<PriceItem>) => {
+    ({ isEdit, valuation, ...value }) => {
       if (isEdit) {
         update({...value, valuation: Number(valuation)})
       } else {
@@ -84,16 +83,13 @@ function PriceManager({ prices, update, units, create, getDictionary, category, 
     }, [update, create],
   )
 
-  const memoList = React.useMemo(() => getPrentsList(prices, units), [prices, units]);
-
   const createPrice = React.useCallback(() => {
     setItem(createItem(category.id, getMax(prices) + 1));
   }, [category, prices]);
 
   React.useEffect(() => {
-    getDictionary('prices', category.id, 'categoryId');
-    getDictionary('units');
-  }, [category, getDictionary]);
+    getPrices(category.id);
+  }, [category, getPrices]);
 
   return (
     <section className={styles.column}>
@@ -106,7 +102,7 @@ function PriceManager({ prices, update, units, create, getDictionary, category, 
           (data) => (
             <div className={styles.item}>
               <dl className={styles.itemTitle}>
-                <dt>{get(props.unitsById, [data.unitId, 'title'], '')}</dt>
+                <dt>{getTitle(data)}</dt>
                 <dd><Price value={data.valuation} sign currencyDisplay="symbol" /></dd>
               </dl>
               <button
@@ -126,17 +122,20 @@ function PriceManager({ prices, update, units, create, getDictionary, category, 
             title={`Цена на "${category.title}"`}
             onSubmit={edit}
           >
-            <Field name="unitId" render={({ input, meta }) => (
+            <Field name="type" render={({ input, meta }) => (
               <SelectField
-                list={memoList(item)}
-                id="unitId"
-                title="Единица измерения:"
+                list={TYPE}
+                id="type"
+                title="Source:"
                 {...input}
               />
             )}/>
-            <Field name="barcode" render={({ input, meta }) => (
-              <InputField id="barcode" title="Barcode:" {...input} />
-            )}/>
+            <Condition when="type" is="tmc" >
+              <ArticleSelector />
+            </Condition>
+            <Condition when="type" is="pc" >
+              <ProccessCardSelector />
+            </Condition>
             <Field name="valuation" render={({ input, meta }) => (
               <PriceField id="valuation" title="Цена за единицу:" {...input} />
             )}/>

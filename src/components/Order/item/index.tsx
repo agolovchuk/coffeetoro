@@ -9,7 +9,7 @@ type Props = OrderApi & OrderItemContainer & {
   url: string;
 };
 
-function OrderItem({ category, quantity, volume, price, onRemove, url }: Props) {
+function OrderItem({ quantity, price, url }: Props) {
   return (
     <li className={styles.container}>
       <NavLink
@@ -17,8 +17,8 @@ function OrderItem({ category, quantity, volume, price, onRemove, url }: Props) 
         activeClassName={styles.active}
         className={cx(styles.link, styles.wrapper)}
       >
-        <h3 className={styles.title}>{category.title}
-          <span className={styles.volume}>{volume.title}</span>
+        <h3 className={styles.title}>{price.title}
+          <span className={styles.volume}>{price.description}</span>
         </h3>
         <div className={styles.summary}>
           <span>

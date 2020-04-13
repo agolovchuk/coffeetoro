@@ -9,6 +9,4 @@ const config = {
 
 firebase.initializeApp(config);
 
-// export { database };
-
 export const database = firebase.database;

@@ -1,16 +1,26 @@
 import { createSelector } from 'reselect';
 import { params } from 'domain/routes';
 import { sortByDate } from 'lib/dateHelper';
-import { units } from '../dictionary/selectors';
+import { arrayToRecord } from 'lib/dataHelper';
 import { getOrderItem, orderItemsArchive } from './helpers';
 import { OrderState, PaymentMethod } from './Types';
+import { extendsPriceList } from 'domain/dictionary/helpers';
 
 export const ordersById = (state: OrderState) => state.ordersList;
 export const orderItems = (state: OrderState) => state.orderItems;
 const orderDictionary = (state: OrderState) => state.orderDictionary;
 
 const priceByID = createSelector(orderDictionary, d => d.prices);
-const categoryById = createSelector(orderDictionary, d => d.categories);
+
+const extendsPriceListSelector = createSelector(orderDictionary,
+  d => extendsPriceList(Object.values(d.prices), d.articles, d.processCards)
+);
+
+const extendsPriceByIdSelector = createSelector(extendsPriceListSelector,
+  p => arrayToRecord(p, 'id')
+)
+
+// const categoryById = createSelector(orderDictionary, d => d.categories);
 const corderItemsListSelectors = createSelector(orderItems, o => Object.values(o));
 
 // Filter order items list for specific order 
@@ -24,13 +34,13 @@ export const orderArchiveSelector = createSelector(
 );
 
 export const ordersSelector = createSelector(
-  [orderItemSelector, priceByID, categoryById , units],
-  (o, p, pd, v) => getOrderItem(o, p, pd, v),
+  [orderItemSelector, extendsPriceByIdSelector],
+  (o, p) => getOrderItem(o, p),
 );
 
 export const orderByProductSelector = createSelector(
   [ordersSelector, params],
-  (o, p) => o.filter(f => f.category.id === p.categoryId),
+  (o, p) => o.filter(f => f.price.parentId === p.categoryId),
 );
 
 export const ordersListSelector = createSelector(

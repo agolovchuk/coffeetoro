@@ -88,24 +88,23 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
     osPrice.createIndex(
-      C.TABLE.price.index.categoryId,
-      C.TABLE.price.index.categoryId, {
+      C.TABLE.price.index.parentId,
+      C.TABLE.price.index.parentId, {
         unique: false,
       }
     );
     osPrice.createIndex(
-      'priceId', [
-        C.TABLE.price.index.categoryId,
-        C.TABLE.price.index.unitId,
-        C.TABLE.price.index.expiryDate,
+      C.TABLE.price.index.type,
+      C.TABLE.price.index.type, {
+        unique: false,
+      }
+    );
+    osPrice.createIndex(
+      C.TABLE.price.index.priceId, [
+        C.TABLE.price.index.parentId,
+        C.TABLE.price.index.expiry,
       ], {
         unique: true
-      }
-    );
-    osPrice.createIndex(
-      C.TABLE.price.index.barcode,
-      C.TABLE.price.index.barcode, {
-        unique: false,
       }
     );
 // =================== Unit =============================
@@ -145,6 +144,50 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       C.TABLE.env.index.id,
       C.TABLE.env.index.id, {
         unique: true,
+      }
+    );
+// ======================================================
+    const osTMC = this.result.createObjectStore(
+      C.TABLE.tmc.name, {
+        keyPath: C.TABLE.tmc.index.id,
+        autoIncrement: false,
+      }
+    );
+    osTMC.createIndex(
+      C.TABLE.tmc.index.id,
+      C.TABLE.tmc.index.id, {
+        unique: true,
+      }
+    );
+    osTMC.createIndex(
+      C.TABLE.tmc.index.barcode,
+      C.TABLE.tmc.index.barcode, {
+        unique: true,
+      }
+    );
+    osTMC.createIndex(
+      C.TABLE.tmc.index.parentId,
+      C.TABLE.tmc.index.parentId, {
+        unique: false,
+      }
+    );
+// ======================================================
+    const osPC = this.result.createObjectStore(
+      C.TABLE.processCards.name, {
+        keyPath: C.TABLE.processCards.index.id,
+        autoIncrement: false,
+      }
+    );
+    osPC.createIndex(
+      C.TABLE.processCards.index.id,
+      C.TABLE.processCards.index.id, {
+        unique: true,
+      }
+    );
+    osPC.createIndex(
+      C.TABLE.processCards.index.parentId,
+      C.TABLE.processCards.index.parentId, {
+        unique: false,
       }
     );
 // ======================================================

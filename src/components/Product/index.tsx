@@ -9,11 +9,12 @@ import Confirmation from './Confirmation';
 interface IPrice {
   id: string;
   valuation: number;
+  description: string;
 }
 
 interface IValuation {
-  price: IPrice,
-  volume: string,
+  price: IPrice;
+  volume: string;
 }
 
 interface IOrderApi {
@@ -24,7 +25,7 @@ interface IOrderApi {
 
 interface Props {
   title: string;
-  name: string;
+  // name: string;
   valuation: ReadonlyArray<IValuation>;
   orderApi?: IOrderApi,
   onChange: (priceId: string) => void;

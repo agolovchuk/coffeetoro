@@ -9,16 +9,20 @@ import * as handler from './helpers';
 
 type Action = OrderAction.Action | DictionaryAction.Action;
 
-export default function fbMiddlware({ dispatch, getState }: MiddlewareAPI<Dispatch<Action>, AppState>) {
+export default function fbMiddlware({ getState }: MiddlewareAPI<Dispatch, AppState>) {
   const config = getState().env.firebaseConfig;
   if (config && config.apiKey) {
     const app = firebase.initializeApp(config);
     const database: firebase.database.Database = app.database();
 
-    database.ref().child('price').on('child_added', handler.addPriceHandler(dispatch));
-    database.ref().child('price').on('child_changed', handler.changePriceHandler(dispatch));
-    database.ref().child('category').on('child_added', handler.addCategoryHandler(dispatch));
-    database.ref().child('category').on('child_changed', handler.changeCategoryHandler(dispatch));
+    database.ref().child('price').on('child_added', handler.addPriceHandler);
+    database.ref().child('price').on('child_changed', handler.changePriceHandler);
+    database.ref().child('category').on('child_added', handler.addCategoryHandler);
+    database.ref().child('category').on('child_changed', handler.changeCategoryHandler);
+    database.ref().child('tmc').on('child_added', handler.addTMCHandler);
+    database.ref().child('tmc').on('child_changed', handler.changeTMCHandler);
+    database.ref().child('processCards').on('child_added', handler.addPCHandler);
+    database.ref().child('processCards').on('child_changed', handler.changePCHandler);
 
     return (next: Dispatch<Action>) => (action: Action) => {
       switch (action.type) {
@@ -36,14 +40,14 @@ export default function fbMiddlware({ dispatch, getState }: MiddlewareAPI<Dispat
         case DictionaryAction.CREATE_PRICE:
           database.ref('price/' + action.payload.id).set({
             ...action.payload,
-            fromDate: action.payload.fromDate.toISOString(),
+            add: action.payload.add.toISOString(),
           });
           break;
 
         case DictionaryAction.UPDATE_PRICE:
           database.ref('price/' + action.payload.id).set({
             ...action.payload,
-            fromDate: action.payload.fromDate.toISOString(),
+            add: action.payload.add.toISOString(),
           });
           break;
 
@@ -53,6 +57,24 @@ export default function fbMiddlware({ dispatch, getState }: MiddlewareAPI<Dispat
 
         case DictionaryAction.UPDATE_CATEGORY:
           database.ref('category/' + action.payload.id).set(action.payload);
+          break;
+
+        case DictionaryAction.CRUD.createItemAction.type:
+          DictionaryAction.CRUD.effect('tmc', action, data => {
+            database.ref('tmc/' + data.id).set(data);
+          });
+          DictionaryAction.CRUD.effect('processCards', action, data => {
+            database.ref('processCards/' + data.id).set(data);
+          });
+          break;
+
+        case DictionaryAction.CRUD.updateItemAction.type:
+          DictionaryAction.CRUD.effect('tmc', action, data => {
+            database.ref('tmc/' + data.id).set(data);
+          });
+          DictionaryAction.CRUD.effect('processCards', action, data => {
+            database.ref('processCards/' + data.id).set(data);
+          });
           break;
 
         default:

@@ -16,7 +16,7 @@ function SelectField({ id, title, list, ...rest }: Props) {
       <select {...rest} className={cx(styles.field, styles.select)} >
         {
           list.map(e => (
-            <option key={e.name} value={e.name}>{e.title}</option>
+            <option key={e.name} disabled={e.disabled} value={e.name}>{e.title}</option>
           ))
         }
       </select>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import cx from 'classnames';
 import { Price } from 'components/Units';
 import styles from './valuation.module.css';
@@ -7,6 +7,7 @@ import styles from './valuation.module.css';
 interface IPrice {
   id: string;
   valuation: number;
+  description: string;
 }
 
 interface Props {
@@ -35,7 +36,7 @@ export default function Valuation({ volume, price, ...props }: Props) {
         <div className={styles.price}>
           <Price value={price.valuation} sign notation="compact" />
         </div>
-        <div className={styles.unit}>{volume}</div>
+        <div className={styles.unit}>{price.description}</div>
       </label>
     </li>
   );

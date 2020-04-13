@@ -17,7 +17,7 @@ function getSumm(list: ReadonlyArray<OrderItemContainer>): number {
 }
 
 function makeUrl(orderId: string) {
-  return ({ id }: Partial<OrderItemContainer["category"]>) =>
+  return (id: string) =>
     ['/order', orderId, id, 'product'].join('/');
 }
 
@@ -31,9 +31,9 @@ function Order({ list, onComplete, orderId }: Props) {
         {
           list.map(data =>
             <Item
-              key={data.category.name + data.volume.name}
+              key={data.price.id}
               onRemove={() => null}
-              url={getUrl(data.category)}
+              url={getUrl(data.price.parentId)}
               {...data}
             />
           )

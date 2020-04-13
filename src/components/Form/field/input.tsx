@@ -6,14 +6,15 @@ interface Props<T extends HTMLElement = HTMLElement> {
   id: string;
   title: string;
   name: string;
-  onBlur: (event?: React.FocusEvent<T>) => void;
-  onChange: (event: React.ChangeEvent<T> | any) => void;
-  onFocus: (event?: React.FocusEvent<T>) => void;
+  onBlur?: (event?: React.FocusEvent<T>) => void;
+  onChange?: (event: React.ChangeEvent<T> | any) => void;
+  onFocus?: (event?: React.FocusEvent<T>) => void;
   type?: string;
   value: string;
   checked?: boolean;
   multiple?: boolean;
-  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
+  inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
+  readOnly?: boolean;
 }
 
 function InputField({ id, title, ...rest }: Props) {

@@ -1,10 +1,11 @@
 import { TypeOf } from 'io-ts';
 import { order, orderItem } from './contracts';
-import { PriceItem, CategoryItem, VolumeItem, Prices, Categories } from '../dictionary/Types';
+import { PriceItem, PriceExtendet, TMCItem, ProcessCardItem } from '../dictionary/Types';
 
 export interface OrderDictionary {
-  categories: Categories;
-  prices: Prices;
+  prices: Record<string, PriceItem>;
+  articles: Record<string, TMCItem>;
+  processCards: Record<string, ProcessCardItem>;
 }
 
 export enum PaymentMethod {
@@ -24,9 +25,7 @@ export type Order = TypeOf<typeof order>;
 
 export interface OrderItemContainer {
   quantity: number,
-  price: PriceItem,
-  category: CategoryItem,
-  volume: VolumeItem,
+  price: PriceExtendet,
 }
 
 export interface OrderState {

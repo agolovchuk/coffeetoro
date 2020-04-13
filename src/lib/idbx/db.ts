@@ -4,21 +4,42 @@ import {
   Fixtures,
   DataAdapterFactory,
   Query,
-  Adapter
+  Adapter,
+  Mode,
 } from './Types';
 import * as C from './constant';
-import { applyFixtures, os } from './helpers';
+import { applyFixtures } from './helpers';
 
 export default class IDB {
 
   private readonly name: string;
   private readonly version: number | undefined;
   private requestUpgrade: RequestUpgrade | null;
+  private db: IDBDatabase | null;
 
   constructor(name: string, requestUpgrade: RequestUpgrade | null, version?: number) {
     this.name = name;
     this.version = version;
     this.requestUpgrade = requestUpgrade;
+    this.db = null;
+  }
+
+  protected async os(table: string | string[], mode: Mode): Promise<IDBObjectStore> {
+    this.db = await this.open();
+    const osName = Array.isArray(table) ? table[0] : table;
+    return this.db.transaction(table, mode).objectStore(osName);
+  }
+
+  protected async reques<T>(req: IDBRequest<T>, cb: () => void = this.close): Promise<T> {
+    return new Promise((resolve, reject) => {
+      req.onsuccess = function() { cb(); resolve(this.result); }
+      req.onerror = function() { cb(); reject(this.error); }
+    });
+  }
+
+  protected close = () => {
+    if (this.db) this.db.close();
+    this.db = null;
   }
 
   open(): Promise<IDBDatabase> {
@@ -50,10 +71,10 @@ export default class IDB {
     indexName: string,
     query?: Query,
   ): Promise<T | null> {
-    const db = await this.open();
+    const objectStore = await this.os(table, C.READ_ONLY);
     return await new Promise((resolve, reject) => {
       let result: T | null = null;
-      const request = os.call(db, table, C.READ_ONLY).index(indexName).openCursor(query);
+      const request = objectStore.index(indexName).openCursor(query);
       request.onsuccess = (event) => {
         const cursor = get(event, ['target', 'result']);
         if (cursor) {
@@ -61,65 +82,63 @@ export default class IDB {
           cursor.continue();
         }
         else {
-          db.close();
+          this.close();
           resolve(result);
         }
       };
-      request.onerror = () => { db.close(); reject(); };
+      request.onerror = () => { this.close(); reject(); };
     });
   }
 
   async addItem(table: string, value: any): Promise<void> {
-    const db = await this.open();
-    return await new Promise((resolve, reject) => {
-      const request = os.call(db, table, C.READ_WRITE).add(value);
-      request.onsuccess = () => { db.close(); resolve(); };
-      request.onerror = () => { db.close(); reject(); };
-    });
+    try {
+      const objectStore = await this.os(table, C.READ_WRITE);
+      await this.reques(objectStore.add(value));
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
   async getItem<T>(table: string, adapter: Adapter<T>, query: Query, indexName?: string): Promise<T | null> {
-    const db = await this.open();
+    const objectStore = await this.os(table, C.READ_ONLY);
     return await new Promise((resolve, reject) => {
-      const objectStore = os.call(db, table, C.READ_ONLY);
       const request = indexName ? objectStore.index(indexName).get(query) : objectStore.get(query);
       request.onsuccess = (event) => {
-        db.close();
+        this.close();
         resolve(adapter(get(event, ['target', 'result'])));
       };
-      request.onerror = () => { db.close(); reject(); };
+      request.onerror = () => { this.close(); reject(); };
     });
   }
 
   async getAll<T>(table: string, adapter: (res: null | unknown[] ) => T, indexName?: string, query?: Query | null): Promise<T | null> {
-    const db = await this.open();
+    const objectStore = await this.os(table, C.READ_ONLY);
     return await new Promise((resolve, reject) => {
-      const OS = os.call(db, table, C.READ_ONLY);
-      const request = typeof indexName === 'string' ? OS.index(indexName).getAll(query) : OS.getAll(query);
+      const request = typeof indexName === 'string' ? objectStore.index(indexName).getAll(query) : objectStore.getAll(query);
       request.onsuccess = (event) => {
-        db.close();
+        this.close();
         resolve(adapter(get(event, ['target', 'result'])));
       };
-      request.onerror = () => { db.close(); reject(); };
+      request.onerror = () => { this.close(); reject(); };
     });
   }
 
   async deleteItem(table: string, query: Query): Promise<void> {
-    const db = await this.open();
-    return await new Promise((resolve, reject) => {
-      const request = os.call(db, table, C.READ_WRITE).delete(query);
-      request.onsuccess = () => { db.close(); resolve(); };
-      request.onerror = () => { db.close(); reject(); };
-    });
+    try {
+      const objectStore = await this.os(table, C.READ_WRITE);
+      await this.reques(objectStore.delete(query));
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
   async updateItem(table: string, value: any): Promise<void> {
-    const db = await this.open();
-    return await new Promise((resolve, reject) => {
-      const request = os.call(db, table, C.READ_WRITE).put(value);
-      request.onsuccess = () => { db.close(); resolve(); };
-      request.onerror = () => { db.close(); reject(); };
-    });
+    try {
+      const objectStore = await this.os(table, C.READ_WRITE);
+      await this.reques(objectStore.put(value));
+    } catch (err) {
+      console.warn(err);
+    }
   }
 
 }

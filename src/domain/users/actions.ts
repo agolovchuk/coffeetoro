@@ -1,6 +1,5 @@
-import { ThunkAction } from 'redux-thunk';
 import { getId } from 'lib/id';
-import { AppState } from '../StoreType';
+import { ThunkAction } from '../StoreType';
 import CDB from 'db';
 import * as C from 'db/constants';
 import { pbkdf2, pbkdf2Verify } from './helpers';
@@ -16,13 +15,13 @@ interface CreateUser {
   payload: User,
 }
 
-function createUserAction(data: User, onComplete: (e?: Error) => void): ThunkAction<void, AppState, unknown, CreateUser> {
+function createUserAction(data: User, onComplete: (e?: Error) => void): ThunkAction<CreateUser> {
   return async(dispatch) => {
     try {
       const hash = await pbkdf2('1111');
       const user = { ...data, hash, id: getId(8) };
-      const dbx = new CDB();
-      await dbx.addItem(C.TABLE.users.name, user);
+      const idb = new CDB();
+      await idb.addItem(C.TABLE.users.name, user);
       dispatch({
         type: CREATE_USER,
         payload: user,
@@ -40,11 +39,11 @@ interface GetUsers {
   payload: Record<string, User>;
 }
 
-function getUsersAction(): ThunkAction<void, AppState, unknown, GetUsers>  {
+function getUsersAction(): ThunkAction<GetUsers>  {
   return async(dispatch) => {
     try {
-      const dbx = new CDB();
-      const users = await dbx.getDictionary(C.TABLE.users.name, adapters.usersListAdapter, 'id');
+      const idb = new CDB();
+      const users = await idb.getDictionary(C.TABLE.users.name, adapters.usersListAdapter, 'id');
       if (users !== null) {
         dispatch({
           type: GET_USERS,
@@ -62,11 +61,11 @@ interface UpdateUser {
   payload: User;
 }
 
-function updateUserAction(data: User, onComplete: (e?: Error) => void): ThunkAction<void, AppState, unknown, UpdateUser> {
+function updateUserAction(data: User, onComplete: (e?: Error) => void): ThunkAction<UpdateUser> {
   return async (dispatch) => {
     try {
-      const dbx = new CDB();
-      const db = await dbx.open();
+      const idb = new CDB();
+      const db = await idb.open();
       const transaction = db.transaction(C.TABLE.users.name, C.READ_WRITE);
       transaction.oncomplete = function () { db.close(); }
 
@@ -100,14 +99,14 @@ interface UpdatePassword {
 function updatePasswordAction(data: UpdatePassword, onComplete: (e?: Error) => void) {
   return async() => {
     try {
-      const dbx = new CDB();
-      const eitherUser = await dbx.getItem(C.TABLE.users.name, adapters.userAdapters, data.id, C.TABLE.users.index.id);
+      const idb = new CDB();
+      const eitherUser = await idb.getItem(C.TABLE.users.name, adapters.userAdapters, data.id, C.TABLE.users.index.id);
       if (eitherUser === null) throw new Error('No user found');
       const { hash, ...user } = eitherUser;
       const isVerify = await pbkdf2Verify(hash, data.old);
       if (!isVerify) throw new Error('Invalsid old password');
       const newHash = await pbkdf2(data.password);
-      await dbx.updateItem(C.TABLE.users.name, { ...user, hash: newHash });
+      await idb.updateItem(C.TABLE.users.name, { ...user, hash: newHash });
       onComplete();
     } catch (err) {
       onComplete(err);

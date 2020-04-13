@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { match } from 'react-router-dom';
-import { currentCategoriesSelector, getCategoriesAction, CategoryItem } from 'domain/dictionary';
+import { currentCategoriesSelector, getCategoriesAction, CountedCategoryItem } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import Grid from 'components/Grid';
 
@@ -30,7 +30,7 @@ interface Props extends PropsFromRedux, PropsFromRouter {};
 
 function pathMaker(orderId: string) {
   const make = (...args: string[]) => ['/order', orderId, ...args].join('/');
-  return (item: CategoryItem) => {
+  return (item: CountedCategoryItem) => {
     if (item.count) return make(item.id, 'product');
     return make(item.id);
   }

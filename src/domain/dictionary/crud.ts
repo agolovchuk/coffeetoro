@@ -56,6 +56,14 @@ function actionWraper<T>(name: DKeys, fn: Reducer<T>): Reducer<T> {
   }
 }
 
+type Effect<T> = (d: T) => void | Promise<void>;
+
+export function effect<T>(name: DKeys, action: Action<T>, fn: Effect<T>) {
+  if (action.payload.name === name) {
+    fn(action.payload.data);
+  }
+}
+
 export function creat<T extends Record<K, any>, K extends keyof T>(name: DKeys, field: keyof T): Reducer<T> {
   return actionWraper(
     name,
