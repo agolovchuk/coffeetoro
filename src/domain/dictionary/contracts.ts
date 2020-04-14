@@ -47,7 +47,7 @@ export const tmc = t.interface({
   barcode: t.union([t.string, t.undefined]),
   unitId: t.string,
   add: t.string,
-  update: t.union([t.string, t.null]),
+  update: t.union([t.string, t.null, t.undefined]),
 });
 
 export const pc = t.interface({
@@ -56,6 +56,5 @@ export const pc = t.interface({
   title: t.string,
   description: t.string,
   add: t.string,
-  update: t.union([t.string, t.null]),
+  update: t.union([t.string, t.null, t.undefined]),
 });
- 

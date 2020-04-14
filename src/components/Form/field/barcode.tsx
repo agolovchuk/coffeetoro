@@ -24,10 +24,10 @@ const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName
 
   const handleKey = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>): void => {
-      if(e.keyCode === 13 && typeof onComplete === 'function') {
+      if(e.keyCode === 13) {
         e.preventDefault();
         e.stopPropagation();
-        onComplete(rest.value);
+        if (typeof onComplete === 'function') onComplete(rest.value);
       }
     }, [onComplete, rest.value],
   );

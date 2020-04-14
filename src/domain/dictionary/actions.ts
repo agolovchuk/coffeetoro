@@ -48,7 +48,7 @@ export function getCategoriesAction(index: CategoryIndex, query?: string): Thunk
       categories.map(({ id }) => promisifyReques<number>(priceStore.index('parentId').count(id)))
     )
   };
-};
+}
 
 export function getChildrenCategoryAction(name: string): ThunkAction<GetCategoriesSuccess> {
   return async(dispatch) => {
@@ -176,7 +176,7 @@ export function createCategoryAction({ count, ...item }: CountedCategoryItem): T
 export interface UpdateCategory {
   type: typeof UPDATE_CATEGORY;
   payload: CountedCategoryItem;
-};
+}
 
 export function updateCategory({ count, ...item }: CountedCategoryItem): ThunkAction<UpdateCategory> {
   return async(dispatch) => {

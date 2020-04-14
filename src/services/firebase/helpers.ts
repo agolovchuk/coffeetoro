@@ -3,7 +3,7 @@ import CDB from 'db';
 import * as C from 'db/constants';
 import { Adapter, IDB } from 'lib/idbx';
 import * as adapters from 'domain/dictionary/adapters';
-import { PriceItem, CategoryItem } from 'domain/dictionary/Types';
+import { PriceItem, CategoryItem, TMCItem, ProcessCardItem } from 'domain/dictionary/Types';
 
 interface PriceContainer {
   id: string,
@@ -39,6 +39,14 @@ export function eqPrice(fBPrice: FBPriceItem, { add, expiry, ...dbp }: PriceItem
 
 export function eqCategory(fbCategory: FBCategory, dbc: CategoryItem) {
   return eq(dbc, fbCategory);
+}
+
+function eqTMC(fbArticle: TMCItem, dba: TMCItem) {
+  return eq({ update: undefined, ...fbArticle }, dba);
+}
+
+function eqPC(fbPC: ProcessCardItem, dbpc: ProcessCardItem) {
+  return eq({ update: undefined, ...fbPC }, dbpc);
 }
 
 function dbWrapper<T, F>(table: string, adapter: Adapter<T>): DBWrapper<T, F> {
@@ -78,18 +86,18 @@ function priceFBtoiDB({ expiry, add, ...data}: FBPriceItem): PriceItem {
     add: new Date(add),
     expiry: expiry ? new Date(expiry) : null,
   }
-};
+}
 
 export const addPriceHandler = handlerFactory(
   priceDB,
   eqPrice,
-  async (data) => { priceDB.set(priceFBtoiDB(data)); }
+  async (data) => { await priceDB.set(priceFBtoiDB(data)); }
 );
 
 export const changePriceHandler = handlerFactory(
   priceDB,
   eqPrice,
-  async (data) => { priceDB.put(priceFBtoiDB(data)); }
+  async (data) => { await priceDB.put(priceFBtoiDB(data)); }
 );
 
 const categoryDB = dbWrapper(C.TABLE.category.name, adapters.categoryAdapter);
@@ -97,39 +105,39 @@ const categoryDB = dbWrapper(C.TABLE.category.name, adapters.categoryAdapter);
 export const addCategoryHandler = handlerFactory(
   categoryDB,
   eqCategory,
-  async (data) => { categoryDB.set(data); }
+  async (data) => { await categoryDB.set(data); }
 );
 
 export const changeCategoryHandler = handlerFactory(
   categoryDB,
   eqCategory,
-  async (data) => { categoryDB.put(data); }
+  async (data) => { await categoryDB.put(data); }
 );
 
 const tmcDB = dbWrapper(C.TABLE.tmc.name, adapters.tmcAdapter);
 
 export const addTMCHandler = handlerFactory(
   tmcDB,
-  eq,
-  async (data) => { tmcDB.set(data); }
+  eqTMC,
+  async (data) => { await tmcDB.set(data); }
 );
 
 export const changeTMCHandler = handlerFactory(
   tmcDB,
-  eq,
-  async (data) => { tmcDB.put(data); }
+  eqTMC,
+  async (data) => { await tmcDB.put(data); }
 );
 
 const processCardsDB = dbWrapper(C.TABLE.processCards.name, adapters.processCardsAdapter);
 
 export const addPCHandler = handlerFactory(
   processCardsDB,
-  eq,
-  async (data) => { processCardsDB.set(data); }
+  eqPC,
+  async (data) => { await processCardsDB.set(data); }
 );
 
 export const changePCHandler = handlerFactory(
   processCardsDB,
-  eq,
-  async (data) => { processCardsDB.put(data); }
+  eqPC,
+  async (data) => { await processCardsDB.put(data); }
 );
