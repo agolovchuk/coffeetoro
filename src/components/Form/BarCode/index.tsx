@@ -62,7 +62,7 @@ function BarCode({ onComplete }: Props) {
     } else {
       dispatch({ type: 'setValue', value: '' });
     }
-  }, []);
+  }, [handleError]);
 
   const handleComplete = React.useCallback((value: string) => {
     onComplete(value, handleRes);
