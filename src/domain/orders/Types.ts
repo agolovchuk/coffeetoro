@@ -1,6 +1,6 @@
 import { TypeOf } from 'io-ts';
 import { order, orderItem } from './contracts';
-import { PriceItem, PriceExtendet, TMCItem, ProcessCardItem } from '../dictionary/Types';
+import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from '../dictionary/Types';
 
 export interface OrderDictionary {
   prices: Record<string, PriceItem>;
@@ -25,7 +25,7 @@ export type Order = TypeOf<typeof order>;
 
 export interface OrderItemContainer {
   quantity: number,
-  price: PriceExtendet,
+  price: PriceExtended,
 }
 
 export interface OrderState {

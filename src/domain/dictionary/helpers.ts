@@ -6,17 +6,20 @@ import {
   CategoryItem,
   TMC,
   ProcessCards,
-  PriceExtendet,
+  PriceExtended,
+  ProcessCardItem,
+  TMCItem,
+  ProcessCardArticle,
 } from './Types';
 
 function priceAdapter(units: Units) {
-  return (e: PriceExtendet) => ({
+  return (e: PriceExtended) => ({
     price: e,
     volume: get(units, [e.unitId, 'title'], 'psc'),
   })
 }
 
-export function getProductForSale(category: CategoryItem, price: PriceExtendet[], units: Units): ProductForSale {
+export function getProductForSale(category: CategoryItem, price: PriceExtended[], units: Units): ProductForSale {
   return {
     ...category,
     valuation: price.map(priceAdapter(units))
@@ -33,7 +36,7 @@ export function sortByIndex<T extends ISortebaleList>(a: T, b: T) {
 
 /** Price */
 
-function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): PriceExtendet {
+function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): PriceExtended {
   if (price.type === 'tmc') {
     const { title, description, unitId } = tmc[price.barcode];
     return { ...price, title, description, unitId };
@@ -45,4 +48,22 @@ function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): PriceExtend
 export function extendsPriceList(priceList: ReadonlyArray<PriceItem>, tmc: TMC, pc: ProcessCards) {
   const adapter = (price: PriceItem) => extendsPrice(price, tmc, pc)
   return priceList.map(adapter);
+}
+
+interface PCFill extends Omit<ProcessCardItem, 'articles'> {
+  articles: ReadonlyArray<{
+    item: TMCItem,
+    quantity: number,
+  }>
+}
+
+export  function pcFill(item: ProcessCardItem | undefined, tmc: Record<string, TMCItem>): PCFill | undefined {
+  if (item) {
+    const articles: ReadonlyArray<ProcessCardArticle> = get(item, 'articles', []);
+    return {
+      ...item,
+      articles: articles.map(e => ({ item: tmc[e.id], quantity: e.quantity })),
+    };
+  }
+  return undefined;
 }

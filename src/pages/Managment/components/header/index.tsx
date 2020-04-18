@@ -3,17 +3,22 @@ import styles from './header.module.css';
 
 interface Props {
   title: string;
-  onCreate: () => void;
+  onCreate?: () => void;
 }
 
 function Header({ title, onCreate }: Props) {
   return (
     <div className={styles.container}>
       <h2 className={styles.title}>{title}</h2>
-      <button
-        className="button_add"
-        type="button"
-        onClick={onCreate} />
+      {
+        typeof onCreate === 'function' ? (
+          <button
+            className="button_add"
+            type="button"
+            onClick={onCreate}
+          />
+        ) : null
+      }
     </div>
   )
 }

@@ -12,7 +12,7 @@ const mapState = (state: AppState) => ({
   user: userSelector(state),
 });
 
-const LANGS: ISelectList = [
+const LANGUAGES: ISelectList = [
   { name: 'en', title: 'English' },
   { name: 'ru', title: 'Русский' }
 ]
@@ -49,7 +49,7 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
 
   if (user === null) throw new Error('No user');
   return (
-    <section className={styles.conent}>
+    <section className={styles.content}>
       <div className={styles.column}>
       <FM id="user.manageYourProfile" defaultMessage="Manage your profile">
         {
@@ -73,7 +73,7 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
                 <InputField id="lastName" title="Last name:" {...input} />
               )}/>
                <Field name="lang" render={({ input, meta }) => (
-                <SelectField list={LANGS} id="lang" title="Language:" {...input} />
+                <SelectField list={LANGUAGES} id="lang" title="Language:" {...input} />
               )}/>
               <div className={styles.btnGroup}>
                 <button
@@ -85,7 +85,7 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
             </form>
           )}
         />
-        
+
       </div>
       <div className={styles.column}>
         <FM id="user.updatePassword" defaultMessage="Update password">

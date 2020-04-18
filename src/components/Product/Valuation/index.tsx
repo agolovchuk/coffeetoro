@@ -7,7 +7,7 @@ import styles from './valuation.module.css';
 interface IPrice {
   id: string;
   valuation: number;
-  description: string;
+  description?: string;
 }
 
 interface Props {

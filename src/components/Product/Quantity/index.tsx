@@ -1,4 +1,4 @@
-import * as React from 'react';
+  import * as React from 'react';
 import cx from 'classnames';
 import { quantify } from './helper';
 import styles from './quantity.module.css';

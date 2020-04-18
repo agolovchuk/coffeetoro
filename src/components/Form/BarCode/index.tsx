@@ -79,6 +79,7 @@ function BarCode({ onComplete }: Props) {
       onComplete={handleComplete}
       inputClassName={cx(styles.barcode, { [styles.error]: state.error })}
       labelClassName={styles.barLabel}
+      containerClassName={styles.container}
     />
   );
 }

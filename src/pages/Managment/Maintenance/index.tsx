@@ -16,7 +16,7 @@ const clearDB = async() => {
 function Maintenance() {
   const [confirmation, setConfirmattion] = React.useState(false);
   return (
-    <section>
+    <section className="scroll-section">
       <h1 className={styles.title}>Maintenance</h1>
       <div className={styles.content}>
         <button

@@ -24,9 +24,12 @@
   margin-bottom: 30px;
   text-align: center;
 }
-.conent {
+.content {
   display: flex;
   align-items: flex-start;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
 }
 .column {
   flex: 1 1 100%;

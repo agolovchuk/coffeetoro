@@ -11,5 +11,6 @@
 .content {
   position: relative;
   padding: 5px;
-  height: calc(100vh - 80px);
+  height: 100%;
+  overflow: hidden;
 }

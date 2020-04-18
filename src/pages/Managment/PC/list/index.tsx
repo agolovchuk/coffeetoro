@@ -1,35 +1,28 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { getId } from 'lib/id';
 import { Field } from 'react-final-form';
-import {
-  InputField,
-  SelectField,
-  BarcodeField
-} from 'components/Form/field';
-import { TMCItem, CRUD, tmcListSelector, unitsSelectSelector } from 'domain/dictionary';
+import { getId } from 'lib/id';
+import { InputField } from 'components/Form/field';
+import { ProcessCardItem, CRUD, processCardsListSelector } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { ManagmentPopup, ItemList, Header, MItem } from '../components';
-import SetBarcode from './setBarcode';
-import { getTitle } from '../helper';
-import { EitherEdit } from '../Types';
+import { ManagmentPopup, ItemList, Header, MItem } from '../../components';
+import { getTitle } from '../../helper';
+import { EitherEdit } from '../../Types';
 
-function createItem(): TMCItem {
+function createItem(): ProcessCardItem {
   return {
-    id: getId(16),
+    id: getId(12),
     title: '',
     description: '',
     parentId: '',
-    unitId: '1',
     add: new Date().toISOString(),
     update: null,
-    barcode: '',
+    articles: [],
   }
 }
 
 const mapState = (state: AppState) => ({
-  tmc: tmcListSelector(state),
-  units: unitsSelectSelector(state),
+  pc: processCardsListSelector(state),
 });
 
 const mapDispatch = {
@@ -42,41 +35,45 @@ const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-interface Props extends PropsFromRedux {};
+interface Props extends PropsFromRedux {}
 
-function TMCManager({ create, update, units, getAll, ...props }: Props) {
+function ProcessCardList ({ create, update, getAll,  ...props }: Props) {
 
-  const [item, setItem] = React.useState<EitherEdit<TMCItem> | null>(null);
+  const [item, setItem] = React.useState<EitherEdit<ProcessCardItem> | null>(null);
 
   const handleSubmit = React.useCallback(
-    ({ isEdit, ...value }: EitherEdit<TMCItem>) => {
+    ({ isEdit, ...value }: EitherEdit<ProcessCardItem>) => {
       if (isEdit) {
-        update('tmc', value);
+        update('processCards', value);
       } else {
-        create('tmc', value);
+        create('processCards', value);
       }
       setItem(null);
     }, [create, update],
   );
 
   const handleCreat = () => setItem(createItem());
-  const handleEdit = (value: TMCItem) => setItem({ ...value, isEdit: true, update: new Date().toISOString() });
+  const handleEdit = (value: ProcessCardItem) => setItem({ ...value, isEdit: true, update: new Date().toISOString() });
+
+  const createLink = React.useMemo(() => {
+    return (data: ProcessCardItem) => ['/manager', 'pc', data.id].join('/');
+  }, []);
 
   React.useEffect(() => {
     getAll('units');
-    getAll('tmc');
+    getAll('processCards');
   }, [getAll]);
 
   return (
     <section className="scroll-section">
-      <Header title="TMC" onCreate={handleCreat} />
-      <ItemList list={props.tmc} getKey={e => e.id}>
+      <Header title="Process Card" onCreate={handleCreat} />
+      <ItemList list={props.pc} getKey={e => e.id}>
         {
           (data) => (
             <MItem
               data={data}
               title={getTitle(data)}
-              getLink={() => ''}
+              getLink={createLink}
               onEdit={handleEdit}
             />
           )
@@ -85,7 +82,7 @@ function TMCManager({ create, update, units, getAll, ...props }: Props) {
       {
         item && (
           <ManagmentPopup
-            title="Add TMC"
+            title="Add Process Card"
             onCancel={() => setItem(null)}
             initialValues={item}
             onSubmit={handleSubmit}
@@ -96,18 +93,6 @@ function TMCManager({ create, update, units, getAll, ...props }: Props) {
             <Field name="description" render={({ input, meta }) => (
               <InputField id="description" title="Description:" {...input} />
             )}/>
-            <Field name="unitId" render={({ input, meta }) => (
-              <SelectField id="unitId" title="Unit:" list={units} {...input} />
-            )}/>
-            <Field name="barcode" render={({ input, meta }) => (
-              <BarcodeField
-                id="barcode"
-                title="Barcode:"
-                {...input}
-              >
-                <SetBarcode />
-              </BarcodeField>
-            )}/>
           </ManagmentPopup>
         )
       }
@@ -115,4 +100,4 @@ function TMCManager({ create, update, units, getAll, ...props }: Props) {
   )
 }
 
-export default connector(TMCManager);
+export default connector(ProcessCardList);

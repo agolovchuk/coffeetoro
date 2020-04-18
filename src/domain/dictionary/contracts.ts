@@ -43,11 +43,16 @@ export const tmc = t.interface({
   id: t.string,
   parentId: t.string,
   title: t.string,
-  description: t.string,
+  description: t.union([t.string, t.undefined]),
   barcode: t.union([t.string, t.undefined]),
   unitId: t.string,
   add: t.string,
   update: t.union([t.string, t.null, t.undefined]),
+});
+
+export const processCardsArticle = t.interface({
+  id: t.string,
+  quantity: t.number,
 });
 
 export const pc = t.interface({
@@ -57,4 +62,5 @@ export const pc = t.interface({
   description: t.string,
   add: t.string,
   update: t.union([t.string, t.null, t.undefined]),
+  articles: t.union([t.array(processCardsArticle), t.undefined]),
 });

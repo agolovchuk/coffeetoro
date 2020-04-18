@@ -1,3 +1,14 @@
+:root {
+  --green-color: #7BCBB0;
+  --blue-color: #3796f6;
+  --border-color: #C4C4C4;
+  --light-border-color: #DCE0E3;
+  --red-color: #E62752;
+  --darck-gray-color: #95A8BC;
+  --medium-gray-color: #cccccc;
+  --light-gray-color: #EAEAEA;
+  --orange-color: #EE8035;
+}
 /** Column */
 .column_wrapper {
   display: flex;
@@ -13,13 +24,18 @@
   border-radius: 4px;
   cursor: pointer;
 }
-.btn__posetive {
-  border: 1px solid #7BCBB0;
-  background-color: #7BCBB0;
+.btn__positive {
+  border: 1px solid var(--green-color);
+  background-color: var(--green-color);
   color: #fff;
 }
 .btn__alt {
-  background-color: #3796f6;
-  border: 1px solid #3796f6;
+  background-color: var(--blue-color);
+  border: 1px solid var(--blue-color);
   color: #fff;
+}
+.scroll-section {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;;
 }

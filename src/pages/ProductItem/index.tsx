@@ -69,7 +69,7 @@ function ProductItem({ addItem, getPrices, orderByProduct, getCategory, ...props
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [orderId, props.updateQuantity, props.removeItem]
   );
-  
+
   React.useEffect(() => {
     getPrices(categoryId);
     getCategory(categoryId);
@@ -84,7 +84,6 @@ function ProductItem({ addItem, getPrices, orderByProduct, getCategory, ...props
             key={order.price.id}
             onChange={() => null}
             title={order.price.title}
-            // name={order.category.name}
             valuation={props.product.valuation}
             orderApi={api(order)}
             quantity={order.quantity}

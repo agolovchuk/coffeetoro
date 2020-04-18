@@ -7,6 +7,7 @@ import {
   getProductForSale,
   sortByIndex,
   extendsPriceList,
+  pcFill,
 } from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
@@ -56,4 +57,9 @@ export const priceByNameSelector = createSelector(prices, p => p);
 export const productItemSelector = createSelector(
   [currentCategorySelector, extendetPricesSelector, units],
   getProductForSale
+)
+
+export const processCardSelector = createSelector(
+  [processCards, tmc, params],
+  (pc, t, p) => p.pcId ? pcFill(get(pc, p.pcId), t) : undefined
 )

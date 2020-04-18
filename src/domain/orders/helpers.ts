@@ -1,10 +1,10 @@
 import get from 'lodash/get';
 import { OrderItem, OrderItemContainer } from './Types';
-import { PriceItem, PriceExtendet, TMCItem, ProcessCardItem } from '../dictionary/Types';
+import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from '../dictionary/Types';
 
 function priceAdapter(
   order: OrderItem,
-  priceByID: Record<string, PriceExtendet>,
+  priceByID: Record<string, PriceExtended>,
 ) {
   const price = get(priceByID, order.priceId);
   if (typeof price === 'undefined') throw new TypeError('No price found:' + order.priceId);
@@ -16,7 +16,7 @@ function priceAdapter(
 
 export function getOrderItem(
   orders: ReadonlyArray<OrderItem>,
-  prices: Record<string, PriceExtendet>,
+  prices: Record<string, PriceExtended>,
 ): ReadonlyArray<OrderItemContainer> {
   return orders
     .map(o => (priceAdapter(o, prices)))

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cx from 'classnames';
 import styles from './field.module.css';
 import Field from './field';
 
@@ -15,14 +16,22 @@ interface Props<T extends HTMLElement = HTMLElement> {
   multiple?: boolean;
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
   readOnly?: boolean;
+  labelClassName?: string;
+  containerClassName?: string;
+  inputClassName?: string;
 }
 
-function InputField({ id, title, ...rest }: Props) {
+function InputField({ id, title, labelClassName, containerClassName, inputClassName, ...rest }: Props) {
   return (
-    <Field id={id} title={title}>
-      <input id={id} {...rest} className={styles.field} />
+    <Field
+      id={id}
+      title={title}
+      labelClassName={labelClassName}
+      containerClassName={containerClassName}
+    >
+      <input id={id} {...rest} className={cx(styles.field, inputClassName)} />
     </Field>
-  )
+  );
 }
 
 export default InputField;
