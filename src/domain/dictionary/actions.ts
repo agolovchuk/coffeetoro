@@ -19,6 +19,8 @@ export const GET_CATEGORY = 'DICTIONARY/GET_CATEGORY';
 export const CREATE_CATEGORY = 'DICTIONARY/CREATE_CATEGORY';
 export const UPDATE_CATEGORY = 'DICTIONARY/UPDATE_CATEGORY';
 
+export const GET_PROCESS_CARD = 'DICTIONARY/GET_PROCESS_CARD';
+
 export interface GetCategoriesSuccess {
   type: typeof GET_CATEGORIES_SUCCESS;
   payload: Record<string, CountedCategoryItem>;
@@ -111,7 +113,6 @@ export function getPricesByCategoryAction(categoryId: string): ThunkAction<GetPr
     }
   }
 }
-
 
 export interface CreatePrice {
   type: typeof CREATE_PRICE;
@@ -215,6 +216,34 @@ export function getCategoryAction(id: string): ThunkAction<GetCategory> {
   }
 }
 
+export interface GetProcessCard {
+  type: typeof GET_PROCESS_CARD;
+  payload: {
+    processCard: ProcessCardItem,
+    articles: Record<string, TMCItem>
+  }
+}
+
+export function getProcessCardAction(pcId: string): ThunkAction<GetProcessCard> {
+  return async(dispatch) => {
+    try {
+      const idb = new CDB();
+      const { processCard, articles } = await idb.getProcessCard(pcId);
+      if (processCard) {
+        dispatch({
+          type: GET_PROCESS_CARD,
+          payload: {
+            processCard,
+            articles: adapters.articlesToDictionary(articles),
+          }
+        });
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
 export type Action = ReturnType<typeof CRUD.createItemAction>
   | ReturnType<typeof CRUD.getAllAction>
   | ReturnType<typeof CRUD.getAllActionSuccess>
@@ -227,4 +256,5 @@ export type Action = ReturnType<typeof CRUD.createItemAction>
   | GetCategory
   | CreateCategory
   | UpdateCategory
+  | GetProcessCard
   ;

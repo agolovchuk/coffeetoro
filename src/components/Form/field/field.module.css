@@ -27,4 +27,10 @@
 }
 .field:read-only {
   outline: none;
+  background-color: #EAEAEA;
+  border-color: #EAEAEA;
+}
+.field.select {
+  background-color: #fff;
+  border: 1px solid #C4C4C4;
 }

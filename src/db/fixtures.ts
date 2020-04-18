@@ -86,41 +86,6 @@ export const units: ReadonlyArray<UnitItem> = [
     type: 'weight',
     sortIndex: 2,
   },
-  {
-    id: '3',
-    name: '110',
-    title: '110 ml',
-    type: 'countable',
-    sortIndex: 3,
-  },
-  {
-    id: '4',
-    name: '180',
-    title: '180 ml',
-    type: 'countable',
-    sortIndex: 4,
-  },
-  {
-    id: '5',
-    name: '250',
-    title: '250 ml',
-    type: 'countable',
-    sortIndex: 5,
-  },
-  {
-    id: '6',
-    name: '350',
-    title: '350 ml',
-    type: 'countable',
-    sortIndex: 6,
-  },
-  {
-    id: '7',
-    name: '450',
-    title: '450 ml',
-    type: 'countable',
-    sortIndex: 7,
-  }
 ];
 
 export const env: ReadonlyArray<IEnv> = [

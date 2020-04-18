@@ -36,7 +36,7 @@ function queryAction(name: DKeys, query?: Query | null, index?: string): QueyAct
   return {
     payload: { name, query, index },
   }
-};
+}
 
 function prepareAction<T>(name: DKeys, data: T): Action<T> {
   return {
@@ -72,24 +72,24 @@ export function creat<T extends Record<K, any>, K extends keyof T>(name: DKeys, 
       [action.payload.data[field]]: action.payload.data
     }),
   );
-};
+}
 
 export function getAll<T extends Record<string, T>>(name: DKeys): Reducer<T> {
   return actionWraper(
-    name, 
+    name,
     (_, action) => action.payload.data,
   )
-};
+}
 
 export function mergeAll<T extends Record<string, T>>(name: DKeys): Reducer<T> {
   return actionWraper(
-    name, 
+    name,
     (state, action) => ({
       ...state,
       ...action.payload.data,
     })
   )
-};
+}
 
 export const createItemAction = createAction<PrepareAction, typeof CREATE_ITEM>(CREATE_ITEM, prepareAction);
 export const getAllAction = createAction<QueryAction, typeof GET_ALL>(GET_ALL, queryAction);

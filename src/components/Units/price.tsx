@@ -10,25 +10,22 @@ interface PriceProps {
 }
 
 export default function Price({ value, sign, currencyDisplay, notation }: PriceProps) {
+
+  const data = React.useContext(UnitsContext);
+
   return (
-    <UnitsContext.Consumer>
+    <FormattedNumber
+      value={data.getPrice(value)}
+      compactDisplay="short"
+      currencyDisplay={currencyDisplay}
+      currencySign="standard"
+      notation={notation}
+      style={sign ? 'currency' : 'unit'} // eslint-disable-line react/style-prop-object
+      currency={data.currency}
+    >
       {
-        data => (
-        <FormattedNumber
-          value={data.getPrice(value)}
-          compactDisplay="short"
-          currencyDisplay={currencyDisplay}
-          currencySign="standard"
-          notation={notation}
-          style={sign ? 'currency' : 'unit'} // eslint-disable-line react/style-prop-object
-          currency={data.currency}
-        >
-          {
-            (c: string) => c
-          }
-        </FormattedNumber>
-        )
+        (c: string) => c
       }
-    </UnitsContext.Consumer>
-  )
+    </FormattedNumber>
+  );
 }

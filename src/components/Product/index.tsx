@@ -3,13 +3,13 @@ import cx from 'classnames';
 import Valuation from './Valuation';
 import styles from './product.module.css';
 import { ProductApi } from './Types';
-import Quantity from './Quantity';  
+import Quantity from './Quantity';
 import Confirmation from './Confirmation';
 
 interface IPrice {
   id: string;
   valuation: number;
-  description: string;
+  description?: string;
 }
 
 interface IValuation {

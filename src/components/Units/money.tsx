@@ -1,6 +1,6 @@
 import * as React from 'react'
 import UnitsContext from './helpers';
-import Input from './input';
+import Input from 'components/Form/Quantity';
 
 interface Props {
   className?: string;
@@ -10,16 +10,9 @@ interface Props {
   max?: number;
 }
 
-
-export default function MoneyInput({ max = Number.MAX_SAFE_INTEGER, ...props}: Props) {
-
+export default function MoneyInput({ max = Number.MAX_SAFE_INTEGER, ...props }: Props) {
+  const data = React.useContext(UnitsContext);
   return (
-    <UnitsContext.Consumer>
-      {
-        (data) => (
-          <Input {...props} multiplier={data.multiplier} />
-        )
-      }
-    </UnitsContext.Consumer>
+    <Input {...props} multiplier={data.multiplier} />
   )
 }

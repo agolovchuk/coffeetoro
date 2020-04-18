@@ -68,8 +68,8 @@ function ManagmentUsers({ createUser, getUsers, users, updateUser }: Props) {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <section>
+    <div className="scroll-section">
+      <section className={styles.container}>
         <Header title="Users" onCreate={handleOpen} />
         <ItemList list={users} getKey={c => c.id}>
           {

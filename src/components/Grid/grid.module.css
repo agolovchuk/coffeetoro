@@ -5,6 +5,8 @@
   grid-template-rows: repeat(auto-fill, 180px);
   grid-gap: 15px;
   overflow-y: auto;
+  height: 100%;
+  position: relative;
 }
 .container > * {
   align-self: center;

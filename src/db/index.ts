@@ -14,6 +14,7 @@ import {
   Order,
   OrderItem,
 } from 'domain/orders/Types';
+import get from "lodash/get";
 
 export * from '../lib/idbx';
 
@@ -57,7 +58,7 @@ export default class CDB extends IDB {
       promisifyReques<PriceTMC | undefined>(osPrice.get(barcode)),
       promisifyReques<TMCItem | undefined>(osTMC.get(barcode)),
     ]);
-    return { price, article };  
+    return { price, article };
   }
 
   getArticleByBarcode = async (barcode: string): Promise<TMCItem & { unit: UnitItem } | null> => {
@@ -74,6 +75,30 @@ export default class CDB extends IDB {
       }
     }
     return null;
+  }
+
+  searchArticle = async (validator: (item: TMCItem) => boolean): Promise<ReadonlyArray<TMCItem>> => {
+    const idb = await this.open();
+    const transaction = idb.transaction([TABLE.tmc.name], READ_ONLY);
+    transaction.oncomplete = () => { idb.close(); };
+    return  new Promise((resolve, reject) => {
+      const request = transaction.objectStore(TABLE.tmc.name).openCursor();
+      let result: ReadonlyArray<TMCItem> = [];
+      request.onsuccess = (event) => {
+        const cursor = get(event, ['target', 'result']);
+        if (cursor) {
+          if(validator(cursor.value)) {
+            result = [...result, cursor.value];
+          }
+          cursor.continue();
+        }
+        else {
+          this.close();
+          resolve(result);
+        }
+      };
+      request.onerror = () => { this.close(); reject(); };
+    })
   }
 
   getPricesByCategory = async(categoryId: string) => {
@@ -128,6 +153,31 @@ export default class CDB extends IDB {
       articles,
       processCards,
     }
-  }  
+  }
+
+  getProcessCard = async (id: string) => {
+    const idb = await this.open();
+    const transaction = idb.transaction([
+      TABLE.processCards.name,
+      TABLE.tmc.name,
+    ], READ_ONLY);
+    transaction.oncomplete = () => { idb.close(); };
+    const osPC = transaction.objectStore(TABLE.processCards.name);
+    const osTMC = transaction.objectStore(TABLE.tmc.name);
+    const processCard = await promisifyReques<ProcessCardItem | undefined>(osPC.get(id));
+    if (processCard && processCard.articles && processCard.articles.length) {
+      const articles: TMCItem[] = await Promise.all(
+        processCard.articles.map(e => promisifyReques<TMCItem>(osTMC.get(e.id)))
+      );
+      return  {
+        processCard,
+        articles,
+      }
+    }
+    return  {
+      processCard,
+      articles: [] as TMCItem[],
+    }
+  }
 
 }

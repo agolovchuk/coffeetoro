@@ -1,5 +1,7 @@
 import pick from 'lodash/fp/pick';
+import get from "lodash/get";
 import compact from 'lodash/fp/compact';
+import { TMCItem, UnitItem } from "domain/dictionary";
 
 interface SortableDict {
   sortIndex: number;
@@ -18,7 +20,11 @@ interface TitleContainer {
   description?: string;
 }
 
-export function getTitle(price: TitleContainer): string {
+export function getTitle<T extends TitleContainer>(price: T): string {
   const { title, description } = pick(['title', 'description'])(price)
   return compact([title, description]).join(' / ');
+}
+
+export function getUnitsTitle(units: Record<string, UnitItem>, article: TMCItem) {
+  return get(units, [get(article, 'unitId'), 'title']);
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import cx from 'classnames';
 import Field from './field';
 import styles from './field.module.css';
-import { ISelectList } from './Types';
+import { ISelectList } from '../Types';
 
 interface Props {
   id: string;

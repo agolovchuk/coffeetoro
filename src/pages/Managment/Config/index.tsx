@@ -41,9 +41,9 @@ function ConfigManagment({ firebaseConfig, updateConfig }: Props) {
   const handleSubmit = React.useCallback((v: FirebaseConfig | null) => { updateConfig(v); }, [updateConfig]);
 
   return (
-    <section>
+    <section className="scroll-section">
       <FM
-        id="managment.systemConfig"
+        id="management.systemConfig"
         defaultMessage="System Configuration"
       >
       {
@@ -55,7 +55,7 @@ function ConfigManagment({ firebaseConfig, updateConfig }: Props) {
           <h2 className={styles.subtitle}>Firebase Sync</h2>
           <CheckBoxField
             id="firebase"
-            title="Enabe:"
+            title="Enable:"
             onChange={resetConfig}
             checked={fbConfig !== null}
           />
@@ -83,7 +83,7 @@ function ConfigManagment({ firebaseConfig, updateConfig }: Props) {
                   <div className={styles.btnGroup}>
                     <button
                       type="submit"
-                      className={cx('btn', 'btn__posetive', styles.btn)}
+                      className={cx('btn', 'btn__positive', styles.btn)}
                     >Save</button>
                   </div>
                 </form>
@@ -93,7 +93,7 @@ function ConfigManagment({ firebaseConfig, updateConfig }: Props) {
               <div className={styles.btnGroup}>
                 <button
                   type="submit"
-                  className={cx('btn', 'btn__posetive', styles.btn)}
+                  className={cx('btn', 'btn__positive', styles.btn)}
                   onClick={() => handleSubmit(null)}
                 >Save</button>
               </div>

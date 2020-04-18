@@ -16,3 +16,29 @@
   flex: 0 0 40px;
   min-width: 40px;
 }
+
+.button_remove {
+  height: 40px;
+  width: 40px;
+  background-color: var(--light-gray-color);
+  border: 1px solid var(--light-border-color);
+  background-size: 24px 24px;
+  border-radius: 10px;
+  flex: 0 0 40px;
+  min-width: 40px;
+  position: relative;
+}
+.button_remove::after {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  -webkit-mask: url("./components/images/remove-24dp.svg") no-repeat center center;
+  background-color: black;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}

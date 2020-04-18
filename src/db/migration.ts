@@ -70,13 +70,13 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
     osCategory.createIndex(
       C.TABLE.category.index.name,
       C.TABLE.category.index.name, {
-        unique: true,   
+        unique: true,
       }
     );
     osCategory.createIndex(
       C.TABLE.category.index.parentId,
       C.TABLE.category.index.parentId, {
-        unique: false, 
+        unique: false,
       }
     );
 
@@ -199,7 +199,6 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
 // ======================================================
   }
   return [
-    // { table: C.TABLE.category.name, data: Fixtures.categories },
     { table: C.TABLE.unit.name, data: Fixtures.units },
     { table: C.TABLE.env.name, data: Fixtures.env },
     { table: C.TABLE.users.name, data: Fixtures.users },

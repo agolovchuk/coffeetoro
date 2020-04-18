@@ -42,7 +42,11 @@ export function eqCategory(fbCategory: FBCategory, dbc: CategoryItem) {
 }
 
 function eqTMC(fbArticle: TMCItem, dba: TMCItem) {
-  return eq({ update: undefined, ...fbArticle }, dba);
+  return eq({
+    update: undefined,
+    description: undefined,
+    ...fbArticle
+  }, dba);
 }
 
 function eqPC(fbPC: ProcessCardItem, dbpc: ProcessCardItem) {

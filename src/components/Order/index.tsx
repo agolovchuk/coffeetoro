@@ -25,7 +25,7 @@ function makeUrl(orderId: string) {
 
 function Order({ list, onComplete, orderId, onFastAdd }: Props) {
   const amount = getSumm(list);
-  const [isPiced, picMethod] = React.useState(false);
+  const [isPicked, picMethod] = React.useState(false);
   const getUrl = React.useMemo(() => makeUrl(orderId), [orderId]);
   return (
     <section className={styles.container}>
@@ -54,7 +54,7 @@ function Order({ list, onComplete, orderId, onFastAdd }: Props) {
         >Оплатить</button>
       </div>
       {
-        isPiced ? (
+        isPicked ? (
           <Payment
             onCancel={() => picMethod(false)}
             valuation={amount}

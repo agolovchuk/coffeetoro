@@ -39,14 +39,16 @@ export const reducer = {
     [A.CRUD.createItemAction.type]: A.CRUD.creat<TMCItem, 'id'>('tmc', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('tmc'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<TMCItem, 'id'>('tmc', 'id'),
-    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.articles })
+    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.articles }),
+    [A.GET_PROCESS_CARD]: (state, action: A.GetProcessCard) => ({...state, ...action.payload.articles }),
   }),
-  
+
   processCards: createReducer({} as ProcessCards, {
+    [A.GET_PROCESS_CARD]: (state, action: A.GetProcessCard) => ({ ...state, [action.payload.processCard.id]: action.payload.processCard }),
     [A.CRUD.createItemAction.type]: A.CRUD.creat<ProcessCardItem, 'id'>('processCards', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('processCards'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<ProcessCardItem, 'id'>('processCards', 'id'),
-    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.processCards })
+    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.processCards }),
   }),
 
 };

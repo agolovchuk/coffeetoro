@@ -5,6 +5,7 @@ export type CategoryItem = TypeOf<typeof contracts.category>;
 export type UnitItem = TypeOf<typeof contracts.unit>;
 export type TMCItem = TypeOf<typeof contracts.tmc>;
 export type ProcessCardItem = TypeOf<typeof contracts.pc>;
+export type ProcessCardArticle = TypeOf<typeof contracts.processCardsArticle>;
 
 export interface CountedCategoryItem extends CategoryItem {
   count: number;
@@ -20,9 +21,9 @@ export type PriceItem = TypeOf<typeof contracts.price>;
 
 export type PriceBase = Omit<PriceItem, 'type' | 'barcode' | 'refId'>;
 
-export interface PriceExtendetBase extends PriceBase {
+export interface PriceExtendedBase extends PriceBase {
   title: string;
-  description: string;
+  description?: string;
   unitId: string;
 }
 
@@ -36,11 +37,11 @@ export interface PricePC extends PriceBase {
   refId: string;
 }
 
-export type PriceExtendet = PriceExtendetBase & PriceTMC | PriceExtendetBase & PricePC;
+export type PriceExtended = PriceExtendedBase & PriceTMC | PriceExtendedBase & PricePC;
 
 export interface SaleParams {
-  readonly price: PriceExtendet;
-  readonly volume: string; 
+  readonly price: PriceExtended;
+  readonly volume: string;
 }
 
 export interface ProductForSale {

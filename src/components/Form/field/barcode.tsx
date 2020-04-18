@@ -18,9 +18,11 @@ interface Props<T extends HTMLElement = HTMLElement> {
   onComplete?: (term: string) => void;
   labelClassName?: string;
   inputClassName?: string;
+  containerClassName?: string;
+  children?: React.ReactNode;
 }
 
-const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName, onComplete, ...rest }: Props, ref: any) => {
+const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName, onComplete, containerClassName, children, ...rest }: Props, ref: any) => {
 
   const handleKey = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>): void => {
@@ -33,7 +35,12 @@ const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName
   );
 
   return (
-    <Field id={id} title={title} labelClassName={labelClassName}>
+    <Field
+      id={id}
+      title={title}
+      labelClassName={labelClassName}
+      containerClassName={containerClassName}
+    >
       <input
         id={id}
         ref={ref}
@@ -42,6 +49,9 @@ const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName
         inputMode="none"
         onKeyDown={handleKey}
       />
+      {
+        children
+      }
     </Field>
   );
 })

@@ -41,7 +41,7 @@ function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd
 
   React.useEffect(() => { getOrder(orderId); }, [getOrder, orderId]);
 
-  const handlFastAdd = (barcode: string, cb: (r: boolean) => void) => {
+  const handleFastAdd = (barcode: string, cb: (r: boolean) => void) => {
     if (barcode.length > 0) {
       fastAdd(match.params.orderId, barcode).then(cb);
     }
@@ -52,7 +52,7 @@ function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd
       list={orders}
       onComplete={(method) => onComplete(match.params.orderId, method)}
       orderId={match.params.orderId}
-      onFastAdd={handlFastAdd}
+      onFastAdd={handleFastAdd}
     />
   )
 }
