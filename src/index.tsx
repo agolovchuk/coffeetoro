@@ -12,10 +12,10 @@ import { getMessages, Messages } from 'l10n';
 
 import './index.css';
 import App from './pages';
-// import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from './serviceWorker';
 import 'lib/loger';
 
-async function coffeetoro() {
+async function coffeeToro() {
   const history = createHistory();
   const store = await configureStore(history);
   const lang = get(store.getState(), ['env', 'user', 'lang'], 'en');
@@ -41,10 +41,11 @@ async function coffeetoro() {
       </Provider>,
       document.getElementById('root')
     );
+    serviceWorker.register();
   }
 }
 
-coffeetoro();
+coffeeToro();
 
 
 // If you want your app to work offline and load faster, you can change

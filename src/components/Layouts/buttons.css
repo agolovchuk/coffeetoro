@@ -42,7 +42,7 @@
   min-width: 40px;
   position: relative;
 }
-.btm__remove::after {
+.btn__remove::after {
   content: '';
   width: 24px;
   height: 24px;

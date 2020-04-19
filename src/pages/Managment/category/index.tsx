@@ -4,8 +4,8 @@ import { Route, match } from 'react-router-dom';
 import { Field } from 'react-final-form';
 import groupBy from 'lodash/groupBy'
 import get from 'lodash/get'
-import createDecorator from "final-form-calculate";
-import { Decorator } from 'final-form';
+// import createDecorator from "final-form-calculate";
+// import { Decorator } from 'final-form';
 import {
   CRUD,
   categoriesListSelector,
@@ -25,7 +25,7 @@ import Tree from '../components/tree';
 import { getMax } from '../helper';
 import { EitherEdit } from '../Types';
 import styles from './category.module.css';
-import { translite } from "lib/commonHelpers";
+// import { translite } from "lib/commonHelpers";
 import { getPrentsList, getParents } from './helpers';
 
 const mapState = (state: AppState) => ({
@@ -61,12 +61,12 @@ interface Props extends PropsFromRedux {
   match: match<{category?: string}>;
 }
 
-const guessSlag = createDecorator({
-  field: 'title',
-  updates: {
-    name: (v: string) => translite(v || ''),
-  }
-}) as Decorator<CountedCategoryItem>;
+// const guessSlag = createDecorator({
+//   field: 'title',
+//   updates: {
+//     name: (v: string) => translite(v || ''),
+//   }
+// }) as Decorator<CountedCategoryItem>;
 
 function ProductManager({ categories, getCategories, update, create, categoryByName, ...props }: Props) {
   const { params } = props.match;

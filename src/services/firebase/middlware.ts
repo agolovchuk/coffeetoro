@@ -15,14 +15,14 @@ export default function fbMiddlware({ getState }: MiddlewareAPI<Dispatch, AppSta
     const app = firebase.initializeApp(config);
     const database: firebase.database.Database = app.database();
 
-    database.ref().child('price').on('child_added', handler.addPriceHandler);
-    database.ref().child('price').on('child_changed', handler.changePriceHandler);
-    database.ref().child('category').on('child_added', handler.addCategoryHandler);
-    database.ref().child('category').on('child_changed', handler.changeCategoryHandler);
-    database.ref().child('tmc').on('child_added', handler.addTMCHandler);
-    database.ref().child('tmc').on('child_changed', handler.changeTMCHandler);
-    database.ref().child('processCards').on('child_added', handler.addPCHandler);
-    database.ref().child('processCards').on('child_changed', handler.changePCHandler);
+    database.ref().child('price').on('child_added', handler.priceHandler);
+    database.ref().child('price').on('child_changed', handler.priceHandler);
+    database.ref().child('category').on('child_added', handler.categoryHandler);
+    database.ref().child('category').on('child_changed', handler.categoryHandler);
+    database.ref().child('tmc').on('child_added', handler.tmcHandler);
+    database.ref().child('tmc').on('child_changed', handler.tmcHandler);
+    database.ref().child('processCards').on('child_added', handler.pcHandler);
+    database.ref().child('processCards').on('child_changed', handler.pcHandler);
 
     return (next: Dispatch<Action>) => (action: Action) => {
       switch (action.type) {

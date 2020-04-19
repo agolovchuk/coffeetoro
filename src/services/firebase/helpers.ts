@@ -49,8 +49,12 @@ function eqTMC(fbArticle: TMCItem, dba: TMCItem) {
   }, dba);
 }
 
-function eqPC(fbPC: ProcessCardItem, dbpc: ProcessCardItem) {
-  return eq({ update: undefined, ...fbPC }, dbpc);
+function eqPC(fbPC: ProcessCardItem, dbPC: ProcessCardItem) {
+  return eq({
+    update: undefined,
+    articles: [],
+    ...fbPC,
+  }, dbPC);
 }
 
 function dbWrapper<T, F>(table: string, adapter: Adapter<T>): DBWrapper<T, F> {
@@ -65,15 +69,20 @@ function dbWrapper<T, F>(table: string, adapter: Adapter<T>): DBWrapper<T, F> {
 function handlerFactory<I, F>(
   dbw: DBWrapper<I, F>,
   equal: (f: F, i: I) => boolean,
-  action: (f: F) => void,
+  action: {
+   add(this: DBWrapper<I, F>, f: F): void,
+   update(this: DBWrapper<I, F>, f: F): void,
+  }
 ) {
   return async(s: firebase.database.DataSnapshot) => {
     try {
       if (typeof s.key === 'string') {
         const data = s.val();
         const p = await dbw.get(s.key);
-        if (p === null || !equal(data, p)) {
-          action(data);
+        if (p === null) {
+          action.add.call(dbw, data);
+        } else if (!equal(data, p)) {
+          action.update.call(dbw, data);
         }
       }
     } catch (err) {
@@ -92,56 +101,38 @@ function priceFBtoiDB({ expiry, add, ...data}: FBPriceItem): PriceItem {
   }
 }
 
-export const addPriceHandler = handlerFactory(
+export const priceHandler = handlerFactory(
   priceDB,
   eqPrice,
-  async (data) => { await priceDB.set(priceFBtoiDB(data)); }
+  {
+    async add(data) { await priceDB.set(priceFBtoiDB(data)); },
+    async update(data) { await priceDB.put(priceFBtoiDB(data)); },
+  }
 );
 
-export const changePriceHandler = handlerFactory(
-  priceDB,
-  eqPrice,
-  async (data) => { await priceDB.put(priceFBtoiDB(data)); }
-);
-
-const categoryDB = dbWrapper(C.TABLE.category.name, adapters.categoryAdapter);
-
-export const addCategoryHandler = handlerFactory(
-  categoryDB,
+export const categoryHandler = handlerFactory(
+  dbWrapper(C.TABLE.category.name, adapters.categoryAdapter),
   eqCategory,
-  async (data) => { await categoryDB.set(data); }
+  {
+    async add(data) { await this.set(data); },
+    async update(data) { await this.put(data); },
+  }
 );
 
-export const changeCategoryHandler = handlerFactory(
-  categoryDB,
-  eqCategory,
-  async (data) => { await categoryDB.put(data); }
-);
-
-const tmcDB = dbWrapper(C.TABLE.tmc.name, adapters.tmcAdapter);
-
-export const addTMCHandler = handlerFactory(
-  tmcDB,
+export const tmcHandler = handlerFactory(
+  dbWrapper(C.TABLE.tmc.name, adapters.tmcAdapter),
   eqTMC,
-  async (data) => { await tmcDB.set(data); }
+  {
+    async add(data) { await this.set(data); },
+    async update(data) { await this.put(data); },
+  }
 );
 
-export const changeTMCHandler = handlerFactory(
-  tmcDB,
-  eqTMC,
-  async (data) => { await tmcDB.put(data); }
-);
-
-const processCardsDB = dbWrapper(C.TABLE.processCards.name, adapters.processCardsAdapter);
-
-export const addPCHandler = handlerFactory(
-  processCardsDB,
+export const pcHandler = handlerFactory(
+  dbWrapper(C.TABLE.processCards.name, adapters.processCardsAdapter),
   eqPC,
-  async (data) => { await processCardsDB.set(data); }
-);
-
-export const changePCHandler = handlerFactory(
-  processCardsDB,
-  eqPC,
-  async (data) => { await processCardsDB.put(data); }
+  {
+    async add(data) { await this.set(data); },
+    async update(data) { await this.put(data); },
+  }
 );

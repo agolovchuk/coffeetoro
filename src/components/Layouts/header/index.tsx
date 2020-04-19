@@ -20,9 +20,9 @@ function Header({ onBack, location, user }: Props) {
   const handleEvent = React.useCallback(() => { setFS(document.fullscreen); }, []);
 
   const handleFullScreen =  React.useCallback(() => {
-    if (document.fullscreen) {
+    if (document.fullscreen === true) {
       document.exitFullscreen();
-    } else {
+    } else if (document.documentElement.requestFullscreen){
       document.documentElement.requestFullscreen();
     }
   }, []);

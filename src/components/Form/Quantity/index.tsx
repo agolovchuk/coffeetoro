@@ -14,6 +14,10 @@ function changeDot(v: string) {
   return v.replace(',', '.');
 }
 
+function isBackSpace(keyCode: number) {
+  return (keyCode === 8 || keyCode === 229);
+}
+
 function Input({ multiplier = 1, value, onChange, className, ...props }: Props) {
 
   const regexp = React.useMemo(() => {
@@ -40,11 +44,11 @@ function Input({ multiplier = 1, value, onChange, className, ...props }: Props) 
       const { keyCode } = e;
       const { selectionStart, selectionEnd } = e.currentTarget;
       const { length } = displayValue;
-      if (selectionStart === 0 && selectionEnd === length && keyCode === 8) {
+      if (selectionStart === 0 && selectionEnd === length && isBackSpace(keyCode)) {
         setDisplayValue('');
         onChange(0);
       }
-      if (selectionStart === 1 && selectionStart === selectionEnd && keyCode === 8) {
+      if (selectionStart === 1 && selectionStart === selectionEnd && isBackSpace(keyCode)) {
         setDisplayValue('');
         onChange(0);
       }
