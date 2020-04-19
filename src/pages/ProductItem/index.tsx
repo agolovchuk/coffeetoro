@@ -14,6 +14,7 @@ import {
   OrderItemContainer,
   orderByProductSelector,
 } from 'domain/orders';
+import Articles from './list';
 import { AppState } from 'domain/StoreType';
 import styles from './product.module.css';
 
@@ -90,9 +91,9 @@ function ProductItem({ addItem, getPrices, orderByProduct, getCategory, ...props
           />
         ))
       }
-      <Product
+      <Articles
         onChange={addHandler}
-        {...props.product}
+        valuation={props.product.valuation}
       />
     </section>
   );

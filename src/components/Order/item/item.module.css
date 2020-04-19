@@ -6,14 +6,14 @@
   text-decoration: none;
   color: #516174;
   font-size: 14px;
-  background: #F1F4F7;
-  border: 1px solid #DCE0E3;
+  background: var(--tile-background);
+  border: 1px solid var(--tile-border);
   border-radius: 2px;
   padding: 10px;
 }
 .active {
   color: #fff;
-  background: #95A8BC;
+  background: var(--darck-gray-color);
 }
 .wrapper {
   display: flex;
@@ -32,7 +32,7 @@
   overflow: hidden;
   text-align: right;
 }
-.summary { 
+.summary {
   display: flex;
   justify-content: space-between;
   font-size: 20px;

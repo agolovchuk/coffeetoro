@@ -107,7 +107,7 @@ function PriceManager({ prices, update, create, category, getPrices }: Props) {
               </dl>
               <button
                 type="button"
-                className="button_edit"
+                className="btn__edit"
                 onClick={() => setItem({ ...data, isEdit: true })}
               />
             </div>

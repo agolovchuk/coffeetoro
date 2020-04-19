@@ -4,8 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import AsyncRoute from 'lib/AsyncRoute'
 import { userSelector } from 'domain/env';
 import { AppState } from 'domain/StoreType';
-import ManagmentItems from './Items';
-import './mgm.css';
+import ManagementItems from './Items';
 
 function asyncCategory(): Promise<unknown> {
   return import('./category').then((res) => {
@@ -56,7 +55,7 @@ interface Props extends PropsFromRedux {}
 function ManagerRout() {
   return (
     <Switch>
-      <Route path="/manager" component={ManagmentItems} exact />
+      <Route path="/manager" component={ManagementItems} exact />
       <AsyncRoute path={["/manager/category/:category", "/manager/category"]} importRender={asyncCategory} />
       <AsyncRoute path="/manager/users" importRender={asyncUsers} />
       <AsyncRoute path="/manager/maintenance" importRender={asyncMaintenance} />

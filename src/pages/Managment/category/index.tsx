@@ -135,7 +135,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
             onCancel={() => setItem(null)}
             onSubmit={edit}
             initialValues={item}
-            decorators={[ guessSlag ]}
+            // decorators={[ guessSlag ]}
           >
             <Field name="parentId" render={({ input, meta }) => (
               <SelectField

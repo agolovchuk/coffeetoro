@@ -1,8 +1,7 @@
 .container {
   text-decoration: none;
-  display: block;
-  background: #F8FAFC;
-  border: 1px solid #DCE0E3;
+  background: var(--tile-background);
+  border: 1px solid var(--tile-border);
   border-radius: 10px;
   text-align: center;
   display: flex;

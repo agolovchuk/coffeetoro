@@ -13,7 +13,7 @@ function Header({ title, onCreate }: Props) {
       {
         typeof onCreate === 'function' ? (
           <button
-            className="button_add"
+            className="btn__add"
             type="button"
             onClick={onCreate}
           />

@@ -1,3 +1,5 @@
+@import "./buttons.css";
+
 :root {
   --green-color: #7BCBB0;
   --blue-color: #3796f6;
@@ -8,6 +10,12 @@
   --medium-gray-color: #cccccc;
   --light-gray-color: #EAEAEA;
   --orange-color: #EE8035;
+  --tile-width: 180px;
+  --tile-height: 180px;
+  /*--tile-background: #F8FAFC;*/
+  /*--tile-border: #DCE0E3;*/
+  --tile-background: #EBECED;
+  --tile-border: #DCE0E3;
 }
 /** Column */
 .column_wrapper {
@@ -16,24 +24,30 @@
 .column_item {
   flex: 1 1 100%;
 }
-/** Button */
-.btn {
-  padding: 0 30px;
-  font-size: 18px;
-  height: 40px;
-  border-radius: 4px;
-  cursor: pointer;
+/** Grid */
+.grid__container {
+  display: grid;
+  padding: 10px 0;
+  grid-template-columns: repeat(auto-fit, 180px);
+  grid-template-rows: repeat(auto-fill, 180px);
+  grid-gap: 15px;
+  overflow-y: auto;
+  height: 100%;
+  position: relative;
 }
-.btn__positive {
-  border: 1px solid var(--green-color);
-  background-color: var(--green-color);
-  color: #fff;
+.grid__item {
+  min-height: var(--tile-height);
+  min-width: var(--tile-width);
+  position: relative;
 }
-.btn__alt {
-  background-color: var(--blue-color);
-  border: 1px solid var(--blue-color);
-  color: #fff;
+/** Tile */
+.tile__container {
+  text-decoration: none;
+  background: var(--tile-background);
+  border: 1px solid var(--tile-border);
+  border-radius: 10px;
 }
+/** --- */
 .scroll-section {
   position: relative;
   height: 100%;

@@ -22,7 +22,7 @@ function MItem<T extends Data>({ data, onEdit, getLink, title }: Props<T>) {
       >{title}</NavLink>
       <button
         type="button"
-        className="button_edit"
+        className="btn__edit"
         onClick={() => onEdit(data)}
       />
     </div>

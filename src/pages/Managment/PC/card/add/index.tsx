@@ -28,7 +28,7 @@ function AddItem({ onAdd }: Props) {
   return (
     <div className={styles.container}>
       <button
-        className="button_add"
+        className="btn__add"
         type="button"
         onClick={() => setSearchDialog(true)}
       />

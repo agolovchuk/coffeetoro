@@ -94,7 +94,7 @@ function Item({ card, getPC, match, getAll, units, update }: Props) {
                             <div className={styles.unit}>{getUnitsTitle(units, input.value)}</div>
                           )}/>
                           <button
-                            className={cx("button_remove", styles.remove)}
+                            className={cx("btm__remove", styles.remove)}
                             onClick={() => fields.remove(index)}
                           />
                         </li>
