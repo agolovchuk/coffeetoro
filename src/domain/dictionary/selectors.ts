@@ -1,13 +1,14 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
 import { arrayToRecord } from 'lib/dataHelper';
-import { DictionaryState, CategoryItem } from './Types';
+import {DictionaryState, CategoryItem } from './Types';
 import { params } from 'domain/routes';
 import {
   getProductForSale,
   sortByIndex,
   extendsPriceList,
   pcFill,
+  toArray,
 } from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
@@ -15,12 +16,14 @@ const prices = (state: DictionaryState) => state.prices;
 export const units = (state: DictionaryState) => state.units;
 const tmc = (state: DictionaryState) => state.tmc;
 const processCards = (state: DictionaryState) => state.processCards;
+const groupArticles = (state: DictionaryState) => state.groupArticles;
 
 export const categoriesListSelector = createSelector(categories, c => Object.values(c).sort(sortByIndex));
 export const pricesListSelector = createSelector(prices, c => Object.values(c).sort(sortByIndex));
 export const unitsListSelector = createSelector(units, c => Object.values(c).sort(sortByIndex));
-export const tmcListSelector = createSelector(tmc, c => Object.values(c));
-export const processCardsListSelector = createSelector(processCards, c => Object.values(c));
+export const tmcListSelector = createSelector(tmc, toArray);
+export const processCardsListSelector = createSelector(processCards, toArray);
+export const groupArticlesSelector = createSelector(groupArticles, toArray);
 
 export const unitsByIdSelector = createSelector(units, u => u);
 export const unitsSelectSelector = createSelector(

@@ -20,5 +20,6 @@ export const dictionaryAdapters = {
   units: dictionaryAdapterFactory(dictionaryContracts.unit, 'id'),
   tmc: dictionaryAdapterFactory(dictionaryContracts.tmc, 'id'),
   processCards: dictionaryAdapterFactory(dictionaryContracts.pc, 'id'),
+  groupArticles: dictionaryAdapterFactory(dictionaryContracts.groupArticles, 'id'),
   categories: adapters.categories,
 };

@@ -75,3 +75,21 @@
   flex: 0 0 40px;
   min-width: 40px;
 }
+
+.btn__generate {
+  position: relative;
+}
+.btn__generate::after {
+  content: '';
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  -webkit-mask: url("./images/fingerprint-black-24dp.svg") no-repeat center center;
+  background-color: var(--blue-color);
+  position: absolute;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}

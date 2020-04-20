@@ -67,3 +67,7 @@ export  function pcFill(item: ProcessCardItem | undefined, tmc: Record<string, T
   }
   return undefined;
 }
+
+export function toArray<T>(obj: Record<string, T>): ReadonlyArray<T> {
+  return Object.values(obj);
+}

@@ -15,7 +15,7 @@ export function getLink(url: string, name: string) {
   return [url, name].join('/');
 }
 
-interface TitleContainer {
+export interface TitleContainer {
   title: string;
   description?: string;
 }

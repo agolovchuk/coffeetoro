@@ -30,23 +30,28 @@ const LIST: List[] = [
     title: 'Users',
   },
   {
-    id: '3',
-    name: 'tmc',
-    title: 'TMC'
+    id: '03',
+    name: 'articles',
+    title: 'Articles'
   },
   {
-    id: '4',
+    id: '04',
+    name: 'group',
+    title: 'Group Articles'
+  },
+  {
+    id: '05',
     name: 'pc',
     title: 'Process Card'
   },
   {
-    id: '5',
+    id: '06',
     name: 'category',
     title: 'Category...'
-  }
-]
+  },
+];
 
-function ManagmentItems({ match }: Props) {
+function ManagementItems({ match }: Props) {
   const createLink = ({ name }: List) => getLink(match.url, name);
   return (
     <Grid
@@ -57,4 +62,4 @@ function ManagmentItems({ match }: Props) {
   );
 }
 
-export default ManagmentItems;
+export default ManagementItems;

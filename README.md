@@ -5,3 +5,4 @@
 * Price key 16
 * TMC key 16
 * TC key 12
+* Group of Articles 6

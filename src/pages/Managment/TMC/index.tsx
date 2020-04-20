@@ -7,9 +7,9 @@ import {
   SelectField,
   BarcodeField
 } from 'components/Form/field';
-import { TMCItem, CRUD, tmcListSelector, unitsSelectSelector } from 'domain/dictionary';
+import {TMCItem, CRUD, tmcListSelector, unitsSelectSelector } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { ManagmentPopup, ItemList, Header, MItem } from '../components';
+import { Main } from '../components';
 import SetBarcode from './setBarcode';
 import { getTitle } from '../helper';
 import { EitherEdit } from '../Types';
@@ -42,25 +42,30 @@ const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-interface Props extends PropsFromRedux {};
+interface Props extends PropsFromRedux {}
 
 function TMCManager({ create, update, units, getAll, ...props }: Props) {
 
-  const [item, setItem] = React.useState<EitherEdit<TMCItem> | null>(null);
-
   const handleSubmit = React.useCallback(
-    ({ isEdit, ...value }: EitherEdit<TMCItem>) => {
+    async ({ isEdit, ...value }: EitherEdit<TMCItem>, cb: () => void) => {
       if (isEdit) {
-        update('tmc', value);
+        await update('tmc', value);
       } else {
-        create('tmc', value);
+        await create('tmc', value);
       }
-      setItem(null);
+      cb();
     }, [create, update],
   );
 
-  const handleCreat = () => setItem(createItem());
-  const handleEdit = (value: TMCItem) => setItem({ ...value, isEdit: true, update: new Date().toISOString() });
+  const createLink = React.useMemo(() => {
+    return (data: TMCItem) => ['/manager', 'tmc', data.id].join('/');
+  }, []);
+
+  const editAdapter = React.useCallback((value: TMCItem) => ({
+    ...value,
+    isEdit: true,
+    update: new Date().toISOString()
+  }), []);
 
   React.useEffect(() => {
     getAll('units');
@@ -68,50 +73,35 @@ function TMCManager({ create, update, units, getAll, ...props }: Props) {
   }, [getAll]);
 
   return (
-    <section className="scroll-section">
-      <Header title="TMC" onCreate={handleCreat} />
-      <ItemList list={props.tmc} getKey={e => e.id}>
-        {
-          (data) => (
-            <MItem
-              data={data}
-              title={getTitle(data)}
-              getLink={() => ''}
-              onEdit={handleEdit}
-            />
-          )
-        }
-      </ItemList>
-      {
-        item && (
-          <ManagmentPopup
-            title="Add TMC"
-            onCancel={() => setItem(null)}
-            initialValues={item}
-            onSubmit={handleSubmit}
-          >
-            <Field name="title" render={({ input, meta }) => (
-              <InputField id="title" title="Title:" {...input} />
-            )}/>
-            <Field name="description" render={({ input, meta }) => (
-              <InputField id="description" title="Description:" {...input} />
-            )}/>
-            <Field name="unitId" render={({ input, meta }) => (
-              <SelectField id="unitId" title="Unit:" list={units} {...input} />
-            )}/>
-            <Field name="barcode" render={({ input, meta }) => (
-              <BarcodeField
-                id="barcode"
-                title="Barcode:"
-                {...input}
-              >
-                <SetBarcode />
-              </BarcodeField>
-            )}/>
-          </ManagmentPopup>
-        )
-      }
-    </section>
+    <Main
+      list={props.tmc}
+      title="Articles"
+      createItem={createItem}
+      editAdapter={editAdapter}
+      handleSubmit={handleSubmit}
+      popupTitle="Add Article"
+      createLink={createLink}
+      createTitle={getTitle}
+    >
+      <Field name="title" render={({ input}) => (
+        <InputField id="title" title="Title:" {...input} />
+      )}/>
+      <Field name="description" render={({ input}) => (
+        <InputField id="description" title="Description:" {...input} />
+      )}/>
+      <Field name="unitId" render={({ input}) => (
+        <SelectField id="unitId" title="Unit:" list={units} {...input} />
+      )}/>
+      <Field name="barcode" render={({ input}) => (
+        <BarcodeField
+          id="barcode"
+          title="Barcode:"
+          {...input}
+        >
+          <SetBarcode />
+        </BarcodeField>
+      )}/>
+    </Main>
   )
 }
 

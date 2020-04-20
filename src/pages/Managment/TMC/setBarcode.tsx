@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cx from 'classnames';
 import { useForm } from 'react-final-form';
 import styles from './tmc.module.css';
 
@@ -13,7 +14,7 @@ function SetBarcode() {
   return (
     <button
       type="button"
-      className={styles.generate}
+      className={cx('btn__generate', styles.generate)}
       onClick={handlePastBarcode}
     />
   )

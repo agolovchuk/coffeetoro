@@ -6,16 +6,11 @@ export type UnitItem = TypeOf<typeof contracts.unit>;
 export type TMCItem = TypeOf<typeof contracts.tmc>;
 export type ProcessCardItem = TypeOf<typeof contracts.pc>;
 export type ProcessCardArticle = TypeOf<typeof contracts.processCardsArticle>;
+export type GroupArticles = TypeOf<typeof contracts.groupArticles>;
 
 export interface CountedCategoryItem extends CategoryItem {
   count: number;
 };
-
-export interface VolumeItem {
-  readonly id: string;
-  readonly title: string;
-  readonly name: string;
-}
 
 export type PriceItem = TypeOf<typeof contracts.price>;
 
@@ -55,6 +50,7 @@ export type Units = Record<string, UnitItem>;
 export type Prices = Record<string, PriceItem>;
 export type TMC = Record<string, TMCItem>;
 export type ProcessCards = Record<string, ProcessCardItem>;
+export type Groups = Record<string, GroupArticles>;
 
 export interface DictionaryState {
   categories: Categories;
@@ -62,4 +58,5 @@ export interface DictionaryState {
   prices: Prices;
   tmc: TMC;
   processCards: ProcessCards;
+  groupArticles: Groups;
 };

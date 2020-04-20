@@ -1,9 +1,6 @@
 import * as React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import AsyncRoute from 'lib/AsyncRoute'
-import { userSelector } from 'domain/env';
-import { AppState } from 'domain/StoreType';
 import ManagementItems from './Items';
 
 function asyncCategory(): Promise<unknown> {
@@ -42,15 +39,12 @@ function asyncPC(): Promise<unknown> {
   });
 }
 
-const mapStateToProps = (state: AppState) => ({
-  user: userSelector(state),
-})
+function asyncGroupArticles(): Promise<unknown> {
+  return import('./Group').then((res) => {
+    return res.default;
+  });
+}
 
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-const connector = connect(mapStateToProps);
-
-interface Props extends PropsFromRedux {}
 
 function ManagerRout() {
   return (
@@ -60,12 +54,11 @@ function ManagerRout() {
       <AsyncRoute path="/manager/users" importRender={asyncUsers} />
       <AsyncRoute path="/manager/maintenance" importRender={asyncMaintenance} />
       <AsyncRoute path="/manager/config" importRender={asyncConfig} />
-      <AsyncRoute path="/manager/tmc" importRender={asyncTMC} />
+      <AsyncRoute path="/manager/articles" importRender={asyncTMC} />
       <AsyncRoute path="/manager/pc" importRender={asyncPC} />
+      <AsyncRoute path="/manager/group" importRender={asyncGroupArticles} />
     </Switch>
   );
 }
 
-
-
-export default connector(ManagerRout);
+export default ManagerRout;

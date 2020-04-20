@@ -4,12 +4,8 @@ import { createUserAction, updateUserAction, getUsersAction, usersListSelector, 
 import { AppState } from 'domain/StoreType';
 import { Field } from 'react-final-form';
 import { InputField, SelectField } from 'components/Form/field';
-import ItemList from '../components/list';
-import MItem from '../components/item';
-import Header from '../components/header';
-import ManagmentPopup from '../components/popup';
+import { Main } from '../components';
 import { EitherEdit } from '../Types';
-import styles from './user.module.css';
 
 type UserType = User;
 
@@ -47,66 +43,51 @@ const connector = connect(mapStateToProps, mapDispatch);
 
 interface Props extends PropsFromRedux {}
 
-function ManagmentUsers({ createUser, getUsers, users, updateUser }: Props) {
-
-  const [user, setUser] = React.useState<null | EitherEdit<UserType>>(null);
+function ManagmentUsers({ createUser, getUsers, updateUser, ...props }: Props) {
 
   React.useEffect(() => { getUsers(); }, [getUsers]);
 
-  const onComplete = React.useCallback(() => setUser(null), [setUser])
-
-  const handleCreateUser = React.useCallback(({ isEdit, ...newUser}: EitherEdit<UserType>) => {
+  const handleCreateUser = React.useCallback(
+    async ({ isEdit, ...newUser}: EitherEdit<UserType>, cb: () => void) => {
     if (isEdit) {
-      updateUser(newUser, onComplete);
+      await updateUser(newUser, cb);
     } else {
-      createUser(newUser, onComplete);
+      await createUser(newUser, cb);
     }
-  }, [createUser, onComplete, updateUser]);
+  }, [createUser, updateUser]);
 
-  const handleOpen = React.useCallback(() => {
-    setUser(createItem());
+  const createLink = React.useMemo(() => {
+    return (data: UserType) => ['/manager', 'users', data.id].join('/');
   }, []);
 
+  const editAdapter = React.useCallback((value: UserType) => ({
+    ...value,
+    isEdit: true,
+  }), []);
+
   return (
-    <div className="scroll-section">
-      <section className={styles.container}>
-        <Header title="Users" onCreate={handleOpen} />
-        <ItemList list={users} getKey={c => c.id}>
-          {
-            data => (
-              <MItem
-                data={data}
-                title={data.name}
-                onEdit={() => setUser({ ...data, isEdit: true })}
-                getLink={({ name }) => ['/manager/users', name].join('/')}
-              />
-            )
-          }
-        </ItemList>
-      </section>
-      {
-        user && (
-          <ManagmentPopup
-            title="Create user"
-            onCancel={() => setUser(null)}
-            initialValues={user}
-            onSubmit={handleCreateUser}
-          >
-            <Field name="role" render={({ input, meta }) => (
-              <SelectField
-                list={ROLES}
-                id="role"
-                title="Role:"
-                {...input}
-              />
-            )}/>
-            <Field name="name" render={({ input, meta }) => (
-              <InputField id="name" title="Name:" {...input} />
-            )}/>
-          </ManagmentPopup>
-        )
-      }
-    </div>
+    <Main
+      title="Users"
+      list={props.users}
+      createItem={createItem}
+      handleSubmit={handleCreateUser}
+      popupTitle="Create user"
+      createLink={createLink}
+      editAdapter={editAdapter}
+      createTitle={({ name }) => name}
+    >
+      <Field name="role" render={({input}) => (
+        <SelectField
+          list={ROLES}
+          id="role"
+          title="Role:"
+          {...input}
+        />
+      )}/>
+      <Field name="name" render={({input}) => (
+        <InputField id="name" title="Name:" {...input} />
+      )}/>
+    </Main>
   );
 }
 

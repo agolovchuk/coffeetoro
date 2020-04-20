@@ -197,6 +197,25 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
 // ======================================================
+    const osGroup = this.result.createObjectStore(
+      C.TABLE.groupArticles.name, {
+        keyPath: C.TABLE.groupArticles.index.id,
+        autoIncrement: false,
+      }
+    );
+    osGroup.createIndex(
+      C.TABLE.groupArticles.index.id,
+      C.TABLE.groupArticles.index.id, {
+        unique: true,
+      }
+    );
+    osGroup.createIndex(
+      C.TABLE.groupArticles.index.title,
+      C.TABLE.groupArticles.index.title, {
+        unique: true,
+      }
+    );
+// ======================================================
   }
   return [
     { table: C.TABLE.unit.name, data: Fixtures.units },

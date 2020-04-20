@@ -1,3 +1,4 @@
+import { createReducer } from '@reduxjs/toolkit';
 import set from 'lodash/fp/set';
 import {
   Categories,
@@ -8,8 +9,9 @@ import {
   TMCItem,
   ProcessCardItem,
   ProcessCards,
+  GroupArticles,
+  Groups,
 } from './Types';
-import { createReducer } from '@reduxjs/toolkit';
 import * as A from './actions';
 
 export const reducer = {
@@ -49,6 +51,12 @@ export const reducer = {
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('processCards'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<ProcessCardItem, 'id'>('processCards', 'id'),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.processCards }),
+  }),
+
+  groupArticles: createReducer({} as Groups, {
+    [A.CRUD.createItemAction.type]: A.CRUD.creat<GroupArticles, 'id'>('groupArticles', 'id'),
+    [A.CRUD.updateItemAction.type]: A.CRUD.creat<GroupArticles, 'id'>('groupArticles', 'id'),
+    [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('groupArticles'),
   }),
 
 };

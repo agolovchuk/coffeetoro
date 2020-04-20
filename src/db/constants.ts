@@ -11,7 +11,7 @@ export const TABLE = {
       client: 'client',
       owner: 'owner',
       orderIdPayment: 'orderIdPayment',
-    }
+    },
   },
   orderItem: {
     name: 'orderItem',
@@ -19,7 +19,7 @@ export const TABLE = {
       id: 'id',
       orderId: 'orderId',
       priceId: 'priceId',
-    }
+    },
   },
   category: {
     name: 'categories',
@@ -27,7 +27,7 @@ export const TABLE = {
       id: 'id',
       name: 'name',
       parentId: 'parentId',
-    }
+    },
   },
   price: {
     name: 'prices',
@@ -37,27 +37,27 @@ export const TABLE = {
       expiry: 'expiry',
       type: 'type',
       barcode: 'barcode',
-      priceId: 'priceId', // Syntetic index
-    }
+      priceId: 'priceId', // Synthetic index
+    },
   },
   unit: {
     name: 'units',
     field: {
       id: 'id',
       type: 'type',
-    }
+    },
   },
   users: {
     name: 'users',
     index: {
       id: 'id',
-    }
+    },
   },
   env: {
     name: 'env',
     index: {
       id: 'id',
-    }
+    },
   },
   tmc: {
     name: 'tmc',
@@ -65,13 +65,20 @@ export const TABLE = {
       id: 'id',
       parentId: 'parentId',
       barcode: 'barcode',
-    }
+    },
   },
   processCards: {
     name: 'processCards',
     index: {
       id: 'id',
       parentId: 'parentId',
-    }
+    },
+  },
+  groupArticles: {
+    name: 'groupArticles',
+    index: {
+      id: 'id',
+      title: 'title',
+    },
   },
 };
