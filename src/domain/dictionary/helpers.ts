@@ -9,7 +9,7 @@ import {
   PriceExtended,
   ProcessCardItem,
   TMCItem,
-  ProcessCardArticle,
+  ProcessCardArticle, GroupArticles,
 } from './Types';
 
 function priceAdapter(units: Units) {
@@ -64,6 +64,16 @@ export  function pcFill(item: ProcessCardItem | undefined, tmc: Record<string, T
       ...item,
       articles: articles.map(e => ({ item: tmc[e.id], quantity: e.quantity })),
     };
+  }
+  return undefined;
+}
+
+export function groupFill(item: GroupArticles | undefined, tmc: Record<string, TMCItem>) {
+  if(item) {
+    return {
+      ...item,
+      group: (item.group || []).map(e => get(tmc, e)),
+    }
   }
   return undefined;
 }

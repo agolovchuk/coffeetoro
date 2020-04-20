@@ -6,62 +6,52 @@ import arrayMutators from 'final-form-arrays'
 import { FieldArray } from 'react-final-form-arrays';
 import cx from 'classnames'
 import { InputField } from 'components/Form/field';
-import Quantity from 'components/Form/Quantity';
 import {
-  processCardSelector,
-  getProcessCardAction,
-  unitsByIdSelector,
+  getGroupArticlesAction,
+  groupArticlesSelector,
   CRUD,
-  ProcessCardItem,
   TMCItem,
+  GroupArticles,
   putArticlesAction,
 } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import Header from '../../components/header';
-import { getTitle, getUnitsTitle } from '../../helper';
-import Add from './add';
+import { getTitle } from '../../helper';
+import Add from '../../PC/card/add';
 import styles from './card.module.css';
 
-interface SubmitValue extends Omit<ProcessCardItem, 'articles'> {
-  articles: ReadonlyArray<{
-    item: TMCItem,
-    quantity: number,
-  }>
+interface SubmitValue extends Omit<GroupArticles, 'group'> {
+  group: ReadonlyArray<TMCItem>
 }
 
 type RouterProps = {
-  match: match<{ pcId: string }>
+  match: match<{ groupId: string }>
 }
 
 const mapStateToProps = (state: AppState, props: RouterProps) => ({
-  card: processCardSelector(state, props),
-  units: unitsByIdSelector(state),
+  card: groupArticlesSelector(state, props),
 });
 
 const mapDispatch = {
-  getPC: getProcessCardAction,
-  getAll: CRUD.getAllAction,
+  getGroup: getGroupArticlesAction,
   update: CRUD.updateItemAction,
-  putArticles: putArticlesAction
+  putArticles: putArticlesAction,
 }
 
 const connector = connect(mapStateToProps, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector>, RouterProps {}
 
-function Item({ card, getPC, match, getAll, units, update, putArticles }: Props) {
-  const { params: { pcId } } = match;
+function Item({ card, getGroup, match, update, putArticles }: Props) {
+  const { params: { groupId } } = match;
 
-  const onSubmit = React.useCallback(({ articles, ...value }: SubmitValue) => {
-    const a = articles.map(({ item, quantity }) => ({ id: item.id, quantity: Number(quantity) }));
-    putArticles(articles.map(e => e.item));
-    update('processCards', { ...value, articles: a });
+  const onSubmit = React.useCallback(({ group, ...value }: SubmitValue) => {
+    const a = group.map(({ id }) => id);
+    putArticles(group);
+    update('groupArticles', { ...value, group: a });
   }, [update, putArticles]);
 
-  React.useEffect(() => {
-    getPC(pcId);
-    getAll('units')
-  }, [pcId, getPC, getAll]);
+  React.useEffect(() => { getGroup(groupId); }, [groupId, getGroup]);
 
   const initialValues = React.useMemo(() => card, [card]);
 
@@ -77,26 +67,15 @@ function Item({ card, getPC, match, getAll, units, update, putArticles }: Props)
             <Field name="description" render={({ input }) => (
               <InputField id="description" title="Description:" {...input} />
             )}/>
-            <FieldArray name="articles" >
+            <FieldArray name="group" >
               {
                 ({ fields }) => (
                   <ul className={styles.list}>
                     {
                       fields.map((name, index) => (
                         <li key={name} className={styles.item}>
-                          <Field name={`${name}.item`} render={({ input }) => (
+                          <Field name={`${name}`} render={({ input }) => (
                             <div className={styles.article}>{getTitle(input.value)}</div>
-                          )}/>
-                          <Field name={`${name}.quantity`} render={({ input}) => (
-                            <Quantity
-                              {...input}
-                              id={`${name}.quantity`}
-                              multiplier={1}
-                              className={styles.quantity}
-                            />
-                          )}/>
-                          <Field name={`${name}.item`} render={({ input }) => (
-                            <div className={styles.unit}>{getUnitsTitle(units, input.value)}</div>
                           )}/>
                           <button
                             className={cx("btn__remove", styles.remove)}
@@ -105,7 +84,7 @@ function Item({ card, getPC, match, getAll, units, update, putArticles }: Props)
                         </li>
                       ))
                     }
-                    <Add onAdd={(data) => fields.push({ item: data, quantity: 0 })} />
+                    <Add onAdd={(data) => fields.push(data)} />
                   </ul>
                 )
               }

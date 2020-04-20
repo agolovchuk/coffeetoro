@@ -43,6 +43,8 @@ export const reducer = {
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<TMCItem, 'id'>('tmc', 'id'),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.articles }),
     [A.GET_PROCESS_CARD]: (state, action: A.GetProcessCard) => ({...state, ...action.payload.articles }),
+    [A.GRT_GROUP_ARTICLES]: (state, action: A.GetGroupArticles) => ({ ...state, ...action.payload.articles }),
+    [A.PUT_ARTICLES]: (state, action: A.PutArticles) => ({ ...state, ...action.payload }),
   }),
 
   processCards: createReducer({} as ProcessCards, {
@@ -57,6 +59,7 @@ export const reducer = {
     [A.CRUD.createItemAction.type]: A.CRUD.creat<GroupArticles, 'id'>('groupArticles', 'id'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<GroupArticles, 'id'>('groupArticles', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('groupArticles'),
+    [A.GRT_GROUP_ARTICLES]: (state, action: A.GetGroupArticles) => ({ ...state, [action.payload.groupArticles.id]: action.payload.groupArticles }),
   }),
 
 };

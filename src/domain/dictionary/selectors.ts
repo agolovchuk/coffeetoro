@@ -9,6 +9,7 @@ import {
   extendsPriceList,
   pcFill,
   toArray,
+  groupFill,
 } from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
@@ -23,7 +24,7 @@ export const pricesListSelector = createSelector(prices, c => Object.values(c).s
 export const unitsListSelector = createSelector(units, c => Object.values(c).sort(sortByIndex));
 export const tmcListSelector = createSelector(tmc, toArray);
 export const processCardsListSelector = createSelector(processCards, toArray);
-export const groupArticlesSelector = createSelector(groupArticles, toArray);
+export const groupArticlesListSelector = createSelector(groupArticles, toArray);
 
 export const unitsByIdSelector = createSelector(units, u => u);
 export const unitsSelectSelector = createSelector(
@@ -64,5 +65,10 @@ export const productItemSelector = createSelector(
 
 export const processCardSelector = createSelector(
   [processCards, tmc, params],
-  (pc, t, p) => p.pcId ? pcFill(get(pc, p.pcId), t) : undefined
+  (pc, t, p) => p.pcId ? pcFill(get(pc, p.pcId), t) : undefined,
+)
+
+export const groupArticlesSelector = createSelector(
+  [groupArticles, tmc, params],
+  (g, t, p) => p.groupId ? groupFill(get(g, p.groupId), t) : undefined,
 )

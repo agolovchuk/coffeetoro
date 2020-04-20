@@ -3,10 +3,12 @@ import CDB, { promisifyReques } from 'db';
 import * as C from 'db/constants';
 import { ThunkAction } from '../StoreType';
 import * as CRUD from './crud';
-import { CategoryItem, PriceItem, CountedCategoryItem, TMCItem, ProcessCardItem } from './Types';
+import { CategoryItem, PriceItem, CountedCategoryItem, TMCItem, ProcessCardItem, GroupArticles } from './Types';
 import * as adapters from './adapters';
 
 export { CRUD }
+
+export const PUT_ARTICLES = 'DICTIONARY/PUT_ARTICLES';
 
 export const GET_CATEGORIES_SUCCESS = 'DICTIONARY/GET_CATEGORIES_SUCCESS';
 export const GET_PRICES_SUCCESS = 'DICTIONARY/GET_PRICES_SUCCESS';
@@ -20,6 +22,8 @@ export const CREATE_CATEGORY = 'DICTIONARY/CREATE_CATEGORY';
 export const UPDATE_CATEGORY = 'DICTIONARY/UPDATE_CATEGORY';
 
 export const GET_PROCESS_CARD = 'DICTIONARY/GET_PROCESS_CARD';
+
+export const GRT_GROUP_ARTICLES = 'DICTIONARY/GRT_GROUP_ARTICLES';
 
 export interface GetCategoriesSuccess {
   type: typeof GET_CATEGORIES_SUCCESS;
@@ -52,34 +56,6 @@ export function getCategoriesAction(index: CategoryIndex, query?: string): Thunk
   };
 }
 
-export function getChildrenCategoryAction(name: string): ThunkAction<GetCategoriesSuccess> {
-  return async(dispatch) => {
-    try {
-      const idb = new CDB();
-      const db = await idb.open();
-      let categories: CategoryItem[];
-      let counters: number[];
-      const transaction = db.transaction(['categories', 'prices']);
-      transaction.oncomplete = function() {
-        db.close();
-        categories = categories.map((e, i) => ({ ...e, count: counters[i] }));
-        dispatch({
-          type: GET_CATEGORIES_SUCCESS,
-          payload: validateArray(adapters.categories)(categories),
-        });
-      }
-      const categoryStore = transaction.objectStore('categories');
-      const priceStore = transaction.objectStore('prices');
-      const { id } = await promisifyReques<CategoryItem>(categoryStore.index('name').get(name));
-      categories = await promisifyReques<CategoryItem[]>(categoryStore.index('parentId').getAll(id));
-      counters = await Promise.all(
-        categories.map(({ name }) => promisifyReques<number>(priceStore.index('categoryId').count(name))),
-      );
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-}
 
 export interface GetPricesSuccess {
   type: typeof GET_PRICES_SUCCESS;
@@ -244,6 +220,46 @@ export function getProcessCardAction(pcId: string): ThunkAction<GetProcessCard> 
   }
 }
 
+export interface GetGroupArticles {
+  type: typeof GRT_GROUP_ARTICLES;
+  payload: {
+    groupArticles: GroupArticles,
+    articles: Record<string, TMCItem>;
+  }
+}
+
+export function getGroupArticlesAction(groupId: string): ThunkAction<GetGroupArticles> {
+  return async(dispatch) => {
+    try {
+      const idb = new CDB();
+      const { groupArticles, articles } = await idb.getGroupArticles(groupId);
+      if (groupArticles) {
+        dispatch({
+          type: GRT_GROUP_ARTICLES,
+          payload: {
+            groupArticles,
+            articles: adapters.articlesToDictionary(articles)
+          }
+        });
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
+export interface PutArticles {
+  type: typeof PUT_ARTICLES;
+  payload: Record<string, TMCItem>;
+}
+
+export function putArticlesAction(articles: ReadonlyArray<TMCItem>) {
+  return {
+    type: PUT_ARTICLES,
+    payload: adapters.articlesToDictionary(articles),
+  };
+}
+
 export type Action = ReturnType<typeof CRUD.createItemAction>
   | ReturnType<typeof CRUD.getAllAction>
   | ReturnType<typeof CRUD.getAllActionSuccess>
@@ -257,4 +273,6 @@ export type Action = ReturnType<typeof CRUD.createItemAction>
   | CreateCategory
   | UpdateCategory
   | GetProcessCard
+  | GetGroupArticles
+  | PutArticles
   ;

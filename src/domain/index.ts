@@ -12,7 +12,6 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
 import { AppState } from './StoreType';
 import idbMiddlware from 'db/middlware';
-// import fbMiddlware from 'services/firebase/middlware';
 import { getEnv } from 'domain/env/helpers';
 
 const __DEV__ = (process.env.NODE_ENV === 'development');
@@ -23,10 +22,10 @@ declare global {
   }
 }
 
-function getMiddlware(state: boolean): Promise<Middleware<any, AppState, any>[] | []> {
+function getMiddleware(state: boolean): Promise<Middleware<any, AppState, any>[] | []> {
   if (state) {
     return Promise.all([
-      import('services/firebase/middlware').then(e => e.default),
+      import('services/firebase/middleware').then(e => e.default),
     ])
   }
   return Promise.resolve([]);
@@ -38,7 +37,7 @@ export default async function configureStore(history: History): Promise<Store<Ap
     env: await getEnv(),
   } as AppState;
 
-  const mdw = await getMiddlware(initialState.env.firebaseConfig !== null);
+  const mdw = await getMiddleware(initialState.env.firebaseConfig !== null);
 
   let composeEnhancers = compose;
 

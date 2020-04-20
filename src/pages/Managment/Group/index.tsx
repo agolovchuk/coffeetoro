@@ -1,77 +1,15 @@
-import * as React from "react";
-import { connect, ConnectedProps } from 'react-redux';
-import { Field } from "react-final-form";
-import {GroupArticles, CRUD, groupArticlesSelector } from 'domain/dictionary';
-import { InputField } from "components/Form/field";
-import { getId } from 'lib/id'
-import { AppState } from "domain/StoreType";
-import { Main } from "../components";
-import { EitherEdit } from "../Types";
-import { getTitle } from "../helper";
+import * as React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import List from './list';
+import Card from './card';
 
-function createItem(): GroupArticles {
-  return {
-    id: getId(6),
-    title: '',
-    description: '',
-    group: [],
-  };
-}
-
-const mapState = (state: AppState) => ({
-  list: groupArticlesSelector(state),
-});
-
-const mapDispatch = {
-  create: CRUD.createItemAction,
-  update: CRUD.updateItemAction,
-  getAll: CRUD.getAllAction,
-};
-
-const connector = connect(mapState, mapDispatch);
-
-interface Props extends ConnectedProps<typeof connector> {}
-
-function Group({ list, update, create, getAll }: Props) {
-
-  const submit = React.useCallback(
-    async ({ isEdit, ...value }: EitherEdit<GroupArticles>, cb: () => void) => {
-      if (isEdit) {
-        await update('groupArticles', value);
-      } else {
-        await create('groupArticles', value);
-      }
-      cb();
-    }, [create, update],
-  );
-
-  const createLink = React.useMemo(() => {
-    return (data: GroupArticles) => ['/manager', 'group', data.id].join('/');
-  }, []);
-
-  const editAdapter = React.useCallback((data) => ({ ...data, isEdit: true }), []);
-
-  React.useEffect(() => { getAll('groupArticles'); }, [getAll]);
-
+function GroupArticles() {
   return (
-    <Main
-      list={list}
-      title="Group Articles"
-      createItem={createItem}
-      editAdapter={editAdapter}
-      handleSubmit={submit}
-      popupTitle="Create Group"
-      createLink={createLink}
-      createTitle={getTitle}
-    >
-      <Field name="title" render={({ input }) => (
-        <InputField id="title" title="Title:" {...input} />
-      )}/>
-      <Field name="description" render={({ input }) => (
-        <InputField id="description" title="Description:" {...input} />
-      )}/>
-    </Main>
+    <Switch>
+      <Route path="/manager/group/:groupId" exact component={Card} />
+      <Route path="/manager/group" exact component={List} />
+    </Switch>
   );
 }
 
-export default connector(Group);
+export default React.memo(GroupArticles);

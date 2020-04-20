@@ -3,7 +3,7 @@ import CDB from 'db';
 import * as C from 'db/constants';
 import { Adapter, IDB } from 'lib/idbx';
 import * as adapters from 'domain/dictionary/adapters';
-import { PriceItem, CategoryItem, TMCItem, ProcessCardItem } from 'domain/dictionary/Types';
+import { PriceItem, CategoryItem, TMCItem, ProcessCardItem , GroupArticles} from 'domain/dictionary/Types';
 
 interface PriceContainer {
   id: string,
@@ -26,8 +26,8 @@ type FBCategory = Omit<CategoryItem, 'count'>;
 
 interface DBWrapper<T, F> {
   get: (key: string) => Promise<T | null>,
-  set: (data: F) => Promise<void>,
-  put: (data: F) => Promise<void>,
+  set: (data: T) => Promise<void>,
+  put: (data: T) => Promise<void>,
 }
 
 export function eqPrice(fBPrice: FBPriceItem, { add, expiry, ...dbp }: PriceItem) {
@@ -61,8 +61,8 @@ function dbWrapper<T, F>(table: string, adapter: Adapter<T>): DBWrapper<T, F> {
   const dbx = (): IDB => new CDB();
   return {
     get: (key: string) => dbx().getItem(table, adapter, key),
-    set: (data: F) => dbx().addItem(table, data),
-    put: (data: F) => dbx().updateItem(table, data),
+    set: (data) => dbx().addItem(table, data),
+    put: (data) => dbx().updateItem(table, data),
   };
 }
 
@@ -81,6 +81,7 @@ function handlerFactory<I, F>(
         const p = await dbw.get(s.key);
         if (p === null) {
           action.add.call(dbw, data);
+          console.log(data, p, s.key);
         } else if (!equal(data, p)) {
           action.update.call(dbw, data);
         }
@@ -91,8 +92,6 @@ function handlerFactory<I, F>(
   }
 }
 
-const priceDB = dbWrapper(C.TABLE.price.name, adapters.priceAdapter);
-
 function priceFBtoiDB({ expiry, add, ...data}: FBPriceItem): PriceItem {
   return {
     ...data,
@@ -102,11 +101,11 @@ function priceFBtoiDB({ expiry, add, ...data}: FBPriceItem): PriceItem {
 }
 
 export const priceHandler = handlerFactory(
-  priceDB,
+  dbWrapper(C.TABLE.price.name, adapters.priceAdapter),
   eqPrice,
   {
-    async add(data) { await priceDB.set(priceFBtoiDB(data)); },
-    async update(data) { await priceDB.put(priceFBtoiDB(data)); },
+    async add(data) { await this.set(priceFBtoiDB(data)); },
+    async update(data) { await this.put(priceFBtoiDB(data)); },
   }
 );
 
@@ -134,5 +133,14 @@ export const pcHandler = handlerFactory(
   {
     async add(data) { await this.set(data); },
     async update(data) { await this.put(data); },
+  }
+);
+
+export const groupHandler = handlerFactory(
+  dbWrapper(C.TABLE.groupArticles.name, adapters.groupArticlesAdapter),
+  eq,
+  {
+    async add(data: GroupArticles) { await this.set(data); },
+    async update(data: GroupArticles) { await this.put(data); },
   }
 );

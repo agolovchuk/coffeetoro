@@ -7,7 +7,7 @@ import { getTitle } from '../../../helper';
 import styles from './add.module.css';
 
 interface Props {
-  onAdd(item: { item: TMCItem, quantity: number }): void
+  onAdd(data: TMCItem): void
 }
 
 function AddItem({ onAdd }: Props) {
@@ -15,10 +15,6 @@ function AddItem({ onAdd }: Props) {
   const db = React.useRef(new CDB());
 
   const [isSearching, setSearchDialog] = React.useState(false);
-
-  const handleSelect = React.useCallback((data: TMCItem) => {
-    onAdd({ item: data, quantity: 0 });
-  }, [onAdd]);
 
   const handleSearch = React.useCallback((term: string) => {
     const validator = ({ title }: TMCItem) => searchValidator(term, title);
@@ -35,7 +31,7 @@ function AddItem({ onAdd }: Props) {
       {
         isSearching ? (
           <Search
-            onChange={handleSelect}
+            onChange={onAdd}
             onSearch={handleSearch}
             onCancel={() => setSearchDialog(false)}
             getKey={d => d.id}

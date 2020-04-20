@@ -6,6 +6,7 @@ export interface Params {
   readonly categoryId?: string;
   readonly product?: string;
   readonly pcId?: string;
+  readonly groupId?: string;
 }
 
 export type ParamsNames = keyof Params;

@@ -9,7 +9,7 @@ import * as handler from './helpers';
 
 type Action = OrderAction.Action | DictionaryAction.Action;
 
-export default function fbMiddlware({ getState }: MiddlewareAPI<Dispatch, AppState>) {
+export default function fbMiddleware({ getState }: MiddlewareAPI<Dispatch, AppState>) {
   const config = getState().env.firebaseConfig;
   if (config && config.apiKey) {
     const app = firebase.initializeApp(config);
@@ -23,6 +23,8 @@ export default function fbMiddlware({ getState }: MiddlewareAPI<Dispatch, AppSta
     database.ref().child('tmc').on('child_changed', handler.tmcHandler);
     database.ref().child('processCards').on('child_added', handler.pcHandler);
     database.ref().child('processCards').on('child_changed', handler.pcHandler);
+    database.ref().child('groupArticles').on('child_added', handler.groupHandler);
+    database.ref().child('groupArticles').on('child_changed', handler.groupHandler);
 
     return (next: Dispatch<Action>) => (action: Action) => {
       switch (action.type) {
@@ -66,6 +68,9 @@ export default function fbMiddlware({ getState }: MiddlewareAPI<Dispatch, AppSta
           DictionaryAction.CRUD.effect('processCards', action, data => {
             database.ref('processCards/' + data.id).set(data);
           });
+          DictionaryAction.CRUD.effect('groupArticles', action, data => {
+            database.ref('groupArticles/' + data.id).set(data);
+          });
           break;
 
         case DictionaryAction.CRUD.updateItemAction.type:
@@ -74,6 +79,9 @@ export default function fbMiddlware({ getState }: MiddlewareAPI<Dispatch, AppSta
           });
           DictionaryAction.CRUD.effect('processCards', action, data => {
             database.ref('processCards/' + data.id).set(data);
+          });
+          DictionaryAction.CRUD.effect('groupArticles', action, data => {
+            database.ref('groupArticles/' + data.id).set(data);
           });
           break;
 
