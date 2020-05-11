@@ -14,7 +14,7 @@ function createItem(): GroupArticles {
     id: getId(6),
     title: '',
     description: '',
-    group: [],
+    articles: [],
   };
 }
 

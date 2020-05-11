@@ -20,8 +20,8 @@ import { getTitle } from '../../helper';
 import Add from '../../PC/card/add';
 import styles from './card.module.css';
 
-interface SubmitValue extends Omit<GroupArticles, 'group'> {
-  group: ReadonlyArray<TMCItem>
+interface SubmitValue extends Omit<GroupArticles, 'articles'> {
+  articles: ReadonlyArray<TMCItem>
 }
 
 type RouterProps = {
@@ -45,10 +45,10 @@ interface Props extends ConnectedProps<typeof connector>, RouterProps {}
 function Item({ card, getGroup, match, update, putArticles }: Props) {
   const { params: { groupId } } = match;
 
-  const onSubmit = React.useCallback(({ group, ...value }: SubmitValue) => {
-    const a = group.map(({ id }) => id);
-    putArticles(group);
-    update('groupArticles', { ...value, group: a });
+  const onSubmit = React.useCallback(({ articles, ...value }: SubmitValue) => {
+    const a = articles.map(({ id }) => id);
+    putArticles(articles);
+    update('groupArticles', { ...value, articles: a });
   }, [update, putArticles]);
 
   React.useEffect(() => { getGroup(groupId); }, [groupId, getGroup]);
@@ -67,7 +67,7 @@ function Item({ card, getGroup, match, update, putArticles }: Props) {
             <Field name="description" render={({ input }) => (
               <InputField id="description" title="Description:" {...input} />
             )}/>
-            <FieldArray name="group" >
+            <FieldArray name="articles" >
               {
                 ({ fields }) => (
                   <ul className={styles.list}>

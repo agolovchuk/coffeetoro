@@ -49,6 +49,21 @@ const LIST: List[] = [
     name: 'category',
     title: 'Category...'
   },
+  {
+    id: '07',
+    name: 'incoming-balances',
+    title: 'Incoming Balances'
+  },
+  {
+    id: '08',
+    name: 'incoming',
+    title: 'Incoming'
+  },
+  {
+    id: '09',
+    name: 'expense',
+    title: 'Expense'
+  }
 ];
 
 function ManagementItems({ match }: Props) {

@@ -31,7 +31,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
   }, [editAdapter]);
 
   const onSubmit = React.useCallback((value: EitherEdit<T>) => {
-    handleSubmit(value, () => setItem(null));
+    handleSubmit({ ...createItem(), ...value }, () => setItem(null));
   }, [handleSubmit]);
 
   return (

@@ -72,7 +72,7 @@ export function groupFill(item: GroupArticles | undefined, tmc: Record<string, T
   if(item) {
     return {
       ...item,
-      group: (item.group || []).map(e => get(tmc, e)),
+      articles: (item.articles || []).map(e => get(tmc, e)),
     }
   }
   return undefined;

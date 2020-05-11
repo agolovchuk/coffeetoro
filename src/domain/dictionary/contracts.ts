@@ -69,5 +69,5 @@ export const groupArticles = t.interface({
   id: t.string,
   title: t.string,
   description: t.union([t.string, t.undefined]),
-  group: t.union([t.array(t.string), t.undefined]) ,
-})
+  articles: t.union([t.array(t.string), t.undefined]),
+});

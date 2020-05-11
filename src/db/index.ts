@@ -191,9 +191,9 @@ export default class CDB extends IDB {
     const osGA = transaction.objectStore(TABLE.groupArticles.name);
     const osTMC = transaction.objectStore(TABLE.tmc.name);
     const groupArticles = await promisifyReques<GroupArticles | undefined>(osGA.get(id));
-    if (groupArticles && groupArticles.group && groupArticles.group.length) {
+    if (groupArticles && groupArticles.articles && groupArticles.articles.length) {
       const articles: ReadonlyArray<TMCItem> = await Promise.all(
-        groupArticles.group.map(e => promisifyReques<TMCItem>(osTMC.get(e))),
+        groupArticles.articles.map(e => promisifyReques<TMCItem>(osTMC.get(e))),
       );
       return  {
         groupArticles,
