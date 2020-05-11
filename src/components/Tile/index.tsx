@@ -9,6 +9,7 @@ const logos = {
   drink: require('./images/Water.svg'),
   users: require('./images/users.svg'),
   pc: require('./images/pc.svg'),
+  topping: require('./images/topping.svg'),
 } as Record<string, any>
 
 interface Props {

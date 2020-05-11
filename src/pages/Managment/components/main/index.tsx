@@ -32,7 +32,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
 
   const onSubmit = React.useCallback((value: EitherEdit<T>) => {
     handleSubmit({ ...createItem(), ...value }, () => setItem(null));
-  }, [handleSubmit]);
+  }, [handleSubmit, createItem]);
 
   return (
     <section className="scroll-section">

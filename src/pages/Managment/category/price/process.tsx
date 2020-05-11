@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Field, useForm } from 'react-final-form';
 import { processCardsListSelector, CRUD } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { SelectField } from 'components/Form/field';
+import { SelectField, orderByTitle } from 'components/Form/field';
 import { getTitle } from '../../helper';
 
 const mapState = (state: AppState) => ({
@@ -30,8 +30,8 @@ function ProcessCardSelector({ pc, getCards }: Props) {
     initialize({ refId: 'null', ...rest, type: 'pc' });
   }, [getCards, initialize, getState]);
 
-  const cardList = React.useMemo(() => 
-    [SELECT, ...pc.map(({ id, ...rest }) => ({ name: id, title: getTitle(rest) }))],
+  const cardList = React.useMemo(() =>
+    [SELECT, ...pc.map(({ id, ...rest }) => ({ name: id, title: getTitle(rest) })).sort(orderByTitle)],
   [pc]);
 
   return (

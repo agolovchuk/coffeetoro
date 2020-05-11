@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
+import sortBy from 'lodash/sortBy';
 import { Article } from './Type';
 import styles from './list.module.css';
 import { Price } from "components/Units";
@@ -10,10 +11,16 @@ interface Props {
 }
 
 function List({ valuation, onChange }: Props) {
+
+  const list = React.useMemo(
+    () => sortBy(valuation, ['price.title', 'price.description']),
+    [valuation]
+  );
+
   return (
     <ul className="grid__container">
       {
-        valuation.map(e => (
+        list.map(e => (
           <li
             key={e.price.id}
             className={cx('grid__item', 'tile__container', styles.tile)}

@@ -4,5 +4,5 @@ export default {
   activeOrders: 'Активные заказы',
   'user.manageYourProfile': 'Manage your profile',
   'user.updatePassword': 'Изменить пароль',
-  'managment.systemConfig': 'Системные настройки',
+  'management.systemConfig': 'Системные настройки',
 }

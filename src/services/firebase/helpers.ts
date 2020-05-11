@@ -81,13 +81,12 @@ function handlerFactory<I, F>(
         const p = await dbw.get(s.key);
         if (p === null) {
           action.add.call(dbw, data);
-          console.log(data, p, s.key);
         } else if (!equal(data, p)) {
           action.update.call(dbw, data);
         }
       }
     } catch (err) {
-      console.warn(err);
+      console.warn(err, dbw, s.key);
     }
   }
 }
