@@ -1,21 +1,58 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { currentCategorySelector, DictionaryState } from 'domain/dictionary';
-import { PARAMS_LIST, PropsMatch } from 'domain/routes';
+import { connect, ConnectedProps } from 'react-redux';
+import { match } from 'react-router-dom';
+import { currentCategoriesSelector, getCategoriesAction, CountedCategoryItem } from 'domain/dictionary';
+import { AppState } from 'domain/StoreType';
 import Grid from 'components/Grid';
 
-interface Props extends PropsMatch {
-  categories: Array<any>,
+interface ICategoryMatch {
+  readonly orderId: string;
+  readonly categoryId?: string;
 }
 
-function Categories({ categories, match: { params } }: Props) {
+interface PropsFromRouter {
+  match: match<ICategoryMatch>;
+}
+
+const mapState = (state: AppState, props: PropsFromRouter) => ({
+  categories: currentCategoriesSelector(state, props),
+});
+
+const mapDispatch = {
+  getCategories: getCategoriesAction,
+}
+
+const connector = connect(mapState, mapDispatch);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+interface Props extends PropsFromRedux, PropsFromRouter {};
+
+function pathMaker(orderId: string) {
+  const make = (...args: string[]) => ['/order', orderId, ...args].join('/');
+  return (item: CountedCategoryItem) => {
+    if (item.count) return make(item.id, 'product');
+    return make(item.id);
+  }
+}
+
+function Categories({ categories, match, getCategories }: Props) {
+
+  const { params: { categoryId, orderId } } = match;
+
+  React.useEffect(() => {
+    getCategories('parentId', categoryId || 'root');
+  }, [categoryId, getCategories]);
+
+  const getLink = React.useMemo(() => pathMaker(orderId), [orderId]);
+
   return (
-    <Grid list={categories} params={params} paramsList={PARAMS_LIST} />
+    <Grid
+      list={categories}
+      getKey={e => e.id}
+      getLink={getLink}
+    />
   );
 }
 
-const mapStateToProps = (state: DictionaryState, props: Props) => ({
-  categories: currentCategorySelector(state, props),
-});
-
-export default connect(mapStateToProps)(Categories);
+export default connector(Categories);

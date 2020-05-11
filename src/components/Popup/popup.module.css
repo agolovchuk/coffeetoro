@@ -1,0 +1,38 @@
+.container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.4);
+  align-items: center;
+  justify-content: center;
+}
+@supports (-webkit-backdrop-filter: blur(10px)) {
+  .container {
+    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.overlay {
+  position: absolute;
+  display: block;
+  width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: none;
+  text-decoration: none;
+  border: 0 none;
+  padding: 0;
+}
+
+.popup {
+  position: relative;
+  border: 1px solid #DCE0E3;
+  border-radius: 4px;
+}

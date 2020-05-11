@@ -1,0 +1,12 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.itemTitle {
+  display: flex;
+  justify-content: space-between;
+  flex: 1 1 100%;
+  margin-right: 12px;
+}

@@ -1,4 +1,38 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+.footer {
+  padding-top: 5px;
+}
 .list {
   list-style-type: none;
   padding: 5px;
+  flex: 1 1 100%;
+  overflow-y: auto;
+}
+.description {
+  font-weight: normal;
+}
+.amount {
+  font-size: 20px;
+  color: #414141;
+  line-height: 1.5;
+  text-align: right;
+  margin: 10px 0 5px;
+}
+.amount dd {
+  font-weight: bold;
+  font-size: 36px;
+}
+.btn {
+  width: 100%;
+  height: 60px;
+  background: #5bceae;
+  color: #ffffff;
+  font-size: 24px;
+  border-radius: 6px;
+  border: 0 none;
 }

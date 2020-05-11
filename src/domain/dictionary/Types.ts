@@ -1,57 +1,62 @@
+import { TypeOf } from 'io-ts';
+import * as contracts from './contracts';
 
+export type CategoryItem = TypeOf<typeof contracts.category>;
+export type UnitItem = TypeOf<typeof contracts.unit>;
+export type TMCItem = TypeOf<typeof contracts.tmc>;
+export type ProcessCardItem = TypeOf<typeof contracts.pc>;
+export type ProcessCardArticle = TypeOf<typeof contracts.processCardsArticle>;
+export type GroupArticles = TypeOf<typeof contracts.groupArticles>;
 
-interface CategoryItem {
-  id: string;
+export interface CountedCategoryItem extends CategoryItem {
+  count: number;
+};
+
+export type PriceItem = TypeOf<typeof contracts.price>;
+
+export type PriceBase = Omit<PriceItem, 'type' | 'barcode' | 'refId'>;
+
+export interface PriceExtendedBase extends PriceBase {
   title: string;
-  name: string;
-  parentName: string | null;
+  description?: string;
+  unitId: string;
 }
 
-export interface ProductItem {
-  id: string;
-  title: string;
-  name: string;
-  categoryName: string;
+export interface PriceTMC extends PriceBase {
+  type: 'tmc';
+  barcode: string;
 }
 
-export interface VolumeItem {
-  readonly id: string;
-  readonly title: string;
-  readonly name: string;
+export interface PricePC extends PriceBase {
+  type: 'pc';
+  refId: string;
 }
 
-export interface PriceItem {
-  id: string;
-  productName: string;
-  volumeId: string;
-  valuation: number;
-  from: string;
-  to: string | null;
-}
+export type PriceExtended = PriceExtendedBase & PriceTMC | PriceExtendedBase & PricePC;
 
 export interface SaleParams {
-  readonly price: PriceItem;
+  readonly price: PriceExtended;
   readonly volume: string;
 }
 
 export interface ProductForSale {
-  readonly id: string;
   readonly title: string;
   readonly name: string;
   readonly valuation: ReadonlyArray<SaleParams>;
 }
 
-export type Categories = ReadonlyArray<CategoryItem>;
-export type Products = ReadonlyArray<ProductItem>;
-export type Volume = Record<string, VolumeItem>;
-export type Prices = ReadonlyArray<PriceItem>;
+export type Categories = Record<string, CountedCategoryItem>;
+export type Units = Record<string, UnitItem>;
+export type Prices = Record<string, PriceItem>;
+export type TMC = Record<string, TMCItem>;
+export type ProcessCards = Record<string, ProcessCardItem>;
+export type Groups = Record<string, GroupArticles>;
 
 export interface DictionaryState {
   categories: Categories;
-  products: Products; 
-  volume: Volume;
+  units: Units;
   prices: Prices;
+  tmc: TMC;
+  processCards: ProcessCards;
+  groupArticles: Groups;
 };
-
-
-

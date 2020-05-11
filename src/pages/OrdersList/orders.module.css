@@ -1,0 +1,54 @@
+.wrapper {
+  height: 100%;
+  overflow-y: auto;
+}
+.btn {
+  width: 160px;
+  height: 160px;
+  background-color: #EBECED;
+  border: 1px solid #DCE0E3;
+  background-position: center center;
+  border-radius: 10px;
+  display: block;
+  padding: 8px;
+}
+
+.content {
+  margin-top: 30px;
+}
+
+.title {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 23px;
+  margin-bottom: 20px;
+}
+
+.list {
+  list-style-type: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 160px);
+  grid-template-rows: repeat(auto-fill, 160px);
+  grid-gap: 20px;
+}
+
+.create {
+  background-image: url("./add.svg");
+}
+
+.place {
+  background-image: url("./table.svg");
+}
+
+.index {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background-color: #C4C4C4;
+  color: #000000;
+  font-size: 20px;
+  display: inline-block;
+  text-align: center;
+  line-height: 32px;
+}

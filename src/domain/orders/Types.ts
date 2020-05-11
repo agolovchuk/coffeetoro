@@ -1,38 +1,35 @@
-import { ProductItem, VolumeItem } from '../dictionary';
-import { PriceItem } from '../dictionary/Types';
+import { TypeOf } from 'io-ts';
+import { order, orderItem } from './contracts';
+import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from '../dictionary/Types';
 
-export interface OrderItem {
-  id: string,
-  priceId: string,
-  quantity: number,
+export interface OrderDictionary {
+  prices: Record<string, PriceItem>;
+  articles: Record<string, TMCItem>;
+  processCards: Record<string, ProcessCardItem>;
 }
 
-enum Payment {
-  Cache,
-  Cards,
+export enum PaymentMethod {
+  Opened,
+  Cash,
+  Bank,
 }
 
-enum Status {
+export enum Status {
   Opened,
   Archive,
 }
 
-interface OrderListItem {
-  id: string,
-  date: string,
-  status: Status,
-  client: string,
-  payment: Payment,
-}
+export type OrderItem = TypeOf<typeof orderItem>;
+
+export type Order = TypeOf<typeof order>;
 
 export interface OrderItemContainer {
   quantity: number,
-  price: PriceItem,
-  product: ProductItem,
-  volume: VolumeItem,
+  price: PriceExtended,
 }
 
 export interface OrderState {
-  order: Record<string, OrderItem>;
-  orderList: ReadonlyArray<OrderListItem>;
+  readonly orderItems: Record<string, OrderItem>;
+  readonly ordersList: Record<string, Order>;
+  readonly orderDictionary: OrderDictionary;
 }

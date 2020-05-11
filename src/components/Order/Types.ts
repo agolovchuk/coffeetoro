@@ -1,19 +1,14 @@
 interface IPrice {
+  id: string;
   valuation: number;
+  parentId: string;
+  title: string;
+  description?: string;
 }
 
 export interface OrderItemContainer {
   price: IPrice;
   quantity: number;
-  product: {
-    title: string;
-    name: string;
-    categoryName: string;
-  },
-  volume: {
-    title: string;
-    name: string;
-  },
 }
 
 export interface OrderApi {

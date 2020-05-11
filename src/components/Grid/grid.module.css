@@ -4,6 +4,9 @@
   grid-template-columns: repeat(auto-fit, 180px);
   grid-template-rows: repeat(auto-fill, 180px);
   grid-gap: 15px;
+  overflow-y: auto;
+  height: 100%;
+  position: relative;
 }
 .container > * {
   align-self: center;

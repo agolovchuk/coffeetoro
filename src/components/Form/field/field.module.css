@@ -1,0 +1,36 @@
+.container {
+  width: 100%;
+  margin-bottom: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.label {
+  display: block;
+  color: #000000;
+  font-size: 16px;
+  margin-right: 10px;
+  flex: 0 0 150px;
+  text-align: right;
+  min-width: 150px;
+}
+.field {
+  display: block;
+  height: 40px;
+  border: 1px solid #C4C4C4;
+  border-radius: 4px;
+  width: 100%;
+  padding: 0 8px;
+  font-size: 20px;
+  flex: 1 1 100%;
+  min-width: 220px;
+}
+.field:read-only {
+  outline: none;
+  background-color: #EAEAEA;
+  border-color: #EAEAEA;
+}
+.field.select {
+  background-color: #fff;
+  border: 1px solid #C4C4C4;
+}

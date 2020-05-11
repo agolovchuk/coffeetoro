@@ -1,0 +1,15 @@
+.barcode {
+  min-width: auto;
+  margin-right: 5px;
+}
+.barLabel {
+  min-width: auto;
+  flex-basis: auto;
+}
+.error {
+  outline-color: #E62752;
+  color: #E62752;
+}
+.container {
+  margin-bottom: 10px;
+}

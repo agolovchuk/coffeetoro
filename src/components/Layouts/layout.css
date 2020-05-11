@@ -1,0 +1,59 @@
+@import "./buttons.css";
+
+:root {
+  --green-color: #7BCBB0;
+  --blue-color: #3796f6;
+  --border-color: #C4C4C4;
+  --light-border-color: #DCE0E3;
+  --red-color: #E62752;
+  --darck-gray-color: #95A8BC;
+  --medium-gray-color: #cccccc;
+  --light-gray-color: #EAEAEA;
+  --orange-color: #EE8035;
+  --tile-width: 180px;
+  --tile-height: 180px;
+  /*--tile-background: #F8FAFC;*/
+  /*--tile-border: #DCE0E3;*/
+  --tile-background: #EBECED;
+  --tile-border: #DCE0E3;
+
+  --grid-item-width: 180px;
+  --grid-item-height: 180px;
+}
+/** Column */
+.column_wrapper {
+  display: flex;
+}
+.column_item {
+  flex: 1 1 100%;
+}
+/** Grid */
+.grid__container {
+  display: grid;
+  padding: 10px 0;
+  grid-template-columns: repeat(auto-fit, var(--grid-item-height));
+  grid-template-rows: repeat(auto-fill, var(--grid-item-width));
+  grid-gap: 15px;
+  overflow-y: auto;
+  height: 100%;
+  position: relative;
+}
+.grid__item {
+  min-height: var(--tile-height);
+  min-width: var(--tile-width);
+  position: relative;
+  height: var(--grid-item-height);
+}
+/** Tile */
+.tile__container {
+  text-decoration: none;
+  background: var(--tile-background);
+  border: 1px solid var(--tile-border);
+  border-radius: 10px;
+}
+/** --- */
+.scroll-section {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;;
+}

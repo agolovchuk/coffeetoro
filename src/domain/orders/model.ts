@@ -1,51 +1,67 @@
-import * as A from './actions';
+import { createReducer } from '@reduxjs/toolkit';
 import compose from 'lodash/fp/compose';
 import set from 'lodash/fp/set';
 import update from 'lodash/fp/update';
 import omit from 'lodash/fp/omit';
-import { Order } from './Types';
+import merge from 'lodash/fp/merge';
+import { Order, OrderItem, OrderDictionary } from './Types';
+import * as A from './actions';
 
 export const reducer = {
+  orderItems(state: Record<string, OrderItem> = {}, action: A.Action) {
+    switch (action.type) {
+      case A.ADD_ITEM:
+        return set(action.payload.price.id)(action.payload.item)(state);
+
+      case A.UPDATE_QUANTITY:
+        return update([action.payload.priceId, 'quantity'])
+          (_ => action.payload.quantity)
+          (state);
+
+      case A.REMOVE_ITEM:
+        return omit(action.payload.priceId)(state);
+
+      case A.GET_ORDER:
+        return action.payload.orderItems;
+
+      case A.COMPLETE:
+        return {};
+
+      default:
+        return state;
+    }
+  },
   ordersList(state: Record<string, Order> = {}, action: A.Action) {
     switch (action.type) {
 
       case A.CREATE_ORDER:
         return set(action.payload.id)(action.payload)(state);
 
-      case A.ADD_ITEM:
-        return update(action.payload.orderId)
-          (order => order && set(['items', action.payload.priceId])(omit('orderId')(action.payload))(order))
-          (state);
-        // return set([
-        //   action.payload.orderId,
-        //   'items',
-        //   action.payload.priceId
-        // ])(omit('orderId')(action.payload))(state);
+      case A.GET_ORDER:
+        return set(action.payload.order.id)(action.payload.order)(state);
 
-      case A.UPDATE_QUANTITY:
-        return set([
-          action.payload.orderId,
-          'items',
-          action.payload.priceId,
-          'quantity'
-        ])(action.payload.quantity)(state);
+      case A.GET_ORDERS_LIST:
+        return action.payload;
 
-      case A.REMOVE_ITEM:
-        return update([action.payload.orderId, 'items'])(omit(action.payload.priceId))(state);
-
-      case A.UPDATE_ITEM:
-        return update([action.payload.orderId, 'items'])(
-          compose(
-            omit(action.payload.prevPriceId),
-            set(action.payload.nextPriceId)({
-              priceId: action.payload.nextPriceId,
-              quantity: action.payload.quantity,
-            }),
-          ),
-        )(state);
+      case A.COMPLETE:
+        return set(action.payload.id)(action.payload)(state);
 
       default:
         return state;
     }
-  }
+  },
+  orderDictionary: createReducer({ prices: {}, articles: {}, processCards: {} } as OrderDictionary, {
+    [A.GET_ORDER]: (_, action: A.GetOrder) => ({
+      prices: action.payload.prices,
+      articles: action.payload.articles,
+      processCards: action.payload.processCards,
+    }),
+    [A.ADD_ITEM]: (state, action: A.IAddItem) => 
+     compose(
+      update('processCards')(merge(action.payload.processCards)),
+      update('articles')(merge(action.payload.articles)),
+      set(['prices', action.payload.price.id])(action.payload.price)
+    )(state),
+    [A.COMPLETE]: () => ({ prices: {}, articles: {}, processCards: {} }),
+  }),
 };

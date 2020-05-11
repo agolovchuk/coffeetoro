@@ -1,0 +1,46 @@
+.container {
+  position: relative;
+  flex: 1 1 100%;
+}
+.field {
+  opacity: 0.01;
+  position: absolute;
+}
+.label {
+  width: 40px;
+  height: 20px;
+  /* border: 1px solid #000; */
+  border-radius: 15px;
+  display: block;
+  position: relative;
+}
+.label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 15px;
+  background-color: #5bceae;
+  opacity: 0.5;
+  transition: 0.3s opacity linear;
+}
+.label::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background-color: #fff;
+  border-radius: 50%;
+  left: 3px;
+  top: 3px;
+  transition: 0.3s transform linear;
+}
+.field:checked + .label::before {
+  opacity: 1;
+}
+.field:checked + .label::after {
+  transform: translateX(20px);
+}

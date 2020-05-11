@@ -1,66 +1,61 @@
+import get from 'lodash/get';
 import { OrderItem, OrderItemContainer } from './Types';
-import { PriceItem, ProductItem, Volume } from '../dictionary/Types';
+import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from '../dictionary/Types';
 
 function priceAdapter(
   order: OrderItem,
-  priceByID: Map<string, PriceItem>,
-  productByName: Map<string, ProductItem>,
-  volume: Volume,
+  priceByID: Record<string, PriceExtended>,
 ) {
-  const price = priceByID.get(order.priceId) as PriceItem;
+  const price = get(priceByID, order.priceId);
+  if (typeof price === 'undefined') throw new TypeError('No price found:' + order.priceId);
   return {
     quantity: order.quantity,
     price,
-    product: productByName.get(price.productName) as ProductItem,
-    volume: volume[price.volumeId],
   }
 }
 
 export function getOrderItem(
-  orders: Record<string, OrderItem>,
-  prices: Map<string, PriceItem>,
-  products: Map<string, ProductItem>,
-  volume: Volume,
+  orders: ReadonlyArray<OrderItem>,
+  prices: Record<string, PriceExtended>,
 ): ReadonlyArray<OrderItemContainer> {
-  return Object.values(orders)
-    .map(o => (priceAdapter(o, prices, products, volume )))
+  return orders
+    .map(o => (priceAdapter(o, prices)))
 }
 
-type OrderState = Record<string, OrderItem>;
+interface OrderItemArchive {
+  quantity: number;
+  valuation: number;
+  categoryId: string;
+  priceId: string;
+}
 
-export function mergeOrder(state: OrderState, order: OrderItem): OrderState {
-  const id = order.priceId
-  if (id in state) {
+export function orderItemsArchive(
+  orders: ReadonlyArray<OrderItem>,
+  prices: Record<string, PriceItem>,
+): ReadonlyArray<OrderItemArchive> {
+  return orders.map(({ quantity, priceId }) => {
+    const { valuation, parentId } = prices[priceId];
+    return { quantity, valuation, categoryId: parentId, priceId }
+  });
+}
+
+export function prepereDictionary(
+  price: PriceItem,
+  articles: Record<string, TMCItem>,
+  pc: Record<string, ProcessCardItem>,
+) {
+  if (price.type === 'tmc') {
+    const tmc = articles[price.barcode];
+    if (typeof tmc === 'undefined' || typeof tmc.barcode === 'undefined') throw Error('No Article in Dictionary');
     return {
-      ...state,
-      [id]: {
-        ...order,
-        quantity: state[id].quantity + order.quantity,
-      },
-    };
-  }
-  return { ...state, [id]: order };
-}
-
-export function updateOrder(state: OrderState, order: OrderItem): OrderState {
-  return {
-    ...state,
-    [order.priceId]: order,
-  }
-}
-
-export function updateOrderItem(state: OrderState, prevId: string, nextId: string): OrderState {
-  const { [prevId]: order, ...rest } = state;
-  return {
-    ...rest,
-    [nextId]: {
-      ...order,
-      priceId: nextId,
+      articles: { [tmc.barcode]: tmc },
+      processCards: {},
     }
   }
-}
-
-export function removeOrderItem(state: OrderState, priceId: string): OrderState {
-  const { [priceId]: order, ...rest } = state;
-  return rest;
+  const card = pc[price.refId];
+  if (typeof card === 'undefined') throw Error('No Card in Procces Card Dictionary');
+  return {
+    articles: {},
+    processCards: { [card.id]: card },
+  }
 }

@@ -1,0 +1,25 @@
+.frame {
+  width: 400px;
+  flex: 0 0 400px;
+}
+.content {
+  padding: 0 20px;
+}
+.line {
+  display: flex;
+  justify-content: space-between;
+  height: 40px;
+  font-size: 26px;
+}
+.input {
+  text-align: right;
+  font-size: 26px;
+  width: 100px;
+  border: 0 none;
+  -webkit-appearance: none;
+}
+.result {
+  margin-top: 10px;
+  color: #ec547a;
+  font-weight: bold;
+}

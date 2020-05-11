@@ -1,0 +1,23 @@
+.container {
+  text-decoration: none;
+  background: var(--tile-background);
+  border: 1px solid var(--tile-border);
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 12px;
+}
+
+.title {
+  text-align: center;
+  color: #000000;
+  font-size: 24px;
+}
+
+.logo {
+  margin: 0 auto;
+  width: 85px;
+  height: 85px;
+}

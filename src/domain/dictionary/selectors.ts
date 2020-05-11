@@ -1,63 +1,74 @@
 import { createSelector } from 'reselect';
-import { DictionaryState, ProductForSale } from './Types';
-import { params, lastParamsValue } from 'domain/routes';
-import { groupBy, arrayToMap, arrayMerge } from 'lib/dataHelper';
-import { getProductsForSaleList, indexedPrice, getProductsForSale } from './helpers';
+import get from 'lodash/get';
+import { arrayToRecord } from 'lib/dataHelper';
+import {DictionaryState, CategoryItem } from './Types';
+import { params } from 'domain/routes';
+import {
+  getProductForSale,
+  sortByIndex,
+  extendsPriceList,
+  pcFill,
+  toArray,
+  groupFill,
+} from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
-const products = (state: DictionaryState) => state.products;
 const prices = (state: DictionaryState) => state.prices;
-export const volume = (state: DictionaryState) => state.volume;
+export const units = (state: DictionaryState) => state.units;
+const tmc = (state: DictionaryState) => state.tmc;
+const processCards = (state: DictionaryState) => state.processCards;
+const groupArticles = (state: DictionaryState) => state.groupArticles;
+
+export const categoriesListSelector = createSelector(categories, c => Object.values(c).sort(sortByIndex));
+export const pricesListSelector = createSelector(prices, c => Object.values(c).sort(sortByIndex));
+export const unitsListSelector = createSelector(units, c => Object.values(c).sort(sortByIndex));
+export const tmcListSelector = createSelector(tmc, toArray);
+export const processCardsListSelector = createSelector(processCards, toArray);
+export const groupArticlesListSelector = createSelector(groupArticles, toArray);
+
+export const unitsByIdSelector = createSelector(units, u => u);
+export const unitsSelectSelector = createSelector(
+  [unitsListSelector],
+  u => u.map(({ id, title }) => ({ name: id, title }))
+);
+
+export const articlesByBarcodeSelector = createSelector(tmcListSelector, a => arrayToRecord(a, 'barcode'));
+
+const priceCategorySelector = createSelector(
+  [pricesListSelector, params],
+  (pr, p) => pr.filter(f => f.parentId === p.categoryId),
+)
+
+export const extendetPricesSelector = createSelector(
+  [priceCategorySelector, articlesByBarcodeSelector, processCards],
+  extendsPriceList,
+);
+
+export const categoryByNameSelector = createSelector(categories, c => c);
 
 export const currentCategorySelector = createSelector(
   [categories, params],
-  (c, p) => {
-    const last = lastParamsValue(p);
-    return c.filter(f => f.parentName === last);
-  }
+  (c, p) => p.categoryId ? get(c, p.categoryId, {} as CategoryItem) : {} as CategoryItem,
 )
 
-export const productsSelector = createSelector(
-  [products, params],
-  (pr, p) => pr.filter(f => f.categoryName === p.category),
+export const currentCategoriesSelector = createSelector(
+  [categoriesListSelector, params],
+  (c, p) => c.filter(f => f.parentId === (p.categoryId || 'root')),
 )
 
-export const productsWithNameSelector = createSelector(
-  [products, params],
-  (pr, p) => pr.filter(f => f.name === p.product),
-)
-
-export const productByName = createSelector(
-  [products],
-  p => arrayToMap(p, 'name'),
-)
-
-const priceByProductSelector = createSelector(
-  prices,
-  (p) => groupBy(p, 'productName')
-)
-
-export const indexedPriceSelector = createSelector(
-  [prices],
-  p => indexedPrice(p),
-)
-
-export const priceByID = createSelector(
-  [prices],
-  p => arrayToMap(p, 'id'),
-)
+export const priceByNameSelector = createSelector(prices, p => p);
 
 export const productItemSelector = createSelector(
-  [productsWithNameSelector, priceByProductSelector, volume],
-  (pr, prs, v) => getProductsForSaleList(pr, prs, v, arrayMerge),
+  [currentCategorySelector, extendetPricesSelector, units],
+  getProductForSale
 )
 
-const mergeByName = (o: Record<string, ProductForSale>, item: ProductForSale) => {
-  const id = item.name;
-  return { ...o, [id]: item };
-}
+export const processCardSelector = createSelector(
+  [processCards, tmc, params],
+  (pc, t, p) => p.pcId ? pcFill(get(pc, p.pcId), t) : undefined,
+)
 
-export const productItemByNameSelector = createSelector(
-  [productsWithNameSelector, priceByProductSelector, volume],
-  (pr, prs, v) => getProductsForSale(pr, prs, v, mergeByName),
+export const groupArticlesSelector = createSelector(
+  [groupArticles, tmc, params],
+  (g, t, p) => p.groupId ? groupFill(get(g, p.groupId), t) : undefined,
 )

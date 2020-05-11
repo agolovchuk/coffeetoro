@@ -1,0 +1,40 @@
+.container {
+  background-color: #EAEAEA;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
+.back {
+  background: url('./back.svg') scroll no-repeat center center #EE8035;
+}
+.back:disabled {
+  background-color: #D2D2D2;
+}
+.profile {
+  /* margin-left: auto; */
+}
+.btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  border: 0 none;
+}
+.orders {
+  background: url('./table.svg') scroll no-repeat center center #cccccc;
+  border: 1px solid #DCE0E3;
+  background-size: contain;
+  margin-left: 20px;
+}
+.active {
+  opacity: 0.4;
+}
+
+.fullscreen {
+  margin-left: auto;
+  margin-right: 10px;
+  background: url("./fullscreen.svg") scroll no-repeat center center;
+  background-size: 40px 40px;
+}
+.isfs {
+  background-image: url("./fullscreen_exit.svg");
+}

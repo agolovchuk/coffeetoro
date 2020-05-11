@@ -1,5 +1,5 @@
-export function arrayToMap<T, K extends keyof T>(arr: ReadonlyArray<T>, field: K): Map<K, T> {
-  return arr.reduce((a, v) => a.set(v[field], v), new Map());
+export function arrayToRecord<T extends Record<K, any>, K extends keyof T>(arr: ReadonlyArray<T>, field: K): Record<K, T> {
+  return arr.reduce((a, v) => ({ ...a, [v[field]]: v }), {} as T);
 }
 
 export function groupBy<T, K extends keyof T>(arr: ReadonlyArray<T>, field: K): Map<K, ReadonlyArray<T>> {
