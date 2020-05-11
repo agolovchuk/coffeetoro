@@ -52,8 +52,9 @@ function ProcessCardList ({ create, update, getAll,  ...props }: Props) {
 
   const editAdapter = React.useCallback((value: ProcessCardItem) => ({
     ...value,
+    articles: value.articles || [],
     isEdit: true,
-    update: new Date().toISOString()
+    update: new Date().toISOString(),
   }), []);
 
   const createLink = React.useMemo(() => {
