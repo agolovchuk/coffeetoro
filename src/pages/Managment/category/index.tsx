@@ -26,7 +26,7 @@ import { getMax } from '../helper';
 import { EitherEdit } from '../Types';
 import styles from './category.module.css';
 // import { translite } from "lib/commonHelpers";
-import { getPrentsList, getParents } from './helpers';
+import { getParentsList, getParents } from './helpers';
 
 const mapState = (state: AppState) => ({
   categories: categoriesListSelector(state),
@@ -90,7 +90,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
   React.useEffect(() => { getCategories('name'); }, [getCategories]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionList = React.useMemo(() => getPrentsList(categories, group), [categories]);
+  const optionList = React.useMemo(() => getParentsList(categories, group), [categories]);
 
   const getKey = React.useMemo(() => getParents(categories), [categories])
 
