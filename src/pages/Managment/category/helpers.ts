@@ -7,7 +7,7 @@ interface Item {
   parentId: string;
 }
 
-export function getPrentsList<T extends Item>(list: ReadonlyArray<T>, group: Record<string, T[]>) {
+export function getParentsList<T extends Item>(list: ReadonlyArray<T>, group: Record<string, T[]>) {
   const l = list.filter(f => f.count === 0);
   return (current: string) => {
     const children = getChildrend(current, group);
