@@ -22,7 +22,7 @@ function priceAdapter(units: Units) {
 export function getProductForSale(category: CategoryItem, price: PriceExtended[], units: Units): ProductForSale {
   return {
     ...category,
-    valuation: price.map(priceAdapter(units))
+    valuation: price.filter(f => !f.expiry).map(priceAdapter(units))
   }
 }
 

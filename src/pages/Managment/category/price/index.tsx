@@ -3,10 +3,12 @@ import { connect, ConnectedProps } from 'react-redux';
 import { match } from 'react-router-dom';
 import { getId } from 'lib/id';
 import { Field } from 'react-final-form';
+import cx from 'classnames';
 import {
   SelectField,
   PriceField,
   Condition,
+  CheckBoxField
 } from 'components/Form/field';
 import { Price } from 'components/Units';
 import { AppState } from 'domain/StoreType';
@@ -18,7 +20,7 @@ import {
   currentCategorySelector,
   createPriceAction,
   updatePriceAction,
-  getPricesByCategoryAction,
+  getPricesByCategoryAction, categoriesListSelector,
 } from 'domain/dictionary';
 import { ManagmentPopup, ItemList, Header } from '../../components';
 import { getMax } from '../../helper';
@@ -51,6 +53,7 @@ interface PropsFromRouter {
 }
 
 const mapState = (state: AppState, props: PropsFromRouter) => ({
+  categories: categoriesListSelector(state),
   category: currentCategorySelector(state, props),
   prices: extendetPricesSelector(state, props),
   products: priceByNameSelector(state),
@@ -68,14 +71,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {}
 
-function PriceManager({ prices, update, create, category, getPrices }: Props) {
+function PriceManager({ prices, update, create, category, getPrices, categories }: Props) {
 
   const [item, setItem] = React.useState<EitherEdit<PriceBase> | null>(null);
 
   const edit = React.useCallback(
-    ({ isEdit, valuation, ...value }) => {
+    ({ isEdit, expiry, valuation, ...value }) => {
       if (isEdit) {
-        update({...value, valuation: Number(valuation)})
+        update({
+          ...value,
+          expiry: expiry ? new Date() : null,
+          valuation: Number(valuation)
+        });
       } else {
         create({...value, valuation: Number(valuation)});
       }
@@ -86,6 +93,8 @@ function PriceManager({ prices, update, create, category, getPrices }: Props) {
   const createPrice = React.useCallback(() => {
     setItem(createItem(category.id, getMax(prices) + 1));
   }, [category, prices]);
+
+  const optionList = React.useMemo(() => categories.map(({ id, title }) => ({ name: id, title })), [categories]);
 
   React.useEffect(() => {
     getPrices(category.id);
@@ -100,16 +109,20 @@ function PriceManager({ prices, update, create, category, getPrices }: Props) {
       <ItemList list={prices} getKey={c => c.id}>
         {
           (data) => (
-            <div className={styles.item}>
+            <div className={cx(styles.item, {[styles.disabled]: data.expiry })}>
               <dl className={styles.itemTitle}>
                 <dt>{getTitle(data)}</dt>
                 <dd><Price value={data.valuation} sign currencyDisplay="symbol" /></dd>
               </dl>
-              <button
-                type="button"
-                className="btn__edit"
-                onClick={() => setItem({ ...data, isEdit: true })}
-              />
+              {
+                data.expiry ? null : (
+                  <button
+                    type="button"
+                    className="btn__edit"
+                    onClick={() => setItem({ ...data, isEdit: true })}
+                  />
+                )
+              }
             </div>
           )
         }
@@ -122,7 +135,23 @@ function PriceManager({ prices, update, create, category, getPrices }: Props) {
             title={`Цена на "${category.title}"`}
             onSubmit={edit}
           >
-            <Field name="type" render={({ input, meta }) => (
+            {
+              item.isEdit ? (
+                <Field name="expiry" render={({ input }) => (
+                  <CheckBoxField id="expiry" title="Mark as deleted" {...input} />
+                )}/>
+              ) : null
+            }
+            <Field name="parentId" render={({ input }) => (
+              <SelectField
+                list={optionList}
+                id="parentId"
+                title="Category"
+                {...input}
+              />
+            )}/>
+
+            <Field name="type" render={({ input}) => (
               <SelectField
                 list={TYPE}
                 id="type"
