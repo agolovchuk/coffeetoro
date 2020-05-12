@@ -36,7 +36,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
 
   return (
     <section className="scroll-section">
-      <Header title={props.title} onCreate={handleCreat} />
+      <Header title={props.title} onCreate={handleCreat} isSticky />
       <ItemList list={props.list} getKey={e => e.id}>
         {
           (data) => (

@@ -1,3 +1,7 @@
 .item {
   list-style-type: none;
+  padding: 6px 0;
+}
+.item:nth-child(even) {
+  background-color: #f5f5f5;
 }
