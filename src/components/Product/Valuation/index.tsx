@@ -18,17 +18,17 @@ interface Props {
   inOrder: boolean;
 }
 
-export default function Valuation({ volume, price, ...props }: Props) {
+export default function Valuation({ volume, price, checked, ...props }: Props) {
   const changeHandler = () => props.onChange(price.id);
   const id = nanoid(5);
-  return (
+  return checked ? (
     <li className={styles.item}>
       <input
         id={id}
         name={id + "valuation"}
         type="radio"
         value={volume}
-        checked={props.checked}
+        checked={checked}
         onChange={changeHandler}
         className={styles.input}
       />
@@ -39,5 +39,5 @@ export default function Valuation({ volume, price, ...props }: Props) {
         <div className={styles.unit}>{price.description}</div>
       </label>
     </li>
-  );
+  ) : null;
 }

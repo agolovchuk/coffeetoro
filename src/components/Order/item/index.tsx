@@ -17,12 +17,13 @@ function OrderItem({ quantity, price, url }: Props) {
         activeClassName={styles.active}
         className={cx(styles.link, styles.wrapper)}
       >
-        <h3 className={styles.title}>{price.title}
+        <h3 className={styles.title}>
+          <span className={styles.name}>{price.title}</span>
           <span className={styles.volume}>{price.description}</span>
         </h3>
         <div className={styles.summary}>
           <span>
-            <span className={styles.quantity}>{quantity}</span> x 
+            <span className={styles.quantity}>{quantity}</span> x
             <span className={styles.valuation}>
               <Price
                 value={price.valuation}

@@ -188,7 +188,7 @@ interface OrderComplete {
 export function completeOrderAction(id: string, method: PaymentMethod): ThunkAction<OrderComplete | any> {
   return async(dispatch, getState) => {
     const order = get(getState(), ['ordersList', id]);
-    const completeOrder = {...order, payment: method };
+    const completeOrder = {...order, date: new Date(), payment: method };
     dispatch(replace('/orders'));
     try {
       const idb = new CDB();
@@ -233,7 +233,7 @@ export function getOrderAction(id: string): ThunkAction<GetOrder> {
       console.warn(err);
     }
   }
-} 
+}
 
 // +++++++++++++++++++++
 interface GetOrdersList {

@@ -77,7 +77,7 @@ function ProductItem({ addItem, getPrices, orderByProduct, getCategory, ...props
   }, [getPrices, categoryId, getCategory]);
 
   return (
-    <section className={styles.container}>
+    <section className="scroll-section">
       <h1 className={styles.title}>{props.product.title}</h1>
       {
         orderByProduct.map((order) => (

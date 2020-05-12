@@ -34,10 +34,10 @@
   grid-template-columns: repeat(auto-fit, var(--grid-item-height));
   grid-template-rows: repeat(auto-fill, var(--grid-item-width));
   grid-gap: 15px;
-  overflow-y: auto;
   height: 100%;
   position: relative;
 }
+
 .grid__item {
   min-height: var(--tile-height);
   min-width: var(--tile-width);
