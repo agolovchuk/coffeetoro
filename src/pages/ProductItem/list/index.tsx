@@ -25,7 +25,10 @@ function List({ valuation, onChange }: Props) {
             key={e.price.id}
             className={cx('grid__item', 'tile__container', styles.tile)}
           >
-            <button className={styles.btn} onClick={() => onChange(e.price.id)}>
+            <button
+              className={cx(styles.btn, { [styles.isTunable]: e.price.type === 'pc' })}
+              onClick={() => onChange(e.price.id)}
+            >
               <h3 className={styles.title}>{e.price.title}</h3>
               <div className={styles.price}>
                 <Price value={e.price.valuation} sign notation="compact" />
