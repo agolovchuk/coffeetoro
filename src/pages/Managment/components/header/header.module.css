@@ -2,8 +2,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  padding-left: 15px;
+  padding: 4px 10px 10px;
+}
+
+.container.sticky {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  background-color: #fff;
+  box-shadow: 0px 6px 12px rgba(45, 48, 58, 0.2);
 }
 
 .title {

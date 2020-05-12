@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { NavLink } from 'react-router-dom';
+import cx from 'classnames';
 import styles from './item.module.css';
 
 type Data = Record<string, any>;
@@ -22,7 +23,7 @@ function MItem<T extends Data>({ data, onEdit, getLink, title }: Props<T>) {
       >{title}</NavLink>
       <button
         type="button"
-        className="btn__edit"
+        className={cx("btn__edit", styles.btn)}
         onClick={() => onEdit(data)}
       />
     </div>
