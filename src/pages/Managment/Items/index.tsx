@@ -63,6 +63,11 @@ const LIST: List[] = [
     id: '09',
     name: 'expense',
     title: 'Expense'
+  },
+  {
+    id: '10',
+    name: 'reports',
+    title: 'Reports'
   }
 ];
 

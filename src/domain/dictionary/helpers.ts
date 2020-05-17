@@ -36,7 +36,7 @@ export function sortByIndex<T extends ISortebaleList>(a: T, b: T) {
 
 /** Price */
 
-function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): PriceExtended {
+export function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): PriceExtended {
   if (price.type === 'tmc') {
     const { title, description, unitId } = tmc[price.barcode];
     return { ...price, title, description, unitId };

@@ -15,7 +15,7 @@ import {
 } from 'domain/dictionary';
 import { ThunkAction } from '../StoreType';
 import * as adapters from './adapters';
-import { prepereDictionary } from './helpers';
+import { prepareDictionary } from './helpers';
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
 
@@ -86,7 +86,7 @@ export function addItemAction(orderId: string, priceId: string): ThunkAction<IAd
     try {
       const idb = new CDB();
       await idb.addItem(C.TABLE.orderItem.name, item);
-      const dict = prepereDictionary(price, tmc, processCards);
+      const dict = prepareDictionary(price, tmc, processCards);
       dispatch({
         type: ADD_ITEM,
         payload: {
