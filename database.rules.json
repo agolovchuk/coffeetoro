@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "orders": {
+      ".indexOn": ["date"]
+    },
+    ".read": true,
+    ".write": true
+  }
+}

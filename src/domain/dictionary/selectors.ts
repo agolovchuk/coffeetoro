@@ -16,7 +16,7 @@ const categories = (state: DictionaryState) => state.categories;
 const prices = (state: DictionaryState) => state.prices;
 export const units = (state: DictionaryState) => state.units;
 const tmc = (state: DictionaryState) => state.tmc;
-const processCards = (state: DictionaryState) => state.processCards;
+export const processCards = (state: DictionaryState) => state.processCards;
 const groupArticles = (state: DictionaryState) => state.groupArticles;
 
 export const categoriesListSelector = createSelector(categories, c => Object.values(c).sort(sortByIndex));

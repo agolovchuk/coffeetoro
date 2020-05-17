@@ -54,6 +54,7 @@ export default async function configureStore(history: History): Promise<Store<Ap
     ...require('./env').reducer,
     ...require('./orders').reducer,
     ...require('./users').reducer,
+    ...require('./reports').reducer,
   });
 
   const store = createStore(

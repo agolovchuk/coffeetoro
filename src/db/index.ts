@@ -206,4 +206,22 @@ export default class CDB extends IDB {
     };
   }
 
+  getPricesById = async (ids: ReadonlyArray<string>) => {
+    const idb = await this.open();
+    const transaction = idb.transaction([
+      TABLE.price.name,
+      TABLE.processCards.name,
+      TABLE.tmc.name,
+    ], READ_ONLY);
+    transaction.oncomplete = () => { idb.close(); };
+    const osPrice = transaction.objectStore(TABLE.price.name);
+    const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
+    const osPC = transaction.objectStore(TABLE.processCards.name);
+    const prices = await Promise.all(
+      ids.map(id => promisifyReques<PriceItem>(osPrice.get(id)))
+    );
+    const { articles, processCards } = await priceZip(prices, osTMC, osPC);
+    return  { prices, articles, processCards };
+  }
+
 }

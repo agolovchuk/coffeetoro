@@ -14,7 +14,7 @@
   border: var(--tile-border);
 }
 .title {
-  margin: 35px auto auto;
+  margin: 10px auto auto;
   font-size: 20px;
 }
 .price {
@@ -31,4 +31,7 @@
   align-items: center;
   border: 0 none;
   background: none;
+}
+.btn.isTunable .title {
+  margin-top: 35px;
 }

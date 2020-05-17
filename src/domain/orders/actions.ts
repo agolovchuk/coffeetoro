@@ -15,7 +15,7 @@ import {
 } from 'domain/dictionary';
 import { ThunkAction } from '../StoreType';
 import * as adapters from './adapters';
-import { prepereDictionary } from './helpers';
+import { prepareDictionary } from './helpers';
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
 
@@ -86,7 +86,7 @@ export function addItemAction(orderId: string, priceId: string): ThunkAction<IAd
     try {
       const idb = new CDB();
       await idb.addItem(C.TABLE.orderItem.name, item);
-      const dict = prepereDictionary(price, tmc, processCards);
+      const dict = prepareDictionary(price, tmc, processCards);
       dispatch({
         type: ADD_ITEM,
         payload: {
@@ -188,7 +188,7 @@ interface OrderComplete {
 export function completeOrderAction(id: string, method: PaymentMethod): ThunkAction<OrderComplete | any> {
   return async(dispatch, getState) => {
     const order = get(getState(), ['ordersList', id]);
-    const completeOrder = {...order, payment: method };
+    const completeOrder = {...order, date: new Date(), payment: method };
     dispatch(replace('/orders'));
     try {
       const idb = new CDB();
@@ -233,7 +233,7 @@ export function getOrderAction(id: string): ThunkAction<GetOrder> {
       console.warn(err);
     }
   }
-} 
+}
 
 // +++++++++++++++++++++
 interface GetOrdersList {

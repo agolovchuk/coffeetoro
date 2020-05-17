@@ -39,7 +39,7 @@ export function orderItemsArchive(
   });
 }
 
-export function prepereDictionary(
+export function prepareDictionary(
   price: PriceItem,
   articles: Record<string, TMCItem>,
   pc: Record<string, ProcessCardItem>,
@@ -53,9 +53,18 @@ export function prepereDictionary(
     }
   }
   const card = pc[price.refId];
-  if (typeof card === 'undefined') throw Error('No Card in Procces Card Dictionary');
+  if (typeof card === 'undefined') throw Error('No Card in Process Card Dictionary');
   return {
     articles: {},
     processCards: { [card.id]: card },
   }
+}
+
+interface Order {
+  valuation: number;
+  quantity: number;
+}
+
+export function getSumOfOrder(list: ReadonlyArray<Order>): number {
+  return list.reduce((a, v) => a + (v.valuation * v.quantity), 0);
 }

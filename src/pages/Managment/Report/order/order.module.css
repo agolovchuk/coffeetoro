@@ -1,0 +1,23 @@
+.item {
+  border-radius: 4px;
+  border: 1px solid var(--medium-gray-color);
+  padding: 5px;
+  margin-bottom: 5px;
+}
+.articles {
+  border: 1px solid var(--medium-gray-color);
+  border-radius: 4px;
+}
+.params {
+  margin: 5px;
+  display: flex;
+  width: 100%;
+  padding: 0 5px;
+}
+.params dt {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+.params dd {
+  flex: 0 0 30px;
+}

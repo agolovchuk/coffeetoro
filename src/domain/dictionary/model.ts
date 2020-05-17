@@ -13,6 +13,7 @@ import {
   Groups,
 } from './Types';
 import * as A from './actions';
+import * as ReportAction from '../reports/actions';
 
 export const reducer = {
   categories: createReducer({} as Categories, {
@@ -34,7 +35,8 @@ export const reducer = {
     [A.CREATE_PRICE]: (state, action: A.CreatePrice) => set(action.payload.id)(action.payload)(state),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('prices'),
     [A.UPDATE_PRICE]: (state, action: A.UpdatePrice) => set(action.payload.id)(action.payload)(state),
-    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.prices })
+    [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.prices }),
+    [ReportAction.ADD_ORDER_ITEM_SUCCESS]: (state, action: ReportAction.AddOrderItem) => ({ ...state, ...action.payload.prices }),
   }),
 
   tmc: createReducer({} as TMC, {
@@ -45,6 +47,7 @@ export const reducer = {
     [A.GET_PROCESS_CARD]: (state, action: A.GetProcessCard) => ({...state, ...action.payload.articles }),
     [A.GRT_GROUP_ARTICLES]: (state, action: A.GetGroupArticles) => ({ ...state, ...action.payload.articles }),
     [A.PUT_ARTICLES]: (state, action: A.PutArticles) => ({ ...state, ...action.payload }),
+    [ReportAction.ADD_ORDER_ITEM_SUCCESS]: (state, action: ReportAction.AddOrderItem) => ({ ...state, ...action.payload.articles}),
   }),
 
   processCards: createReducer({} as ProcessCards, {
@@ -53,6 +56,7 @@ export const reducer = {
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('processCards'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<ProcessCardItem, 'id'>('processCards', 'id'),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.processCards }),
+    [ReportAction.ADD_ORDER_ITEM_SUCCESS]: (state, action: ReportAction.AddOrderItem) => ({ ...state, ...action.payload.processCards}),
   }),
 
   groupArticles: createReducer({} as Groups, {
