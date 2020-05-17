@@ -25,7 +25,6 @@ export function getOrderItem(
 interface OrderItemArchive {
   quantity: number;
   valuation: number;
-  categoryId: string;
   priceId: string;
 }
 
@@ -34,8 +33,8 @@ export function orderItemsArchive(
   prices: Record<string, PriceItem>,
 ): ReadonlyArray<OrderItemArchive> {
   return orders.map(({ quantity, priceId }) => {
-    const { valuation, parentId } = prices[priceId];
-    return { quantity, valuation, categoryId: parentId, priceId }
+    const { valuation } = prices[priceId];
+    return { quantity, valuation, priceId }
   });
 }
 
