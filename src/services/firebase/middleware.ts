@@ -48,9 +48,6 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
             ...action.payload,
             items,
             date: action.payload.date.toISOString(),
-            d: format(action.payload.date, 'dd'),
-            m: format(action.payload.date, 'MM'),
-            y: format(action.payload.date, 'yy'),
           });
           break;
 
