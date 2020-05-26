@@ -7,7 +7,7 @@ import { validateArray } from 'lib/contracts';
 
 type Action = OrderAction.Action | DictionaryAction.Action;
 
-export default function idbMiddlware() {
+export default function idMiddleware() {
   const Idb = new CDB();
   return ({ dispatch }: MiddlewareAPI) => (next: Dispatch) => (action: Action) => {
     switch (action.type) {
@@ -23,7 +23,7 @@ export default function idbMiddlware() {
       case DictionaryAction.CRUD.createItemAction.type:
         Idb.addItem(action.payload.name, action.payload.data);
         break;
-      
+
       case DictionaryAction.CRUD.updateItemAction.type:
         Idb.updateItem(action.payload.name, action.payload.data);
         break;

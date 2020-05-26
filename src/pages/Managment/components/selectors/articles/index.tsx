@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { Field, useField, useForm } from 'react-final-form';
 import { InputField } from 'components/Form/field';
+import { TMCItem } from 'domain/dictionary';
+import Search from '../add';
 import CDB from 'db';
 import { BarcodeField } from 'components/Form/field';
+import styles from './articles.module.css';
 
 interface Item {
   title: string;
@@ -12,11 +15,15 @@ interface Item {
   };
 }
 
-function ArticleSelector() {
+interface Props {
+  updateAdapter: (d: any, args?: any) => any,
+}
+
+function ArticleSelector({ updateAdapter }: Props) {
 
   const [item, setItem] = React.useState<Item | null>(null);
 
-  const handlSearch = React.useCallback(async (barcode: string) => {
+  const handelSearch = React.useCallback(async (barcode: string) => {
     const idb = new CDB();
     const tmc = await idb.getArticleByBarcode(barcode);
     setItem(tmc);
@@ -24,27 +31,34 @@ function ArticleSelector() {
 
   const { input: { value: barcode }} = useField('barcode', { subscription: { value: true }});
 
-  const { initialize, getState } = useForm();
-  
+  const { initialize, getState, change } = useForm();
+
   React.useEffect(() => {
     if (barcode) {
-      handlSearch(barcode);
+      handelSearch(barcode);
     }
-    const { values: { type, refId, ...rest } } = getState();
-    initialize({ ...rest, type: 'tmc', barcode: barcode || '' });
-  }, [barcode, handlSearch, getState, initialize]);
+    initialize(updateAdapter(getState().values, { barcode }));
+  }, [barcode, handelSearch, getState, initialize, updateAdapter]);
+
+  const searchHandler = React.useCallback(({ barcode }: TMCItem) => {
+    change('barcode', barcode);
+  }, [change]);
 
   return (
-    <div>
+    <div className={styles.container}>
       <Field name="barcode"
         render={({ input, meta }) => (
-          <BarcodeField
-            id="barcode"
-            title="Barcode:"
-            {...input}
-          />
+          <div className={styles.search}>
+            <BarcodeField
+              id="barcode"
+              title="Barcode:"
+              {...input}
+            />
+            <Search onAdd={searchHandler} />
+          </div>
         )}
       />
+
       {
         item && (
           <React.Fragment>

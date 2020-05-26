@@ -51,6 +51,17 @@ function asyncReports(): Promise<unknown> {
   });
 }
 
+function asyncExpense(): Promise<unknown> {
+  return import('./Expense').then((res) => {
+    return res.default;
+  });
+}
+
+function asyncServices(): Promise<unknown> {
+  return import('./Services').then((res) => {
+    return res.default;
+  });
+}
 
 function ManagerRout() {
   return (
@@ -64,6 +75,8 @@ function ManagerRout() {
       <AsyncRoute path="/manager/pc" importRender={asyncPC} />
       <AsyncRoute path="/manager/group" importRender={asyncGroupArticles} />
       <AsyncRoute path={["/manager/reports", "/manager/reports/:date"]} exact importRender={asyncReports} />
+      <AsyncRoute path="/manager/expense" importRender={asyncExpense} />
+      <AsyncRoute path="/manager/services" importRender={asyncServices} />
     </Switch>
   );
 }

@@ -10,6 +10,7 @@ import {
   pcFill,
   toArray,
   groupFill,
+  extendsExpanseList,
 } from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
@@ -18,6 +19,8 @@ export const units = (state: DictionaryState) => state.units;
 const tmc = (state: DictionaryState) => state.tmc;
 export const processCards = (state: DictionaryState) => state.processCards;
 const groupArticles = (state: DictionaryState) => state.groupArticles;
+const expenses = (state: DictionaryState) => state.expenses;
+const services = (state: DictionaryState) => state.services;
 
 export const categoriesListSelector = createSelector(categories, c => Object.values(c).sort(sortByIndex));
 export const pricesListSelector = createSelector(prices, c => Object.values(c).sort(sortByIndex));
@@ -25,6 +28,8 @@ export const unitsListSelector = createSelector(units, c => Object.values(c).sor
 export const tmcListSelector = createSelector(tmc, toArray);
 export const processCardsListSelector = createSelector(processCards, toArray);
 export const groupArticlesListSelector = createSelector(groupArticles, toArray);
+export const expensesListSelector = createSelector(expenses, toArray);
+export const servicesListSelector = createSelector(services, toArray);
 
 export const unitsByIdSelector = createSelector(units, u => u);
 export const unitsSelectSelector = createSelector(
@@ -39,7 +44,7 @@ const priceCategorySelector = createSelector(
   (pr, p) => pr.filter(f => f.parentId === p.categoryId),
 )
 
-export const extendetPricesSelector = createSelector(
+export const extendedPricesSelector = createSelector(
   [priceCategorySelector, articlesByBarcodeSelector, processCards],
   extendsPriceList,
 );
@@ -59,7 +64,7 @@ export const currentCategoriesSelector = createSelector(
 export const priceByNameSelector = createSelector(prices, p => p);
 
 export const productItemSelector = createSelector(
-  [currentCategorySelector, extendetPricesSelector, units],
+  [currentCategorySelector, extendedPricesSelector, units],
   getProductForSale
 )
 
@@ -71,4 +76,9 @@ export const processCardSelector = createSelector(
 export const groupArticlesSelector = createSelector(
   [groupArticles, tmc, params],
   (g, t, p) => p.groupId ? groupFill(get(g, p.groupId), t) : undefined,
+)
+
+export const extendedExpanseSelector = createSelector(
+  [expensesListSelector, articlesByBarcodeSelector, services],
+  (e, tmc, s) => extendsExpanseList(e, tmc, s)
 )

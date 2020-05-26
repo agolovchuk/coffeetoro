@@ -1,4 +1,4 @@
-import { IDB, promisifyReques } from '../lib/idbx';
+import { IDB, promisifyRequest, promisifyCursor } from '../lib/idbx';
 import { DB_NAME, TABLE, READ_ONLY } from './constants';
 import requestUpgrade from './migration';
 import { tmcAdapter, unitAdapter } from 'domain/dictionary/adapters';
@@ -8,45 +8,20 @@ import {
   ProcessCardItem,
   PriceItem,
   PriceTMC,
-  PricePC,
-  GroupArticles,
+  GroupArticles, ExpenseItem,
 } from 'domain/dictionary/Types';
 import {
   Order,
   OrderItem,
 } from 'domain/orders/Types';
 import get from "lodash/get";
+import { priceZip, separatePrice, expenseZip } from './helpers';
 
 export * from '../lib/idbx';
 
-interface PriceByType {
-  tmc: ReadonlyArray<PriceTMC>;
-  pc: ReadonlyArray<PricePC>;
-}
-
-function separatePrice(prices: PriceItem[]) {
-  return prices.reduce((a, v) => (
-    { ...a, [v.type]: [...a[v.type], v] }
-  ), { tmc: [], pc: [] } as PriceByType);
-}
-
-async function priceZip(prices: PriceItem[], osTMC: IDBIndex, osPC: IDBObjectStore) {
-  const { tmc, pc } = separatePrice(prices);
-  const articles = await Promise.all(
-    tmc.map(e => promisifyReques<TMCItem>(osTMC.get(e.barcode)))
-  );
-  const processCards = await Promise.all(
-    pc.map(e => promisifyReques<ProcessCardItem>(osPC.get(e.refId)))
-  )
-  return {
-    articles,
-    processCards,
-  }
-}
-
 export default class CDB extends IDB {
   constructor() {
-    super(DB_NAME, requestUpgrade);
+    super(DB_NAME, requestUpgrade, 2);
   }
 
   getPriceByBarcode = async (barcode: string) => {
@@ -56,8 +31,8 @@ export default class CDB extends IDB {
     const osPrice = transaction.objectStore(TABLE.price.name).index(TABLE.price.index.barcode);
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const [price, article] = await Promise.all([
-      promisifyReques<PriceTMC | undefined>(osPrice.get(barcode)),
-      promisifyReques<TMCItem | undefined>(osTMC.get(barcode)),
+      promisifyRequest<PriceTMC | undefined>(osPrice.get(barcode)),
+      promisifyRequest<TMCItem | undefined>(osTMC.get(barcode)),
     ]);
     return { price, article };
   }
@@ -68,9 +43,9 @@ export default class CDB extends IDB {
     transaction.oncomplete = () => { idb.close(); };
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const osUnits = transaction.objectStore(TABLE.unit.name);
-    const tmc = tmcAdapter(await promisifyReques(osTMC.get(barcode)));
+    const tmc = tmcAdapter(await promisifyRequest(osTMC.get(barcode)));
     if (tmc) {
-      const unit = unitAdapter(await promisifyReques(osUnits.get(tmc.unitId)));
+      const unit = unitAdapter(await promisifyRequest(osUnits.get(tmc.unitId)));
       if (unit) {
         return { ...tmc, unit }
       }
@@ -109,13 +84,13 @@ export default class CDB extends IDB {
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const osPrice = transaction.objectStore(TABLE.price.name).index(TABLE.price.index.parentId);
     const osPC = transaction.objectStore(TABLE.processCards.name);
-    const prices = await promisifyReques<PriceItem[]>(osPrice.getAll(categoryId));
+    const prices = await promisifyRequest<PriceItem[]>(osPrice.getAll(categoryId));
     const { tmc, pc } = separatePrice(prices);
     const articles = await Promise.all(
-      tmc.map(e => promisifyReques<TMCItem>(osTMC.get(e.barcode)))
+      tmc.map(e => promisifyRequest<TMCItem>(osTMC.get(e.barcode)))
     );
     const processCards = await Promise.all(
-      pc.map(e => promisifyReques<ProcessCardItem>(osPC.get(e.refId)))
+      pc.map(e => promisifyRequest<ProcessCardItem>(osPC.get(e.refId)))
     )
     return  {
       prices,
@@ -141,10 +116,10 @@ export default class CDB extends IDB {
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const osPC = transaction.objectStore(TABLE.processCards.name);
 
-    const order = await promisifyReques<Order>(ordersRequest);
-    const orderItems = await promisifyReques<OrderItem[]>(orderRequest);
+    const order = await promisifyRequest<Order>(ordersRequest);
+    const orderItems = await promisifyRequest<OrderItem[]>(orderRequest);
     const prices = await Promise.all(
-      orderItems.map(e => promisifyReques<PriceItem>(priceStore.get(e.priceId)))
+      orderItems.map(e => promisifyRequest<PriceItem>(priceStore.get(e.priceId)))
     );
     const { articles, processCards } = await priceZip(prices, osTMC, osPC);
     return {
@@ -165,10 +140,10 @@ export default class CDB extends IDB {
     transaction.oncomplete = () => { idb.close(); };
     const osPC = transaction.objectStore(TABLE.processCards.name);
     const osTMC = transaction.objectStore(TABLE.tmc.name);
-    const processCard = await promisifyReques<ProcessCardItem | undefined>(osPC.get(id));
+    const processCard = await promisifyRequest<ProcessCardItem | undefined>(osPC.get(id));
     if (processCard && processCard.articles && processCard.articles.length) {
       const articles: TMCItem[] = await Promise.all(
-        processCard.articles.map(e => promisifyReques<TMCItem>(osTMC.get(e.id)))
+        processCard.articles.map(e => promisifyRequest<TMCItem>(osTMC.get(e.id)))
       );
       return  {
         processCard,
@@ -190,10 +165,10 @@ export default class CDB extends IDB {
     transaction.oncomplete = () => { idb.close(); };
     const osGA = transaction.objectStore(TABLE.groupArticles.name);
     const osTMC = transaction.objectStore(TABLE.tmc.name);
-    const groupArticles = await promisifyReques<GroupArticles | undefined>(osGA.get(id));
+    const groupArticles = await promisifyRequest<GroupArticles | undefined>(osGA.get(id));
     if (groupArticles && groupArticles.articles && groupArticles.articles.length) {
       const articles: ReadonlyArray<TMCItem> = await Promise.all(
-        groupArticles.articles.map(e => promisifyReques<TMCItem>(osTMC.get(e))),
+        groupArticles.articles.map(e => promisifyRequest<TMCItem>(osTMC.get(e))),
       );
       return  {
         groupArticles,
@@ -218,10 +193,32 @@ export default class CDB extends IDB {
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const osPC = transaction.objectStore(TABLE.processCards.name);
     const prices = await Promise.all(
-      ids.map(id => promisifyReques<PriceItem>(osPrice.get(id)))
+      ids.map(id => promisifyRequest<PriceItem>(osPrice.get(id)))
     );
     const { articles, processCards } = await priceZip(prices, osTMC, osPC);
     return  { prices, articles, processCards };
   }
 
+  getExpense = async (query = null) => {
+    const idb = await this.open();
+    const transaction = idb.transaction([
+      TABLE.expenses.name,
+      TABLE.tmc.name,
+      TABLE.services.name,
+    ], READ_ONLY);
+    transaction.oncomplete = () => { idb.close(); };
+    const osExpenses = transaction.objectStore(TABLE.expenses.name);
+    const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
+    const osServices = transaction.objectStore(TABLE.services.name);
+    const expenses = await promisifyCursor<ExpenseItem>(osExpenses, query);
+    const { articles, services } = await expenseZip(expenses, osTMC, osServices);
+    return  {
+      expenses,
+      articles,
+      services,
+    }
+  }
+
 }
+
+

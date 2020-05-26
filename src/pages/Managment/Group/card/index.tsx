@@ -17,7 +17,7 @@ import {
 import { AppState } from 'domain/StoreType';
 import Header from '../../components/header';
 import { getTitle } from '../../helper';
-import Add from '../../PC/card/add';
+import Add from '../../components/selectors/add';
 import styles from './card.module.css';
 
 interface SubmitValue extends Omit<GroupArticles, 'articles'> {

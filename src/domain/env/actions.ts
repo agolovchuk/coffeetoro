@@ -1,7 +1,7 @@
 import get from'lodash/get';
 import { ThunkAction } from '../StoreType';
 import { IUser, FirebaseConfig } from './Types';
-import CDB, { promisifyReques } from 'db';
+import CDB, { promisifyRequest } from 'db';
 import { pbkdf2Verify } from 'domain/users/helpers'
 import * as C from 'db/constants';
 import { envSelector } from './selectors';
@@ -23,7 +23,7 @@ function logoutAction(): ThunkAction<Logout> {
       const updateRequest = db
         .transaction(C.TABLE.env.name, C.READ_WRITE)
         .objectStore(C.TABLE.env.name).put({ ...env, user: null });
-      await promisifyReques(updateRequest);
+      await promisifyRequest(updateRequest);
       db.close();
     } catch (err) {
       console.warn(err);
@@ -58,14 +58,14 @@ function loginAction({ id, password, onError }: UserAuth): ThunkAction<Login | a
         .objectStore(C.TABLE.users.name)
         .index(C.TABLE.users.index.id)
         .get(id);
-      const { hash, ...user  } = await promisifyReques(checkRequest);
+      const { hash, ...user  } = await promisifyRequest(checkRequest);
       const res = await pbkdf2Verify(hash, password);
       if (res) {
         const { env } = getState();
         const updateRequest = db
           .transaction(C.TABLE.env.name, C.READ_WRITE)
           .objectStore(C.TABLE.env.name).put({ ...env, user: id });
-        await promisifyReques(updateRequest);
+        await promisifyRequest(updateRequest);
         dispatch({ type: LOGIN, payload: user });
       } else {
         onError('Invalid password');

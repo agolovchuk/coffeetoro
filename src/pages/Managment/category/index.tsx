@@ -19,7 +19,7 @@ import {
 import { AppState } from 'domain/StoreType';
 import { InputField, SelectField } from 'components/Form/field';
 import { getId } from 'lib/id';
-import { ManagmentPopup, MItem, Header } from '../components';
+import { ManagementPopup, MItem, Header } from '../components';
 import Price from './price'
 import Tree from '../components/tree';
 import { getMax } from '../helper';
@@ -130,7 +130,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
       <Route path="/manager/category/:categoryId" component={Price} />
       {
         item !== null ? (
-          <ManagmentPopup
+          <ManagementPopup
             title="Категория"
             onCancel={() => setItem(null)}
             onSubmit={edit}
@@ -151,7 +151,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
             <Field name="name" render={({ input, meta }) => (
               <InputField id="name" title="Slug:" {...input} />
             )}/>
-          </ManagmentPopup>
+          </ManagementPopup>
         ) : null
       }
     </div>
