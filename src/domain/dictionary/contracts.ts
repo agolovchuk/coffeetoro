@@ -71,3 +71,32 @@ export const groupArticles = t.interface({
   description: t.union([t.string, t.undefined]),
   articles: t.union([t.array(t.string), t.undefined]),
 });
+
+export const expenseBase = {
+  id: t.string,
+  foreignId: t.union([t.string, t.undefined]),
+  valuation: t.number,
+  date: date,
+  quantity: t.number,
+  source: t.union([t.literal('cash'), t.literal('bank'), t.string]),
+}
+
+export const expense = t.union([
+  t.interface({
+    ...expenseBase,
+    type: t.literal('product'),
+    barcode: t.string,
+  }),
+  t.interface({
+    ...expenseBase,
+    type: t.literal('service'),
+    refId: t.string,
+  }),
+]);
+
+export const service = t.interface({
+  id: t.string,
+  title: t.string,
+  description: t.union([t.string, t.undefined]),
+  parentId: t.string,
+})

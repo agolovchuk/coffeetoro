@@ -81,4 +81,18 @@ export const TABLE = {
       title: 'title',
     },
   },
+  expenses: {
+    name: 'expenses',
+    index: {
+      id: 'id',
+      foreignId: 'foreignId',
+      barcode: 'barcode',
+    }
+  },
+  services: {
+    name: 'services',
+    index: {
+      id: 'id',
+    }
+  }
 };

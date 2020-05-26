@@ -22,4 +22,6 @@ export const dictionaryAdapters = {
   processCards: dictionaryAdapterFactory(dictionaryContracts.pc, 'id'),
   groupArticles: dictionaryAdapterFactory(dictionaryContracts.groupArticles, 'id'),
   categories: adapters.categories,
+  expenses: dictionaryAdapterFactory(dictionaryContracts.expense, 'id'),
+  services: dictionaryAdapterFactory(dictionaryContracts.service, 'id'),
 };

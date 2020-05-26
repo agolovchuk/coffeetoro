@@ -13,7 +13,7 @@ import {
 import { Price } from 'components/Units';
 import { AppState } from 'domain/StoreType';
 import {
-  extendetPricesSelector,
+  extendedPricesSelector,
   PriceBase,
   PriceTMC,
   priceByNameSelector,
@@ -22,10 +22,9 @@ import {
   updatePriceAction,
   getPricesByCategoryAction, categoriesListSelector,
 } from 'domain/dictionary';
-import { ManagmentPopup, ItemList, Header } from '../../components';
+import { ManagementPopup, ItemList, Header } from '../../components';
 import { getMax } from '../../helper';
-import ArticleSelector from './articles';
-import ProccessCardSelector from './process';
+import { ArticleSelector, ProcessCardSelector } from '../../components/selectors';
 import { EitherEdit } from '../../Types';
 import { getTitle } from '../../helper';
 import styles from './price.module.css';
@@ -48,6 +47,10 @@ function createItem(parentId: string, sortIndex: number): PriceTMC {
   }
 }
 
+function priceUpdateAdapter({ type, refId, ...rest }: any, { barcode }: any): any {
+  return { ...rest, type: 'tmc', barcode: barcode || '' }
+}
+
 interface PropsFromRouter {
   match: match<{ categoryId: string }>
 }
@@ -55,7 +58,7 @@ interface PropsFromRouter {
 const mapState = (state: AppState, props: PropsFromRouter) => ({
   categories: categoriesListSelector(state),
   category: currentCategorySelector(state, props),
-  prices: extendetPricesSelector(state, props),
+  prices: extendedPricesSelector(state, props),
   products: priceByNameSelector(state),
 })
 
@@ -129,7 +132,7 @@ function PriceManager({ prices, update, create, category, getPrices, categories 
       </ItemList>
       {
         item !== null ? (
-          <ManagmentPopup
+          <ManagementPopup
             initialValues={item}
             onCancel={() => setItem(null)}
             title={`Цена на "${category.title}"`}
@@ -160,15 +163,15 @@ function PriceManager({ prices, update, create, category, getPrices, categories 
               />
             )}/>
             <Condition when="type" is="tmc" >
-              <ArticleSelector />
+              <ArticleSelector updateAdapter={priceUpdateAdapter} />
             </Condition>
             <Condition when="type" is="pc" >
-              <ProccessCardSelector />
+              <ProcessCardSelector />
             </Condition>
             <Field name="valuation" render={({ input, meta }) => (
               <PriceField id="valuation" title="Цена за единицу:" {...input} />
             )}/>
-          </ManagmentPopup>
+          </ManagementPopup>
         ) : null
       }
     </section>

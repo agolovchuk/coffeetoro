@@ -9,7 +9,8 @@ import {
   PriceExtended,
   ProcessCardItem,
   TMCItem,
-  ProcessCardArticle, GroupArticles,
+  ProcessCardArticle, GroupArticles, ExpenseItem, Services,
+  ExpenseExtended,
 } from './Types';
 
 function priceAdapter(units: Units) {
@@ -80,4 +81,17 @@ export function groupFill(item: GroupArticles | undefined, tmc: Record<string, T
 
 export function toArray<T>(obj: Record<string, T>): ReadonlyArray<T> {
   return Object.values(obj);
+}
+
+
+
+export function extendsExpanseList(list: ReadonlyArray<ExpenseItem>, tmc: TMC, services: Services): ReadonlyArray<ExpenseExtended> {
+  return list.map((v) => {
+    if(v.type === 'product') {
+      const { title, description } = tmc[v.barcode];
+      return {...v, title, description }
+    }
+    const { title, description } = services[v.refId];
+    return  {...v, title, description }
+  }, []);
 }

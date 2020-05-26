@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
+import { format } from 'date-fns';
 import styles from './field.module.css';
 import Field from './field';
 
@@ -11,7 +12,7 @@ interface Props<T extends HTMLElement = HTMLElement> {
   onChange?: (event: React.ChangeEvent<T> | any) => void;
   onFocus?: (event?: React.FocusEvent<T>) => void;
   type?: string;
-  value: string;
+  value: string | Date;
   checked?: boolean;
   multiple?: boolean;
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
@@ -21,7 +22,8 @@ interface Props<T extends HTMLElement = HTMLElement> {
   inputClassName?: string;
 }
 
-function InputField({ id, title, labelClassName, containerClassName, inputClassName, ...rest }: Props) {
+function InputField({ id, title, labelClassName, containerClassName, inputClassName, value, ...rest }: Props) {
+  const v = (value instanceof Date) ? format(value, 'yyyy-MM-dd') : value;
   return (
     <Field
       id={id}
@@ -29,7 +31,7 @@ function InputField({ id, title, labelClassName, containerClassName, inputClassN
       labelClassName={labelClassName}
       containerClassName={containerClassName}
     >
-      <input id={id} {...rest} className={cx(styles.field, inputClassName)} />
+      <input id={id} {...rest} value={v} className={cx(styles.field, inputClassName)} />
     </Field>
   );
 }

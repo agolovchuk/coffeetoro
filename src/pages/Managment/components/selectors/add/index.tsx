@@ -2,7 +2,7 @@ import * as React from 'react';
 import CDB from 'db';
 import { TMCItem } from 'domain/dictionary';
 import Search from 'components/Form/Search';
-import { searchValidator } from '../helpers';
+import { searchValidator } from './helpers';
 import { getTitle } from '../../../helper';
 import styles from './add.module.css';
 

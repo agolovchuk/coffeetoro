@@ -3,7 +3,17 @@ import CDB from 'db';
 import * as C from 'db/constants';
 import { Adapter, IDB } from 'lib/idbx';
 import * as adapters from 'domain/dictionary/adapters';
-import { PriceItem, CategoryItem, TMCItem, ProcessCardItem , GroupArticles} from 'domain/dictionary/Types';
+import {
+  PriceItem,
+  CategoryItem,
+  TMCItem,
+  ProcessCardItem,
+  GroupArticles,
+  ServiceItem,
+  ExpenseItem,
+  ExpenseProduct,
+  ExpenseService,
+} from 'domain/dictionary/Types';
 
 interface PriceContainer {
   id: string,
@@ -141,5 +151,42 @@ export const groupHandler = handlerFactory(
   {
     async add(data: GroupArticles) { await this.set(data); },
     async update(data: GroupArticles) { await this.put(data); },
+  }
+);
+
+type ExpenseFB = Omit<ExpenseProduct, 'date'> & { date: string } | Omit<ExpenseService, 'date'> & { date: string };
+
+function expenseFbToiDB({ date, ...rest }: ExpenseFB): ExpenseItem {
+  return {
+    ...rest,
+    date: new Date(date),
+  }
+}
+
+function eqExpense(fb: ExpenseFB, { date, ...rest }: ExpenseItem): boolean {
+  return eq(
+    fb,
+    {
+      ...rest,
+      date: date.toISOString(),
+    }
+  )
+}
+
+export const expensesHandler = handlerFactory(
+  dbWrapper(C.TABLE.expenses.name, adapters.expenses),
+  eqExpense,
+  {
+    async add(data: ExpenseFB) { await this.set(expenseFbToiDB(data)); },
+    async update(data: ExpenseFB) { await this.put(expenseFbToiDB(data)); },
+  }
+);
+
+export const servicesHandler = handlerFactory(
+  dbWrapper(C.TABLE.services.name, adapters.services),
+  eq,
+  {
+    async add(data: ServiceItem) { await this.set(data); },
+    async update(data: ServiceItem) { await this.put(data); },
   }
 );

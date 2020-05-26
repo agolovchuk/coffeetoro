@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Header, ItemList, ManagmentPopup, MItem} from "../index";
+import {Header, ItemList, ManagementPopup, MItem} from "../index";
 import { EitherEdit } from "../../Types";
 
 interface Props<T> {
@@ -11,7 +11,7 @@ interface Props<T> {
   handleSubmit: (data: T, cb: () => void) => void;
   popupTitle: string;
   createLink: (data: T) => string;
-  createTitle: (data: T) => string;
+  createTitle: (data: T) => string | React.ReactNode;
 }
 
 interface DataType {
@@ -51,7 +51,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
       </ItemList>
       {
         item && (
-          <ManagmentPopup
+          <ManagementPopup
             title={props.popupTitle}
             onCancel={() => setItem(null)}
             initialValues={item}
@@ -60,7 +60,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
             {
               props.children
             }
-          </ManagmentPopup>
+          </ManagementPopup>
         )
       }
     </section>

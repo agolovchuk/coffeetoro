@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Confirmation, Modal, Popup } from 'components/Popup';
-import { promisifyReques } from 'lib/idbx/helpers';
+import { promisifyRequest } from 'lib/idbx/helpers';
 import { DB_NAME } from 'db/constants';
 import styles from './maintenance.module.css';
 
 const clearDB = async() => {
   try {
-    await promisifyReques(indexedDB.deleteDatabase(DB_NAME));
+    await promisifyRequest(indexedDB.deleteDatabase(DB_NAME));
     window.location.href = '/';
   } catch (err) {
     console.warn("Couldn't delete database");
