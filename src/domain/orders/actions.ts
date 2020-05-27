@@ -1,5 +1,4 @@
 import get from 'lodash/get';
-import { replace } from 'connected-react-router';
 import CDB from 'db';
 import * as C from 'db/constants';
 import { getId } from 'lib/id';
@@ -185,11 +184,10 @@ interface OrderComplete {
   payload: Order;
 }
 
-export function completeOrderAction(id: string, method: PaymentMethod): ThunkAction<OrderComplete | any> {
+export function completeOrderAction(id: string, method: PaymentMethod): ThunkAction<OrderComplete> {
   return async(dispatch, getState) => {
     const order = get(getState(), ['ordersList', id]);
     const completeOrder = {...order, date: new Date(), payment: method };
-    dispatch(replace('/orders'));
     try {
       const idb = new CDB();
       await idb.updateItem(C.TABLE.orders.name, completeOrder);

@@ -66,7 +66,6 @@ export function getCategoriesAction(index: CategoryIndex, query?: string): Thunk
   };
 }
 
-
 export interface GetPricesSuccess {
   type: typeof GET_PRICES_SUCCESS;
   payload: {

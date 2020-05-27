@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { RouteComponentProps } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
-import { replace as replaceAction } from 'connected-react-router';
 import cx from 'classnames';
 import { AppState } from 'domain/StoreType';
 import { getUsersAction, usersListSelector } from 'domain/users';
@@ -18,7 +18,6 @@ const mapState = (state: AppState) => ({
 const mapDispatch = {
   getUsers: getUsersAction,
   login: loginAction,
-  replace: replaceAction
 }
 
 const connector = connect(mapState, mapDispatch);
@@ -29,19 +28,19 @@ interface StateUser {
   password: string;
 }
 
-interface Props extends ConnectedProps<typeof connector> {};
+interface Props extends ConnectedProps<typeof connector>, RouteComponentProps {};
 
-function Auth({ getUsers, users, login, replace, currentUser }: Props) {
+function Auth({ getUsers, users, login, currentUser, history }: Props) {
 
   const passwordInput = React.useRef<HTMLInputElement | null>(null);
 
   React.useEffect(() => {
     if (currentUser !== null) {
-      replace('/orders');
+      history.replace('/orders');
     } else {
       getUsers();
     }
-  }, [getUsers, currentUser, replace]);
+  }, [getUsers, currentUser, history]);
 
   const [user, setUser] = React.useState<null | StateUser>(null);
 
