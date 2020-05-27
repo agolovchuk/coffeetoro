@@ -18,11 +18,15 @@ export function getLink(url: string, name: string) {
 export interface TitleContainer {
   title: string;
   description?: string;
+  unit?: {
+    title: string
+  }
 }
 
 export function getTitle<T extends TitleContainer>(price: T): string {
-  const { title, description } = pick(['title', 'description'])(price)
-  return compact([title, description]).join(' / ');
+  const { title, description } = pick(['title', 'description'])(price);
+  const unitTitle = get(price, ['unit', 'title']);
+  return compact([title, description, unitTitle]).join(' / ');
 }
 
 export function getUnitsTitle(units: Record<string, UnitItem>, article: TMCItem) {

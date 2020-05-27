@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { getId } from "lib/id";
 import { ExpenseExtended } from "domain/dictionary";
 
@@ -9,7 +8,7 @@ export function articleUpdateAdapter({ type, refId, barcode, quantity, ...rest }
     ...rest,
     type: 'product',
     barcode: barcode || '',
-    quantity: 1,
+    quantity: quantity || 1,
   }
 }
 
@@ -18,7 +17,7 @@ export function serviceUpdateAdapter({ type, barcode, refId, quantity, ...rest }
     ...rest,
     type: 'service',
     refId: refId || 'null',
-    quantity: 1,
+    quantity: quantity || 1,
   }
 }
 

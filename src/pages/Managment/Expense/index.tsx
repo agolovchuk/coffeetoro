@@ -1,7 +1,15 @@
 import * as React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import { Field } from "react-final-form";
-import { CRUD, getExpenseAction, extendedExpanseSelector, ExpenseExtended } from "domain/dictionary";
+import pick from 'lodash/pick';
+import {
+  CRUD,
+  getExpenseAction,
+  extendedExpanseSelector,
+  ExpenseExtended,
+  putArticlesAction,
+  TMCItem,
+} from "domain/dictionary";
 import { AppState } from 'domain/StoreType';
 import {Condition, InputField, PriceField, SelectField } from "components/Form/field";
 import { Main } from "../components";
@@ -14,6 +22,7 @@ import {
   createItem,
   editAdapter,
 } from './helpers';
+import styles from './exp.module.css';
 
 const TYPE = [
   { name: 'product', title: 'Товары' },
@@ -34,23 +43,28 @@ const mapDispatch = {
   update: CRUD.updateItemAction,
   create: CRUD.createItemAction,
   getAll: getExpenseAction,
+  putArticles: putArticlesAction,
 }
 const connector = connect(mapState, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector> { }
 
-function Expense({ list, update, create, getAll }: Props) {
+function Expense({ list, update, create, getAll, putArticles }: Props) {
 
   const handleSubmit = React.useCallback(
-    ({ isEdit, title, description, date, ...value }: EitherEdit<ExpenseExtended>, cb: () => void) => {
+    ({ isEdit, title, description, quantity, date, ...value }: EitherEdit<ExpenseExtended>, cb: () => void) => {
       if (isEdit) {
-        update('expenses', { ...value, date: new Date(date) });
+        update('expenses', { ...value, quantity: Number(quantity), date: new Date(date) });
       } else {
-        create('expenses', { ...value, date: new Date(date) });
+        create('expenses', { ...value, quantity: Number(quantity), date: new Date(date) });
       }
       cb();
     }, [create, update],
   );
+
+  const putArticle = React.useCallback((item: TMCItem) => {
+    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);
+  }, [putArticles]);
 
   React.useEffect(() => { getAll(); }, [getAll]);
 
@@ -61,7 +75,7 @@ function Expense({ list, update, create, getAll }: Props) {
       createItem={createItem}
       editAdapter={editAdapter}
       handleSubmit={handleSubmit}
-      popupTitle="Add Expense order"
+      popupTitle="Расходный ордер"
       createLink={() => '/'}
       createTitle={(d :ExpenseExtended) => (<Item {...d} />)}
     >
@@ -73,14 +87,16 @@ function Expense({ list, update, create, getAll }: Props) {
           {...input}
         />
       )}/>
-      <Field name="date" render={({ input}) => (
-        <InputField id="date" title="Дата:" type='date' {...input} />
-      )}/>
-      <Field name="foreignId" render={({ input}) => (
-        <InputField id="foreignId" title="Номер накладной:" {...input} />
-      )}/>
+      <div className={styles.line}>
+        <Field name="foreignId" render={({ input}) => (
+          <InputField id="foreignId" title="Накладная:" {...input} />
+        )}/>
+        <Field name="date" render={({ input}) => (
+          <InputField id="date" title="Дата:" type='date' {...input} />
+        )}/>
+      </div>
       <Condition when="type" is="product" >
-        <ArticleSelector updateAdapter={articleUpdateAdapter} />
+        <ArticleSelector updateAdapter={articleUpdateAdapter} onPicItem={putArticle} />
       </Condition>
       <Condition when="type" is="service" >
         <ServiceSelector updateAdapter={serviceUpdateAdapter} />
@@ -93,12 +109,14 @@ function Expense({ list, update, create, getAll }: Props) {
           {...input}
         />
       )}/>
-      <Field name="quantity" render={({ input}) => (
-        <InputField id="quantity" title="Количество:" {...input} />
-      )}/>
-      <Field name="valuation" render={({ input}) => (
-        <PriceField id="valuation" title="Цена за единицу:" {...input} />
-      )}/>
+      <div className={styles.line}>
+        <Field name="quantity" render={({ input}) => (
+          <InputField id="quantity" title="Количество:" {...input} />
+        )}/>
+        <Field name="valuation" render={({ input}) => (
+          <PriceField id="valuation" title="Цена за единицу:" {...input} />
+        )}/>
+      </div>
     </Main>
   )
 }

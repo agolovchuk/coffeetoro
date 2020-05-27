@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Field, useField, useForm } from 'react-final-form';
-import { InputField } from 'components/Form/field';
 import { TMCItem } from 'domain/dictionary';
 import Search from '../add';
 import CDB from 'db';
 import { BarcodeField } from 'components/Form/field';
 import styles from './articles.module.css';
+import { getTitle } from '../../../helper';
 
 interface Item {
   title: string;
@@ -17,9 +17,10 @@ interface Item {
 
 interface Props {
   updateAdapter: (d: any, args?: any) => any,
+  onPicItem?: (item: TMCItem) => void;
 }
 
-function ArticleSelector({ updateAdapter }: Props) {
+function ArticleSelector({ updateAdapter, onPicItem }: Props) {
 
   const [item, setItem] = React.useState<Item | null>(null);
 
@@ -27,7 +28,8 @@ function ArticleSelector({ updateAdapter }: Props) {
     const idb = new CDB();
     const tmc = await idb.getArticleByBarcode(barcode);
     setItem(tmc);
-  }, []);
+    if (typeof onPicItem === "function" && tmc) onPicItem(tmc);
+  }, [onPicItem]);
 
   const { input: { value: barcode }} = useField('barcode', { subscription: { value: true }});
 
@@ -58,24 +60,9 @@ function ArticleSelector({ updateAdapter }: Props) {
           </div>
         )}
       />
-
       {
         item && (
-          <React.Fragment>
-            <InputField id="Title" title="Title" name="title" value={item.title} readOnly />
-            {
-              item.description && (
-                <InputField
-                  id="description"
-                  title="description"
-                  name="description"
-                  value={item.description}
-                  readOnly
-                />
-              )
-            }
-            <InputField id="unit" title="unit" name="unit" value={item.unit.title} readOnly />
-          </React.Fragment>
+          <div className={styles.line}>{getTitle(item)}</div>
         )
       }
     </div>

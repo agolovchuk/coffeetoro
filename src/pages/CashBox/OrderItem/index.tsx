@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { PropsMatch } from 'domain/routes';
+import { RouteComponentProps } from 'react-router-dom';
 import {
   ordersSelector,
   completeOrderAction,
@@ -15,7 +15,7 @@ interface IOrderParams {
   orderId: string;
 }
 
-type PropsFromRouter = PropsMatch<IOrderParams>;
+type PropsFromRouter = RouteComponentProps<IOrderParams>;
 
 const mapState = (state: AppState, props: PropsFromRouter) => ({
   orders: ordersSelector(state, props),
@@ -34,24 +34,29 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {};
 
-function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd }: Props) {
+function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd, history }: Props) {
   const { orderId } = match.params
 
   React.useEffect(() => { getDictionary('units'); }, [getDictionary]);
 
   React.useEffect(() => { getOrder(orderId); }, [getOrder, orderId]);
 
-  const handleFastAdd = (barcode: string, cb: (r: boolean) => void) => {
+  const handleComplete = React.useCallback((method) => {
+    history.replace('/orders');
+    onComplete(orderId, method);
+  }, [orderId, onComplete, history]);
+
+  const handleFastAdd = React.useCallback((barcode: string, cb: (r: boolean) => void) => {
     if (barcode.length > 0) {
-      fastAdd(match.params.orderId, barcode).then(cb);
+      fastAdd(orderId, barcode).then(cb);
     }
-  }
+  }, [orderId, fastAdd]);
 
   return (
     <Order
       list={orders}
-      onComplete={(method) => onComplete(match.params.orderId, method)}
-      orderId={match.params.orderId}
+      onComplete={handleComplete}
+      orderId={orderId}
       onFastAdd={handleFastAdd}
     />
   )

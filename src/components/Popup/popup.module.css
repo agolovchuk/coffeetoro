@@ -35,4 +35,6 @@
   position: relative;
   border: 1px solid #DCE0E3;
   border-radius: 4px;
+  max-width: 95vw;
+  max-height: 95vh;
 }

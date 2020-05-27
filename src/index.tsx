@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createHashHistory as createHistory } from 'history';
-import { ConnectedRouter } from 'connected-react-router';
 import { HashRouter as RouterProvider } from 'react-router-dom';
 import get from 'lodash/get';
 import IntlProvider from 'components/Intl';
@@ -16,8 +14,7 @@ import * as serviceWorker from './serviceWorker';
 import 'lib/loger';
 
 async function coffeeToro() {
-  const history = createHistory();
-  const store = await configureStore(history);
+  const store = await configureStore();
   const lang = get(store.getState(), ['env', 'user', 'lang'], 'en');
   let messages: Messages = {};
   try {
@@ -30,13 +27,11 @@ async function coffeeToro() {
     ReactDOM.render(
       <Provider store={store}>
         <IntlProvider locale="ru-UA" defaultMessage={messages}>
-          <ConnectedRouter history={history}>
-            <RouterProvider>
-              <UnitsContext.Provider value={getValueFromStore(store)}>
-                <App />
-              </UnitsContext.Provider>
-            </RouterProvider>
-          </ConnectedRouter>
+          <RouterProvider>
+            <UnitsContext.Provider value={getValueFromStore(store)}>
+              <App />
+            </UnitsContext.Provider>
+          </RouterProvider>
         </IntlProvider>
       </Provider>,
       document.getElementById('root')
