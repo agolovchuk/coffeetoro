@@ -46,7 +46,7 @@ function asyncGroupArticles(): Promise<unknown> {
 }
 
 function asyncReports(): Promise<unknown> {
-  return import('./Report').then((res) => {
+  return import('../Daily').then((res) => {
     return res.default;
   });
 }

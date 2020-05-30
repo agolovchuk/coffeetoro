@@ -12,6 +12,7 @@ interface Props<T> {
   popupTitle: string;
   createLink: (data: T) => string;
   createTitle: (data: T) => string | React.ReactNode;
+  orderBy?: (a: T, b: T) => number;
 }
 
 interface DataType {
@@ -22,6 +23,8 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
 
   const [item, setItem] = React.useState<EitherEdit<T> | null>(null);
 
+  const status = React.useRef<boolean>(false);
+
   const handleCreat = React.useCallback(() => {
     setItem(createItem());
   }, [createItem]);
@@ -31,13 +34,22 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
   }, [editAdapter]);
 
   const onSubmit = React.useCallback((value: EitherEdit<T>) => {
-    handleSubmit({ ...createItem(), ...value }, () => setItem(null));
+    handleSubmit({ ...createItem(), ...value }, () => {
+      status.current && setItem(null);
+    });
   }, [handleSubmit, createItem]);
+
+  React.useEffect(() => {
+    status.current = true;
+    return () => {
+      status.current = false;
+    }
+  }, []);
 
   return (
     <section className="scroll-section">
       <Header title={props.title} onCreate={handleCreat} isSticky />
-      <ItemList list={props.list} getKey={e => e.id}>
+      <ItemList list={props.list} getKey={e => e.id} orderBy={props.orderBy}>
         {
           (data) => (
             <MItem

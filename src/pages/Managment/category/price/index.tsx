@@ -20,7 +20,7 @@ import {
   currentCategorySelector,
   createPriceAction,
   updatePriceAction,
-  getPricesByCategoryAction, categoriesListSelector,
+  getPricesByCategoryAction, categoriesListSelector, TMCItem, putArticlesAction,
 } from 'domain/dictionary';
 import { ManagementPopup, ItemList, Header } from '../../components';
 import { getMax } from '../../helper';
@@ -28,6 +28,7 @@ import { ArticleSelector, ProcessCardSelector } from '../../components/selectors
 import { EitherEdit } from '../../Types';
 import { getTitle } from '../../helper';
 import styles from './price.module.css';
+import pick from "lodash/pick";
 
 const TYPE = [
   { name: 'tmc', title: 'TMC' },
@@ -66,6 +67,7 @@ const mapDispatch = {
   getPrices: getPricesByCategoryAction,
   create: createPriceAction,
   update: updatePriceAction,
+  putArticles: putArticlesAction,
 };
 
 const connector = connect(mapState, mapDispatch);
@@ -74,7 +76,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {}
 
-function PriceManager({ prices, update, create, category, getPrices, categories }: Props) {
+function PriceManager({ prices, update, create, category, getPrices, categories, putArticles }: Props) {
 
   const [item, setItem] = React.useState<EitherEdit<PriceBase> | null>(null);
 
@@ -92,6 +94,10 @@ function PriceManager({ prices, update, create, category, getPrices, categories 
       setItem(null);
     }, [update, create],
   )
+
+  const putArticle = React.useCallback((item: TMCItem) => {
+    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);
+  }, [putArticles]);
 
   const createPrice = React.useCallback(() => {
     setItem(createItem(category.id, getMax(prices) + 1));
@@ -163,7 +169,7 @@ function PriceManager({ prices, update, create, category, getPrices, categories 
               />
             )}/>
             <Condition when="type" is="tmc" >
-              <ArticleSelector updateAdapter={priceUpdateAdapter} />
+              <ArticleSelector updateAdapter={priceUpdateAdapter} onPicItem={putArticle} />
             </Condition>
             <Condition when="type" is="pc" >
               <ProcessCardSelector />
