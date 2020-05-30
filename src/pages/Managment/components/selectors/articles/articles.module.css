@@ -1,0 +1,19 @@
+.search {
+  display: flex;
+}
+.container {
+  position: relative;
+  z-index: 10;
+}
+.line {
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
+  margin-bottom: 20px;
+  padding: 0 10px;
+  background-color: #EAEAEA;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

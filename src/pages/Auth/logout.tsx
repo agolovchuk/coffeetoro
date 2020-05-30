@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { replace as replaceAction } from 'connected-react-router';
+import { RouteComponentProps } from 'react-router-dom';
 import { logoutAction, userSelector } from 'domain/env';
 import { AppState } from 'domain/StoreType';
 
 const mapDispatch = {
   logout: logoutAction,
-  replace: replaceAction,
 }
 
 const mapState = (state: AppState) => ({
@@ -15,13 +14,13 @@ const mapState = (state: AppState) => ({
 
 const connector = connect(mapState, mapDispatch);
 
-interface Props extends ConnectedProps<typeof connector> {};
+interface Props extends ConnectedProps<typeof connector>, RouteComponentProps {};
 
-function Logout({ logout, currentUser, replace }: Props) {
+function Logout({ logout, currentUser, history }: Props) {
 
   React.useEffect(() => {
-    if (currentUser === null) { replace('/login'); } else { logout(); }
-  }, [logout, replace, currentUser]);
+    if (currentUser === null) { history.replace('/login'); } else { logout(); }
+  }, [logout, history, currentUser]);
 
   return null;
 }

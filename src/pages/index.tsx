@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { goBack } from 'connected-react-router';
 import { AppState } from 'domain/StoreType';
-import { locationSelector } from 'domain/routes';
 import { userSelector, IUser } from 'domain/env';
 import Layout from 'components/Layouts';
 import OrdersList from './OrdersList';
@@ -16,14 +14,9 @@ import UserPage from './User';
 
 const mapState = (state: AppState) => ({
   user: userSelector(state),
-  location: locationSelector(state),
 });
 
-const mapDispatch = {
-  onBack: goBack,
-}
-
-const connector = connect(mapState, mapDispatch);
+const connector = connect(mapState);
 
 type Props = ConnectedProps<typeof connector>;
 
@@ -35,14 +28,14 @@ function getAvailablePath(user: IUser | null): string[] {
   return usersPath;
 }
 
-function App({ onBack, location, user }: Props) {
+function App({ user }: Props) {
   const path = React.useMemo(() => getAvailablePath(user), [user]);
   return (
     <Switch>
       <Route path="/login" exact component={Auth} />
       <Route path="/logout" exact component={Logout} />
-      <Route path={path}>
-        <Layout onBack={onBack} location={location} user={user}>
+      <Route path={path} render={({ location, history }) => (
+        <Layout onBack={history.goBack} location={location} user={user}>
           <Switch>
             <Route path="/user" component={UserPage} exact />
             <Route path="/orders" component={OrdersList} exact />
@@ -50,6 +43,7 @@ function App({ onBack, location, user }: Props) {
             <ManagerRout />
           </Switch>
         </Layout>
+      )}>
       </Route>
       {
         user !== null ? (

@@ -2,6 +2,7 @@ import * as C from './constants';
 import * as Fixtures from './fixtures';
 
 export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionChangeEvent): any {
+  const fixtures = [];
   if (ev.oldVersion < 1) {
 // =========== Orders ==============================
     const osOrders = this.result.createObjectStore(
@@ -216,10 +217,50 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
 // ======================================================
+    fixtures.push({ table: C.TABLE.unit.name, data: Fixtures.units });
+    fixtures.push({ table: C.TABLE.env.name, data: Fixtures.env });
+    fixtures.push({ table: C.TABLE.users.name, data: Fixtures.users });
   }
-  return [
-    { table: C.TABLE.unit.name, data: Fixtures.units },
-    { table: C.TABLE.env.name, data: Fixtures.env },
-    { table: C.TABLE.users.name, data: Fixtures.users },
-  ];
+  if (ev.oldVersion < 2) {
+    // ======================================================
+    const osExpense = this.result.createObjectStore(
+      C.TABLE.expenses.name, {
+        keyPath: C.TABLE.expenses.index.id,
+        autoIncrement: false,
+      }
+    );
+    osExpense.createIndex(
+      C.TABLE.expenses.index.id,
+      C.TABLE.expenses.index.id, {
+        unique: true,
+      }
+    );
+    osExpense.createIndex(
+      C.TABLE.expenses.index.foreignId,
+      C.TABLE.expenses.index.foreignId, {
+        unique: false,
+      }
+    );
+    osExpense.createIndex(
+      C.TABLE.expenses.index.barcode,
+      C.TABLE.expenses.index.barcode, {
+        unique: false,
+      }
+    );
+// ======================================================
+    const osServices = this.result.createObjectStore(
+      C.TABLE.services.name, {
+        keyPath: C.TABLE.services.index.id,
+        autoIncrement: false,
+      }
+    );
+    osServices.createIndex(
+      C.TABLE.services.index.id,
+      C.TABLE.services.index.id, {
+        unique: true,
+      }
+    );
+// ======================================================
+  }
+  return fixtures;
 }

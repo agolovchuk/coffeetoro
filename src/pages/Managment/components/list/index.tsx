@@ -1,4 +1,5 @@
 import * as React from 'react';
+import get from 'lodash/get';
 import styles from './list.module.css';
 
 interface Props<T> {
@@ -34,7 +35,7 @@ interface Ordering {
 }
 
 ItemList.defaultProps = {
-  orderBy: (a: Ordering, b: Ordering) => a.title.localeCompare(b.title),
+  orderBy: (a: Ordering, b: Ordering) => get(a, 'title').localeCompare(get(b, 'title')),
   // orderBy: [(a) => a.title.localeCompare(), 'description'],
 }
 

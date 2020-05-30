@@ -1,9 +1,17 @@
 import { validateArray } from 'lib/contracts';
-import CDB, { promisifyReques } from 'db';
+import CDB, { promisifyRequest } from 'db';
 import * as C from 'db/constants';
 import { ThunkAction } from '../StoreType';
 import * as CRUD from './crud';
-import { CategoryItem, PriceItem, CountedCategoryItem, TMCItem, ProcessCardItem, GroupArticles } from './Types';
+import {
+  CategoryItem,
+  PriceItem,
+  CountedCategoryItem,
+  TMCItem,
+  ProcessCardItem,
+  GroupArticles,
+  Expenses, ServiceItem,
+} from './Types';
 import * as adapters from './adapters';
 
 export { CRUD }
@@ -24,6 +32,8 @@ export const UPDATE_CATEGORY = 'DICTIONARY/UPDATE_CATEGORY';
 export const GET_PROCESS_CARD = 'DICTIONARY/GET_PROCESS_CARD';
 
 export const GRT_GROUP_ARTICLES = 'DICTIONARY/GRT_GROUP_ARTICLES';
+
+export const GET_EXPENSE = 'DICTIONARY/GET_EXPENSE';
 
 export interface GetCategoriesSuccess {
   type: typeof GET_CATEGORIES_SUCCESS;
@@ -49,13 +59,12 @@ export function getCategoriesAction(index: CategoryIndex, query?: string): Thunk
     }
     const categoryStore = transaction.objectStore('categories');
     const priceStore = transaction.objectStore('prices');
-    categories = await promisifyReques<CategoryItem[]>(categoryStore.index(index).getAll(query));
+    categories = await promisifyRequest<CategoryItem[]>(categoryStore.index(index).getAll(query));
     counters = await Promise.all(
-      categories.map(({ id }) => promisifyReques<number>(priceStore.index('parentId').count(id)))
+      categories.map(({ id }) => promisifyRequest<number>(priceStore.index('parentId').count(id)))
     )
   };
 }
-
 
 export interface GetPricesSuccess {
   type: typeof GET_PRICES_SUCCESS;
@@ -260,6 +269,30 @@ export function putArticlesAction(articles: ReadonlyArray<TMCItem>) {
   };
 }
 
+export interface GetExpense {
+  type: typeof GET_EXPENSE;
+  payload: {
+    expenses: Expenses,
+    articles: Record<string, TMCItem>;
+    services: Record<string, ServiceItem>
+  }
+}
+
+export function getExpenseAction(): ThunkAction<GetExpense> {
+  return async (dispatch) => {
+    const idb = new CDB();
+    const { expenses, articles, services } = await idb.getExpense();
+    dispatch({
+      type: GET_EXPENSE,
+      payload: {
+        expenses: adapters.expensesToDictionary(expenses),
+        articles: adapters.articlesToDictionary(articles),
+        services: adapters.servicesToDictionary(services),
+      }
+    })
+  }
+}
+
 export type Action = ReturnType<typeof CRUD.createItemAction>
   | ReturnType<typeof CRUD.getAllAction>
   | ReturnType<typeof CRUD.getAllActionSuccess>
@@ -275,4 +308,5 @@ export type Action = ReturnType<typeof CRUD.createItemAction>
   | GetProcessCard
   | GetGroupArticles
   | PutArticles
+  | GetExpense
   ;

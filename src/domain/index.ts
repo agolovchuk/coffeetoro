@@ -8,10 +8,8 @@ import {
   Middleware,
 } from 'redux';
 import thunk from 'redux-thunk';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
-import { History } from 'history';
 import { AppState } from './StoreType';
-import idbMiddlware from 'db/middlware';
+import idMiddleware from 'db/middlware';
 import { getEnv } from 'domain/env/helpers';
 
 const __DEV__ = (process.env.NODE_ENV === 'development');
@@ -31,7 +29,7 @@ function getMiddleware(state: boolean): Promise<Middleware<any, AppState, any>[]
   return Promise.resolve([]);
 }
 
-export default async function configureStore(history: History): Promise<Store<AppState>> {
+export default async function configureStore(): Promise<Store<AppState>> {
 
   const initialState = {
     env: await getEnv(),
@@ -49,7 +47,6 @@ export default async function configureStore(history: History): Promise<Store<Ap
   }
 
   const reducers: Reducer<AppState> = combineReducers<AppState>({
-    router: connectRouter(history),
     ...require('./dictionary').reducer,
     ...require('./env').reducer,
     ...require('./orders').reducer,
@@ -63,8 +60,7 @@ export default async function configureStore(history: History): Promise<Store<Ap
     composeEnhancers(
       applyMiddleware(
         thunk,
-        routerMiddleware(history),
-        idbMiddlware(),
+        idMiddleware(),
         ...mdw,
       ),
     ),

@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import pick from 'lodash/pick';
 import {
   ProductForSale,
   PriceItem,
@@ -9,7 +10,8 @@ import {
   PriceExtended,
   ProcessCardItem,
   TMCItem,
-  ProcessCardArticle, GroupArticles,
+  ProcessCardArticle, GroupArticles, ExpenseItem, Services,
+  ExpenseExtended,
 } from './Types';
 
 function priceAdapter(units: Units) {
@@ -80,4 +82,17 @@ export function groupFill(item: GroupArticles | undefined, tmc: Record<string, T
 
 export function toArray<T>(obj: Record<string, T>): ReadonlyArray<T> {
   return Object.values(obj);
+}
+
+
+
+export function extendsExpanseList(list: ReadonlyArray<ExpenseItem>, tmc: TMC, services: Services): ReadonlyArray<ExpenseExtended> {
+  return list.map((v) => {
+    if(v.type === 'product') {
+      const { title, description } = pick(get(tmc, v.barcode), ['title', 'description']);
+      return {...v, title, description }
+    }
+    const { title, description } = pick(get(services, v.refId), ['title', 'description']);
+    return  {...v, title, description }
+  }, []);
 }

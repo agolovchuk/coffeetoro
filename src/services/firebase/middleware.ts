@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import { AnyAction, MiddlewareAPI, Action } from 'redux';
-import { format } from 'date-fns';
 import { AppState, ThunkAction } from 'domain/StoreType';
 import * as OrderSelector from 'domain/orders/selectors';
 import * as OrderAction from 'domain/orders/actions';
@@ -37,6 +36,10 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
     database.ref().child('processCards').on('child_changed', handler.pcHandler);
     database.ref().child('groupArticles').on('child_added', handler.groupHandler);
     database.ref().child('groupArticles').on('child_changed', handler.groupHandler);
+    database.ref().child('expenses').on('child_added', handler.expensesHandler);
+    database.ref().child('expenses').on('child_changed', handler.expensesHandler);
+    database.ref().child('services').on('child_added', handler.servicesHandler);
+    database.ref().child('services').on('child_changed', handler.servicesHandler);
 
     return (next: Dispatch<AppAction>) => (action: AppAction) => {
       switch (action.type) {
@@ -83,6 +86,15 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           DictionaryAction.CRUD.effect('groupArticles', action, data => {
             database.ref('groupArticles/' + data.id).set(data);
           });
+          DictionaryAction.CRUD.effect('expenses', action, data => {
+            database.ref('expenses/' + data.id).set({
+              ...data,
+              date: data.date.toISOString(),
+            });
+          });
+          DictionaryAction.CRUD.effect('services', action, data => {
+            database.ref('services/' + data.id).set(data);
+          });
           break;
 
         case DictionaryAction.CRUD.updateItemAction.type:
@@ -94,6 +106,15 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           });
           DictionaryAction.CRUD.effect('groupArticles', action, data => {
             database.ref('groupArticles/' + data.id).set(data);
+          });
+          DictionaryAction.CRUD.effect('expenses', action, data => {
+            database.ref('expenses/' + data.id).set({
+              ...data,
+              date: data.date.toISOString(),
+            });
+          });
+          DictionaryAction.CRUD.effect('services', action, data => {
+            database.ref('services/' + data.id).set(data);
           });
           break;
 

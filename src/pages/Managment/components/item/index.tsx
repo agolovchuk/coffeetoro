@@ -7,7 +7,7 @@ type Data = Record<string, any>;
 
 interface Props<T> {
   data: T,
-  title: string,
+  title: string | React.ReactNode,
   onEdit: (data: T) => void;
   getLink: ((data: T) => string) | string;
 }

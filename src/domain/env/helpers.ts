@@ -1,4 +1,4 @@
-import CDB, { promisifyReques } from 'db';
+import CDB, { promisifyRequest } from 'db';
 import * as C from 'db/constants';
 import { User } from 'domain/users';
 import { IEnv, DBEnv } from './Types';
@@ -21,9 +21,9 @@ export async function getEnv(): Promise<IEnv> {
       }
       db.close();
     }
-    env = await promisifyReques<DBEnv>(envRequest);
+    env = await promisifyRequest<DBEnv>(envRequest);
     if (typeof env.user === 'string') {
-      user = await promisifyReques<User | null>(userOs.get(env.user));
+      user = await promisifyRequest<User | null>(userOs.get(env.user));
     }
   });
 }

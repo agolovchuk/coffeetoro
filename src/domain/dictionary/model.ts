@@ -11,6 +11,10 @@ import {
   ProcessCards,
   GroupArticles,
   Groups,
+  Expenses,
+  ExpenseItem,
+  Services,
+  ServiceItem,
 } from './Types';
 import * as A from './actions';
 import * as ReportAction from '../reports/actions';
@@ -48,6 +52,7 @@ export const reducer = {
     [A.GRT_GROUP_ARTICLES]: (state, action: A.GetGroupArticles) => ({ ...state, ...action.payload.articles }),
     [A.PUT_ARTICLES]: (state, action: A.PutArticles) => ({ ...state, ...action.payload }),
     [ReportAction.ADD_ORDER_ITEM_SUCCESS]: (state, action: ReportAction.AddOrderItem) => ({ ...state, ...action.payload.articles}),
+    [A.GET_EXPENSE]: (state, action: A.GetExpense) => ({ ...state, ...action.payload.articles }),
   }),
 
   processCards: createReducer({} as ProcessCards, {
@@ -64,6 +69,20 @@ export const reducer = {
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<GroupArticles, 'id'>('groupArticles', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('groupArticles'),
     [A.GRT_GROUP_ARTICLES]: (state, action: A.GetGroupArticles) => ({ ...state, [action.payload.groupArticles.id]: action.payload.groupArticles }),
+  }),
+
+  expenses: createReducer({} as Expenses, {
+    [A.CRUD.createItemAction.type]: A.CRUD.creat<ExpenseItem, 'id'>('expenses', 'id'),
+    [A.CRUD.updateItemAction.type]: A.CRUD.creat<ExpenseItem, 'id'>('expenses', 'id'),
+    [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('expenses'),
+    [A.GET_EXPENSE]: (state, action: A.GetExpense) => ({ ...state, ...action.payload.expenses }),
+  }),
+
+  services: createReducer({} as Services, {
+    [A.CRUD.createItemAction.type]: A.CRUD.creat<ServiceItem, 'id'>('services', 'id'),
+    [A.CRUD.updateItemAction.type]: A.CRUD.creat<ServiceItem, 'id'>('services', 'id'),
+    [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('services'),
+    [A.GET_EXPENSE]: (state, action: A.GetExpense) => ({ ...state, ...action.payload.services }),
   }),
 
 };
