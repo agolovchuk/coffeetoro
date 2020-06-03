@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import { connect, ConnectedProps } from 'react-redux';
-import { ordersListSelector, createOrderAction, getOrdersListAction, Order } from 'domain/orders';
+import { ordersListSelector, createOrderAction, getOrdersListAction, removeOrderAction } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
 import { FormattedMessage as FM } from 'react-intl';
 
@@ -15,6 +15,7 @@ const mapState = (state: AppState) => ({
 const mapDispatch = {
   createOrder: createOrderAction,
   getOrdersList: getOrdersListAction,
+  removeOrder: removeOrderAction,
 }
 
 const connector = connect(mapState, mapDispatch);
@@ -23,9 +24,13 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux {};
 
-function Orders({ orders, createOrder, getOrdersList }: Props) {
-  
+function Orders({ orders, createOrder, getOrdersList, removeOrder }: Props) {
+
   React.useEffect(() => { getOrdersList(); }, [getOrdersList]);
+
+  const handleRemove = React.useCallback((id) => () => {
+    removeOrder(id);
+  }, [removeOrder]);
 
   return (
     <div className={styles.wrapper}>
@@ -40,11 +45,20 @@ function Orders({ orders, createOrder, getOrdersList }: Props) {
         </FM>
         <ul className={styles.list}>
           {
-            orders.map((e: Order, i) => (
-              <li key={e.id}>
+            orders.map((e, i) => (
+              <li key={e.id} className={styles.item}>
                 <Link className={cx(styles.btn, styles.place)} to={`/order/${e.id}`}>
                   <span className={styles.index}>{i + 1}</span>
                 </Link>
+                {
+                  e.count || (
+                    <button
+                      className={styles.remove}
+                      type="button"
+                      onClick={handleRemove(e.id)}
+                    />
+                  )
+                }
               </li>
             ))
           }

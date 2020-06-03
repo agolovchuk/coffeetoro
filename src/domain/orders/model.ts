@@ -61,6 +61,9 @@ export const reducer = {
       case A.GET_ORDERS_LIST:
         return action.payload;
 
+      case A.REMOVE_ORDER:
+        return omit(action.payload)(state);
+
       case A.COMPLETE:
         return set(action.payload.id)(action.payload)(state);
 
