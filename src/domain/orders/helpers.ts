@@ -1,6 +1,6 @@
 import get from 'lodash/get';
+import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from 'domain/dictionary/Types';
 import { OrderItem, OrderItemContainer } from './Types';
-import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from '../dictionary/Types';
 
 function priceAdapter(
   order: OrderItem,

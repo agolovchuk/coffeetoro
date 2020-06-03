@@ -14,6 +14,8 @@ const discountItems = (state: OrderState) => state.discountItems;
 
 const priceByID = createSelector(orderDictionary, d => d.prices);
 
+export const discountsListSelector = createSelector([discountItems], toArray);
+
 const extendsPriceListSelector = createSelector(orderDictionary,
   d => extendsPriceList(Object.values(d.prices), d.articles, d.processCards)
 );
@@ -23,11 +25,11 @@ const extendsPriceByIdSelector = createSelector(extendsPriceListSelector,
 )
 
 // const categoryById = createSelector(orderDictionary, d => d.categories);
-const corderItemsListSelectors = createSelector(orderItems, toArray);
+const orderItemsListSelectors = createSelector(orderItems, toArray);
 
 // Filter order items list for specific order
 const orderItemSelector = createSelector(
-  [corderItemsListSelectors, params],
+  [orderItemsListSelectors, params],
   (o, p) => o.filter(f => f.orderId === p.orderId),
 )
 
@@ -53,4 +55,4 @@ export const ordersListSelector = createSelector(
     .sort(sortByDate('date'))
 )
 
-export const discountsListSelector = createSelector([discountItems], toArray);
+

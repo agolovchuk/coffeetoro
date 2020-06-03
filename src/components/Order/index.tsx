@@ -21,7 +21,8 @@ interface Props {
 
 function getSumm(list: ReadonlyArray<OrderItemContainer>, ds: ReadonlyArray<DiscountItem>): number {
   const discount = ds.reduce((a, v) => a + v.valuation, 0);
-  return list.reduce((a, v) => a + (v.price.valuation * v.quantity), -discount);
+  const order = list.reduce((a, v) => a + (v.price.valuation * v.quantity), 0);
+  return Math.max(order - discount, 0)
 }
 
 function makeUrl(orderId: string) {

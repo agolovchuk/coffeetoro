@@ -121,7 +121,7 @@ export default class CDB extends IDB {
 
     const order = await promisifyRequest<Order>(ordersRequest);
     const orderItems = await promisifyRequest<OrderItem[]>(orderRequest);
-    const discounts = await promisifyRequest<DiscountItem[]>(osDiscount.getAll(orderId));
+    const discounts = await promisifyRequest<DiscountItem[]>(osDiscount.index(TABLE.discountItem.index.orderId).getAll(orderId));
     const prices = await Promise.all(
       orderItems.map(e => promisifyRequest<PriceItem>(priceStore.get(e.priceId)))
     );
