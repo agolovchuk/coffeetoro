@@ -41,8 +41,6 @@ export async function priceZip(prices: PriceItem[], osTMC: IDBIndex, osPC: IDBOb
   }
 }
 
-
-
 export function separateExpense(list: ReadonlyArray<ExpenseItem>) {
   return list.reduce((a, v) => (
     { ...a, [v.type]: [...a[v.type], v] }

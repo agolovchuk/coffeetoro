@@ -1,3 +1,5 @@
+import { DiscountItem } from 'domain/orders/Types';
+
 export interface OrderArchiveContent {
   priceId: string;
   quantity: number;
@@ -8,7 +10,8 @@ export interface OrderArchiveItem {
   date: string;
   id: string;
   payment: 1 | 2;
-  items: ReadonlyArray<OrderArchiveContent>
+  items: ReadonlyArray<OrderArchiveContent>;
+  discounts: ReadonlyArray<DiscountItem>;
 }
 
 export interface ReportState {

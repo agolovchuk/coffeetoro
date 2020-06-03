@@ -11,6 +11,7 @@ import {
   GroupArticles, ExpenseItem,
 } from 'domain/dictionary/Types';
 import {
+  DiscountItem,
   Order,
   OrderItem,
 } from 'domain/orders/Types';
@@ -21,7 +22,7 @@ export * from '../lib/idbx';
 
 export default class CDB extends IDB {
   constructor() {
-    super(DB_NAME, requestUpgrade, 2);
+    super(DB_NAME, requestUpgrade, 3);
   }
 
   getPriceByBarcode = async (barcode: string) => {
@@ -107,6 +108,7 @@ export default class CDB extends IDB {
       TABLE.price.name,
       TABLE.tmc.name,
       TABLE.processCards.name,
+      TABLE.discountItem.name,
     ]);
     transaction.oncomplete = () => { idb.close(); };
 
@@ -115,9 +117,11 @@ export default class CDB extends IDB {
     const priceStore = transaction.objectStore(TABLE.price.name);
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const osPC = transaction.objectStore(TABLE.processCards.name);
+    const osDiscount = transaction.objectStore(TABLE.discountItem.name);
 
     const order = await promisifyRequest<Order>(ordersRequest);
     const orderItems = await promisifyRequest<OrderItem[]>(orderRequest);
+    const discounts = await promisifyRequest<DiscountItem[]>(osDiscount.index(TABLE.discountItem.index.orderId).getAll(orderId));
     const prices = await Promise.all(
       orderItems.map(e => promisifyRequest<PriceItem>(priceStore.get(e.priceId)))
     );
@@ -128,6 +132,7 @@ export default class CDB extends IDB {
       prices,
       articles,
       processCards,
+      discounts,
     }
   }
 

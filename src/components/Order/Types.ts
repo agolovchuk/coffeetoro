@@ -14,3 +14,9 @@ export interface OrderItemContainer {
 export interface OrderApi {
   onRemove: () => void;
 }
+
+export interface DiscountItem {
+  orderId: string,
+  discountId: string,
+  valuation: number,
+}
