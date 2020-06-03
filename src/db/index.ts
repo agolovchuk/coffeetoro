@@ -100,6 +100,22 @@ export default class CDB extends IDB {
     };
   }
 
+  getOrderList = async () => {
+    const idb = await this.open();
+    const transaction = idb.transaction([
+      TABLE.orders.name,
+      TABLE.orderItem.name,
+    ]);
+    transaction.oncomplete = () => { idb.close(); };
+    const osOrders = transaction.objectStore(TABLE.orders.name).index(TABLE.orders.field.payment);
+    const osOrderItems = transaction.objectStore(TABLE.orderItem.name).index(TABLE.orderItem.field.orderId);
+    const orders = await promisifyRequest<Order[]>(osOrders.getAll(0));
+    const counters = await Promise.all(
+      orders.map(e => promisifyRequest(osOrderItems.count(e.id)))
+    );
+    return orders.map((e, i) => ({ ...e, count: counters[i] }));
+  }
+
   getOrder = async(orderId: string) => {
     const idb = await this.open();
     const transaction = idb.transaction([

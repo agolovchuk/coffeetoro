@@ -38,3 +38,10 @@
 .isfs {
   background-image: url("./fullscreen_exit.svg");
 }
+.report {
+  background-image: url("./score-black-24dp.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 36px 36px;
+  margin-right: 10px;
+}

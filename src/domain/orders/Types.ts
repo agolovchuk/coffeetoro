@@ -32,6 +32,6 @@ export interface OrderItemContainer {
 export interface OrderState {
   readonly orderItems: Record<string, OrderItem>;
   readonly discountItems: Record<string, DiscountItem>;
-  readonly ordersList: Record<string, Order>;
+  readonly ordersList: Record<string, Order & {count: number}>;
   readonly orderDictionary: OrderDictionary;
 }

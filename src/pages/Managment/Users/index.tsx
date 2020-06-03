@@ -41,7 +41,11 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const connector = connect(mapStateToProps, mapDispatch);
 
-interface Props extends PropsFromRedux {}
+interface Props extends PropsFromRedux {};
+
+function orderUsers(a: UserType, b: UserType): number {
+  return a.name.localeCompare(b.name);
+}
 
 function ManagmentUsers({ createUser, getUsers, updateUser, ...props }: Props) {
 
@@ -75,6 +79,7 @@ function ManagmentUsers({ createUser, getUsers, updateUser, ...props }: Props) {
       createLink={createLink}
       editAdapter={editAdapter}
       createTitle={({ name }) => name}
+      orderBy={orderUsers}
     >
       <Field name="role" render={({input}) => (
         <SelectField
