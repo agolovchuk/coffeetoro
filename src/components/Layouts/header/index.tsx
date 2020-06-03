@@ -53,6 +53,12 @@ function Header({ onBack, location, user }: Props) {
         onClick={handleFullScreen}
         type="button"
       />
+      <NavLink
+        to="/report"
+        exact
+        className={cx(styles.btn, styles.report)}
+        activeClassName={styles.active}
+      />
       {
         user && (
           <Profile

@@ -49,6 +49,10 @@ const connector = connect(mapState, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector> { }
 
+function orderUsers(a: ExpenseExtended, b: ExpenseExtended): number {
+  return a.date.getTime() - b.date.getTime();
+}
+
 function Expense({ list, update, create, getAll, putArticles }: Props) {
 
   const handleSubmit = React.useCallback(
@@ -78,6 +82,7 @@ function Expense({ list, update, create, getAll, putArticles }: Props) {
       popupTitle="Расходный ордер"
       createLink={() => '/'}
       createTitle={(d :ExpenseExtended) => (<Item {...d} />)}
+      orderBy={orderUsers}
     >
       <Field name="type" render={({ input}) => (
         <SelectField
