@@ -4,7 +4,7 @@ import set from 'lodash/fp/set';
 import update from 'lodash/fp/update';
 import omit from 'lodash/fp/omit';
 import merge from 'lodash/fp/merge';
-import { Order, OrderItem, OrderDictionary } from './Types';
+import { Order, OrderItem, OrderDictionary, DiscountItem } from './Types';
 import * as A from './actions';
 
 export const reducer = {
@@ -23,6 +23,24 @@ export const reducer = {
 
       case A.GET_ORDER:
         return action.payload.orderItems;
+
+      case A.COMPLETE:
+        return {};
+
+      default:
+        return state;
+    }
+  },
+  discountItems(state: Record<string, DiscountItem> = {}, action: A.Action) {
+    switch (action.type) {
+      case A.GET_ORDER:
+        return action.payload.discounts;
+
+      case A.ADD_DISCOUNT:
+        return set(action.payload.discountId)(action.payload)(state);
+
+      case A.REMOVE_DISCOUNT:
+        return omit(action.payload.discountId)(state);
 
       case A.COMPLETE:
         return {};
@@ -56,7 +74,7 @@ export const reducer = {
       articles: action.payload.articles,
       processCards: action.payload.processCards,
     }),
-    [A.ADD_ITEM]: (state, action: A.IAddItem) => 
+    [A.ADD_ITEM]: (state, action: A.IAddItem) =>
      compose(
       update('processCards')(merge(action.payload.processCards)),
       update('articles')(merge(action.payload.articles)),

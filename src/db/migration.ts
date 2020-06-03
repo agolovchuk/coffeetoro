@@ -262,5 +262,28 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
     );
 // ======================================================
   }
+  if (ev.oldVersion < 3) {
+    const osDiscountItem = this.result.createObjectStore(
+      C.TABLE.discountItem.name, {
+        keyPath: [
+          C.TABLE.discountItem.index.orderId,
+          C.TABLE.discountItem.index.discountId,
+        ],
+        autoIncrement: false,
+      }
+    );
+    osDiscountItem.createIndex(
+      C.TABLE.discountItem.index.orderId,
+      C.TABLE.discountItem.index.orderId, {
+        unique: false,
+      }
+    );
+    osDiscountItem.createIndex(
+      C.TABLE.discountItem.index.discountId,
+      C.TABLE.discountItem.index.discountId, {
+        unique: false,
+      }
+    );
+  }
   return fixtures;
 }

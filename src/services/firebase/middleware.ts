@@ -46,10 +46,13 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
 
         case OrderAction.COMPLETE:
           const params = { match: { params: { orderId: action.payload.id } }};
-          const items = OrderSelector.orderArchiveSelector(getState(), params )
+          const state = getState();
+          const items = OrderSelector.orderArchiveSelector(state, params )
+          const discounts = OrderSelector.discountsListSelector(state);
           database.ref('orders/' + action.payload.id).set({
             ...action.payload,
             items,
+            discounts,
             date: action.payload.date.toISOString(),
           });
           break;

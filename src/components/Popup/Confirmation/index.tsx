@@ -1,5 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
+import PopupHeader from '../header';
 import styles from './confirmation.module.css';
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
 function Confirmation({ title, children, onConfirm, onCancel }: Props) {
   return (
     <section className={styles.container}>
-      <h2 className={styles.title}>{title}</h2>
+      <PopupHeader title={title} />
       {
         children
       }

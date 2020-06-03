@@ -21,6 +21,13 @@ export const TABLE = {
       priceId: 'priceId',
     },
   },
+  discountItem: {
+    name: 'discountItem',
+    index: {
+      orderId: 'orderId',
+      discountId: 'discountId',
+    }
+  },
   category: {
     name: 'categories',
     index: {

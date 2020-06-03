@@ -1,0 +1,24 @@
+.wrapper {
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.container {
+  position: relative;
+  width: 100%;
+  will-change: transform;
+}
+.remove {
+  top: 0;
+  right: 0;
+  width: 0;
+  background: var(--red-color);
+  border: 0 none;
+  height: 40px;
+  position: absolute;
+  color: #fff;
+  font-size: 17px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
