@@ -84,8 +84,6 @@ export function toArray<T>(obj: Record<string, T>): ReadonlyArray<T> {
   return Object.values(obj);
 }
 
-
-
 export function extendsExpanseList(list: ReadonlyArray<ExpenseItem>, tmc: TMC, services: Services): ReadonlyArray<ExpenseExtended> {
   return list.map((v) => {
     if(v.type === 'product') {

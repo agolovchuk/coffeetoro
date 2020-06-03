@@ -3,10 +3,11 @@ import CDB from 'db';
 import * as C from 'db/constants';
 import { getId } from 'lib/id';
 import { arrayToRecord } from 'lib/dataHelper';
-import { Order, PaymentMethod, OrderItem } from './Types';
+import { Order, PaymentMethod, OrderItem, DiscountItem } from './Types';
 import {
   PriceItem,
   pricesToDictionary,
+
   pcToDictionary,
   TMCItem,
   ProcessCardItem,
@@ -27,6 +28,9 @@ export const GET_ORDER = 'ORDER/GET_ORDER';
 
 export const GET_ORDERS_LIST = 'ORDER/GET_ORDERS_LIST';
 export const GET_ORDER_ITEMS_SUCCESS = 'ORDER/GET_ORDER_ITEMS_SUCCESS';
+
+export const ADD_DISCOUNT = 'ORDER/ADD_DISCOUNT';
+export const REMOVE_DISCOUNT = 'ORDER/REMOVE_DISCOUNT';
 
 export interface IAddItem {
   type: typeof ADD_ITEM;
@@ -210,6 +214,7 @@ export interface GetOrder {
     prices: Record<string, PriceItem>;
     articles: Record<string, TMCItem>;
     processCards: Record<string, ProcessCardItem>;
+    discounts: Record<string, DiscountItem>;
   }
 }
 export function getOrderAction(id: string): ThunkAction<GetOrder> {
@@ -225,6 +230,7 @@ export function getOrderAction(id: string): ThunkAction<GetOrder> {
           prices: pricesToDictionary(res.prices),
           articles: arrayToRecord(res.articles, 'barcode'),
           processCards: pcToDictionary(res.processCards),
+          discounts: adapters.discountsToDictionary(res.discounts),
         }
       });
     } catch (err) {
@@ -260,6 +266,50 @@ export function getOrdersListAction(): ThunkAction<GetOrdersList> {
   }
 }
 
+export interface AddDiscount {
+  type: typeof ADD_DISCOUNT;
+  payload: DiscountItem,
+}
+
+export function addDiscountAction(item: DiscountItem, cb: () => void): ThunkAction<AddDiscount> {
+  return async(dispatch) => {
+    try {
+      const idb = new CDB();
+      await idb.addItem(C.TABLE.discountItem.name, item);
+      dispatch({
+        type: ADD_DISCOUNT,
+        payload: item,
+      })
+      cb();
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
+export interface RemoveDiscount {
+  type: typeof REMOVE_DISCOUNT;
+  payload: {
+    orderId: string,
+    discountId: string,
+  };
+}
+
+export function removeDiscountAction(orderId: string, discountId: string): ThunkAction<RemoveDiscount>  {
+  return async (dispatch) => {
+    try {
+      const idb = new CDB();
+      await idb.deleteItem(C.TABLE.discountItem.name, [orderId, discountId]);
+      dispatch({
+        type: REMOVE_DISCOUNT,
+        payload: { orderId, discountId },
+      });
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
 export type Action = CreateOrder
   | IAddItem
   | UpdateQuantity
@@ -267,4 +317,6 @@ export type Action = CreateOrder
   | GetOrder
   | OrderComplete
   | GetOrdersList
+  | AddDiscount
+  | RemoveDiscount
   ;

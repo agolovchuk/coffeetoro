@@ -8,11 +8,11 @@ import { PaymentMethod } from 'domain/orders/Types';
 
 interface Props {
   onCancel: () => void,
-  onConplete: (method: PaymentMethod) => void,
+  onComplete: (method: PaymentMethod) => void,
   valuation: number,
 }
 
-function Payment({ onCancel, onConplete, valuation }: Props) {
+function Payment({ onCancel, onComplete, valuation }: Props) {
   const [method, setMethod] = React.useState(PaymentMethod.Opened);
   return (
     <Modal>
@@ -57,13 +57,13 @@ function Payment({ onCancel, onConplete, valuation }: Props) {
               className={cx(styles.btn, styles.cancel)}
               type="button"
               onClick={onCancel}
-            >Cancell</button>
+            >Cancel</button>
             {
               method !== PaymentMethod.Opened ? (
                 <button
                   className={cx(styles.btn, styles.pay)}
                   type="button"
-                  onClick={() => onConplete(method)}
+                  onClick={() => onComplete(method)}
                 >Ok</button>
               ) : null
             }

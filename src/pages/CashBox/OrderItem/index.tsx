@@ -6,6 +6,9 @@ import {
   completeOrderAction,
   getOrderAction,
   fastAddAction,
+  addDiscountAction,
+  removeDiscountAction,
+  discountsListSelector,
 } from 'domain/orders';
 import { CRUD } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
@@ -19,6 +22,7 @@ type PropsFromRouter = RouteComponentProps<IOrderParams>;
 
 const mapState = (state: AppState, props: PropsFromRouter) => ({
   orders: ordersSelector(state, props),
+  discountsList: discountsListSelector(state),
 });
 
 const mapDispatch = {
@@ -26,6 +30,8 @@ const mapDispatch = {
   onComplete: completeOrderAction,
   getOrder: getOrderAction,
   fastAdd: fastAddAction,
+  addDiscount: addDiscountAction,
+  removeDiscount: removeDiscountAction
 }
 
 const connector = connect(mapState, mapDispatch);
@@ -34,7 +40,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 interface Props extends PropsFromRedux, PropsFromRouter {};
 
-function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd, history }: Props) {
+function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd, removeDiscount, history, ...rest }: Props) {
   const { orderId } = match.params
 
   React.useEffect(() => { getDictionary('units'); }, [getDictionary]);
@@ -52,14 +58,21 @@ function OrderItem({ orders, match, onComplete, getOrder, getDictionary, fastAdd
     }
   }, [orderId, fastAdd]);
 
+  const handleRemoveDiscount = React.useCallback((discountId: string) => {
+    removeDiscount(orderId, discountId)
+  }, [removeDiscount, orderId]);
+
   return (
     <Order
       list={orders}
       onComplete={handleComplete}
       orderId={orderId}
       onFastAdd={handleFastAdd}
+      onAddDiscount={rest.addDiscount}
+      discounts={rest.discountsList}
+      onRemoveDiscount={handleRemoveDiscount}
     />
-  )
+  );
 }
 
 export default connector(OrderItem);

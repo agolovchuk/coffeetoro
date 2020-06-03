@@ -2,6 +2,10 @@ export function arrayToRecord<T extends Record<K, any>, K extends keyof T>(arr: 
   return arr.reduce((a, v) => ({ ...a, [v[field]]: v }), {} as T);
 }
 
+export function toArray<T>(obj: Record<string, T>): ReadonlyArray<T> {
+  return Object.values(obj);
+}
+
 export function groupBy<T, K extends keyof T>(arr: ReadonlyArray<T>, field: K): Map<K, ReadonlyArray<T>> {
   return arr.reduce((a, v) => {
     const g = a.get(v[field]) || [];

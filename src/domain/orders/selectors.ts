@@ -5,10 +5,12 @@ import { arrayToRecord } from 'lib/dataHelper';
 import { getOrderItem, orderItemsArchive } from './helpers';
 import { OrderState, PaymentMethod } from './Types';
 import { extendsPriceList } from 'domain/dictionary/helpers';
+import { toArray } from 'lib/dataHelper';
 
 export const ordersById = (state: OrderState) => state.ordersList;
 export const orderItems = (state: OrderState) => state.orderItems;
 const orderDictionary = (state: OrderState) => state.orderDictionary;
+const discountItems = (state: OrderState) => state.discountItems;
 
 const priceByID = createSelector(orderDictionary, d => d.prices);
 
@@ -21,9 +23,9 @@ const extendsPriceByIdSelector = createSelector(extendsPriceListSelector,
 )
 
 // const categoryById = createSelector(orderDictionary, d => d.categories);
-const corderItemsListSelectors = createSelector(orderItems, o => Object.values(o));
+const corderItemsListSelectors = createSelector(orderItems, toArray);
 
-// Filter order items list for specific order 
+// Filter order items list for specific order
 const orderItemSelector = createSelector(
   [corderItemsListSelectors, params],
   (o, p) => o.filter(f => f.orderId === p.orderId),
@@ -50,3 +52,5 @@ export const ordersListSelector = createSelector(
     .filter(f => f.payment === PaymentMethod.Opened)
     .sort(sortByDate('date'))
 )
+
+export const discountsListSelector = createSelector([discountItems], toArray);

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
-import { arrayToRecord } from 'lib/dataHelper';
+import { arrayToRecord, toArray } from 'lib/dataHelper';
 import {DictionaryState, CategoryItem } from './Types';
 import { params } from 'domain/routes';
 import {
@@ -8,7 +8,6 @@ import {
   sortByIndex,
   extendsPriceList,
   pcFill,
-  toArray,
   groupFill,
   extendsExpanseList,
 } from './helpers';

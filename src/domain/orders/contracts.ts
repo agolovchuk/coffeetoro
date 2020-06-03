@@ -14,3 +14,9 @@ export const orderItem = t.interface({
   priceId: t.string,
   quantity: t.number,
 });
+
+export const discountItem = t.interface({
+  orderId: t.string,
+  discountId: t.string,
+  valuation: t.number,
+});

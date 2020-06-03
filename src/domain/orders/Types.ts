@@ -1,5 +1,5 @@
 import { TypeOf } from 'io-ts';
-import { order, orderItem } from './contracts';
+import { order, orderItem, discountItem } from './contracts';
 import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from '../dictionary/Types';
 
 export interface OrderDictionary {
@@ -20,6 +20,7 @@ export enum Status {
 }
 
 export type OrderItem = TypeOf<typeof orderItem>;
+export type DiscountItem = TypeOf<typeof discountItem>;
 
 export type Order = TypeOf<typeof order>;
 
@@ -30,6 +31,7 @@ export interface OrderItemContainer {
 
 export interface OrderState {
   readonly orderItems: Record<string, OrderItem>;
+  readonly discountItems: Record<string, DiscountItem>;
   readonly ordersList: Record<string, Order>;
   readonly orderDictionary: OrderDictionary;
 }
