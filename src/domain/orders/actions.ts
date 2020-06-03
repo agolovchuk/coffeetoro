@@ -18,6 +18,7 @@ import * as adapters from './adapters';
 import { prepareDictionary } from './helpers';
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
+export const REMOVE_ORDER = 'ORDERS/REMOVE_ORDER';
 
 export const ADD_ITEM = 'ORDER/ADD_ITEM';
 export const UPDATE_QUANTITY = 'ORDER/UPDATE_QUANTITY';
@@ -239,25 +240,40 @@ export function getOrderAction(id: string): ThunkAction<GetOrder> {
   }
 }
 
+interface RemoveOrder {
+  type: typeof REMOVE_ORDER;
+  payload: string;
+}
+
+export function removeOrderAction(id: string): ThunkAction<RemoveOrder> {
+  return async(dispatch) => {
+    try {
+      const idb = new CDB();
+      await idb.deleteItem(C.TABLE.orders.name, id);
+      dispatch({
+        type: REMOVE_ORDER,
+        payload: id,
+      })
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+}
+
 // +++++++++++++++++++++
 interface GetOrdersList {
   type: typeof GET_ORDERS_LIST;
-  payload: Record<string, Order>;
+  payload: Record<string, Order & { count: number }>;
 }
 export function getOrdersListAction(): ThunkAction<GetOrdersList> {
   return async(dispatch) => {
     try {
       const idb = new CDB();
-      const orders = await idb.getAll(
-        C.TABLE.orders.name,
-        adapters.ordersAdapter,
-        C.TABLE.orders.field.payment,
-        0,
-      );
+      const orders = await idb.getOrderList();
       if (orders) {
         dispatch({
           type: GET_ORDERS_LIST,
-          payload: orders
+          payload: adapters.ordersAdapter(orders),
         })
       }
     } catch (err) {
@@ -319,4 +335,5 @@ export type Action = CreateOrder
   | GetOrdersList
   | AddDiscount
   | RemoveDiscount
+  | RemoveOrder
   ;
