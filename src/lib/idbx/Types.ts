@@ -9,6 +9,6 @@ export type RequestUpgrade = (this: IDBOpenDBRequest, ev: IDBVersionChangeEvent)
 
 export type DataAdapterFactory<T> = (prev: T | null, value: unknown) => T | null;
 
-export type Adapter<T> = (value: unknown) => T | null;
+export type Validator<T> = (value: unknown) => T | null;
 
 export type Query = string | number | IDBArrayKey;

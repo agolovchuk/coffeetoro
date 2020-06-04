@@ -6,9 +6,13 @@ import * as OrderSelector from 'domain/orders/selectors';
 import * as OrderAction from 'domain/orders/actions';
 import * as DictionaryAction from 'domain/dictionary/actions';
 import * as ReportsAction from 'domain/reports/actions';
+import * as DailyAction from 'domain/daily/actions';
 import * as handler from './helpers';
 
-type AppAction = OrderAction.Action | DictionaryAction.Action | ReportsAction.Action;
+type AppAction = OrderAction.Action
+  | DictionaryAction.Action
+  | ReportsAction.Action
+  | DailyAction.Action;
 
 type Ak = Action | ThunkAction<AnyAction>;
 
@@ -40,6 +44,8 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
     database.ref().child('expenses').on('child_changed', handler.expensesHandler);
     database.ref().child('services').on('child_added', handler.servicesHandler);
     database.ref().child('services').on('child_changed', handler.servicesHandler);
+    database.ref().child('daily').on('child_added', handler.dailyHandler);
+    database.ref().child('daily').on('child_changed', handler.dailyHandler);
 
     return (next: Dispatch<AppAction>) => (action: AppAction) => {
       switch (action.type) {
@@ -130,6 +136,15 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
         case ReportsAction.COMPLETE:
           orders.equalTo(action.payload).off('child_added');
           break;
+
+        case DailyAction.SET_DAY_PARAMS:
+          database
+            .ref('daily/' + action.payload.dateKey)
+            .set({
+              ...action.payload,
+              date: action.payload.date.toISOString(),
+            });
+          break
 
         default:
           break;

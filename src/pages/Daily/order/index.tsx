@@ -1,13 +1,16 @@
 import * as React from "react";
 import { format } from 'date-fns';
+import cx from 'classnames';
 import { Price } from "components/Units";
 import Item from "../item";
-import { getSumOfOrder } from 'domain/orders/helpers';
+import { getSumOfOrder, getSumOdDiscount } from 'domain/orders/helpers';
+import { DiscountItem } from 'domain/orders/Types';
 import styles from './order.module.css';
 
 interface Props {
   date: string;
   payment: 1 | 2;
+  discounts?: ReadonlyArray<DiscountItem>;
   items: ReadonlyArray<{
     title: string;
     id: string;
@@ -17,7 +20,10 @@ interface Props {
   }>;
 }
 
-function Order({ items, date, payment }: Props) {
+function Order({ items, date, payment, discounts }: Props) {
+
+  const sm = React.useMemo(() => getSumOfOrder(items), [items])
+
   return (
     <li className={styles.item}>
       <dl className={styles.params}>
@@ -28,13 +34,28 @@ function Order({ items, date, payment }: Props) {
         <dt>Сумма:</dt>
         <dd>
           <Price
-            value={getSumOfOrder(items)}
+            value={sm}
             sign
             notation="compact"
             currencyDisplay="narrowSymbol"
           />
         </dd>
       </dl>
+      {
+        discounts ? (
+          <dl className={cx(styles.params, styles.discount)}>
+            <dt>Скидка:</dt>
+            <dd>
+              <Price
+                value={getSumOdDiscount(discounts)}
+                sign
+                notation="compact"
+                currencyDisplay="narrowSymbol"
+              />
+            </dd>
+          </dl>
+        ) : null
+      }
       <dl className={styles.params}>
         <dt>Оплата:</dt>
         <dd>{payment === 2 ? 'Банк' : 'Касса'}</dd>

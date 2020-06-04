@@ -285,5 +285,19 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
   }
+  if (ev.oldVersion < 4) {
+    const osDaily = this.result.createObjectStore(
+      C.TABLE.daily.name, {
+        keyPath: C.TABLE.daily.index.dateKey,
+        autoIncrement: false,
+      },
+    );
+    osDaily.createIndex(
+      C.TABLE.daily.index.date,
+      C.TABLE.daily.index.date, {
+        unique: true,
+      }
+    );
+  }
   return fixtures;
 }
