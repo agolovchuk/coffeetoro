@@ -1,7 +1,7 @@
 import eq from 'deep-equal';
 import CDB from 'db';
 import * as C from 'db/constants';
-import { Adapter, IDB } from 'lib/idbx';
+import { Validator, IDB } from 'lib/idbx';
 import * as adapters from 'domain/dictionary/adapters';
 import {
   PriceItem,
@@ -14,6 +14,8 @@ import {
   ExpenseProduct,
   ExpenseService,
 } from 'domain/dictionary/Types';
+import { dayParamsAdapter } from 'domain/daily/adapters';
+import { DayItem } from 'domain/daily/Types';
 
 interface PriceContainer {
   id: string,
@@ -47,6 +49,22 @@ export function eqPrice(fBPrice: FBPriceItem, { add, expiry, ...dbp }: PriceItem
   }, fBPrice);
 }
 
+type FBDay = Omit<DayItem, 'date'> & { date: string };
+
+function eqDay(fBDay: FBDay, { date, ...rest }: DayItem) {
+  return eq({
+      ...rest,
+    date: date.toISOString(),
+    }, fBDay);
+}
+
+function dayFBtoDB({ date, ...rest }: FBDay): DayItem {
+  return {
+    ...rest,
+    date: new Date(date),
+  }
+}
+
 export function eqCategory(fbCategory: FBCategory, dbc: CategoryItem) {
   return eq(dbc, fbCategory);
 }
@@ -67,10 +85,10 @@ function eqPC(fbPC: ProcessCardItem, dbPC: ProcessCardItem) {
   }, dbPC);
 }
 
-function dbWrapper<T, F>(table: string, adapter: Adapter<T>): DBWrapper<T, F> {
+function dbWrapper<T, F>(table: string, validator: Validator<T>): DBWrapper<T, F> {
   const dbx = (): IDB => new CDB();
   return {
-    get: (key: string) => dbx().getItem(table, adapter, key),
+    get: (key: string) => dbx().getItem(table, validator, key),
     set: (data) => dbx().addItem(table, data),
     put: (data) => dbx().updateItem(table, data),
   };
@@ -188,5 +206,14 @@ export const servicesHandler = handlerFactory(
   {
     async add(data: ServiceItem) { await this.set(data); },
     async update(data: ServiceItem) { await this.put(data); },
+  }
+);
+
+export const dailyHandler = handlerFactory(
+  dbWrapper(C.TABLE.daily.name, dayParamsAdapter),
+  eqDay,
+  {
+    async add(data: FBDay) { await this.set(dayFBtoDB(data)); },
+    async update(data: FBDay) { await this.put(dayFBtoDB(data)); },
   }
 );

@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from 'domain/dictionary/Types';
+import { DiscountItem } from 'domain/orders/Types';
 import { OrderItem, OrderItemContainer } from './Types';
 
 function priceAdapter(
@@ -64,6 +65,11 @@ interface Order {
   quantity: number;
 }
 
+
 export function getSumOfOrder(list: ReadonlyArray<Order>): number {
   return list.reduce((a, v) => a + (v.valuation * v.quantity), 0);
+}
+
+export function getSumOdDiscount(discounts: ReadonlyArray<DiscountItem>): number {
+  return discounts.reduce((a, v) => a + v.valuation, 0)
 }

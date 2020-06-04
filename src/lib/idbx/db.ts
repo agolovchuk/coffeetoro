@@ -4,7 +4,7 @@ import {
   Fixtures,
   DataAdapterFactory,
   Query,
-  Adapter,
+  Validator,
   Mode,
 } from './Types';
 import * as C from './constant';
@@ -99,7 +99,7 @@ export default class IDB {
     }
   }
 
-  async getItem<T>(table: string, adapter: Adapter<T>, query: Query, indexName?: string): Promise<T | null> {
+  async getItem<T>(table: string, adapter: Validator<T>, query: Query, indexName?: string): Promise<T | null> {
     const objectStore = await this.os(table, C.READ_ONLY);
     return await new Promise((resolve, reject) => {
       const request = indexName ? objectStore.index(indexName).get(query) : objectStore.get(query);

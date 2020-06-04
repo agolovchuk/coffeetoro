@@ -101,5 +101,12 @@ export const TABLE = {
     index: {
       id: 'id',
     }
+  },
+  daily: {
+    name: 'daily',
+    index: {
+      date: 'date',
+      dateKey: 'dateKey',
+    }
   }
 };

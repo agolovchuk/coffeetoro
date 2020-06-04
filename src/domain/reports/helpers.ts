@@ -1,5 +1,6 @@
-import { OrderArchiveItem } from './Types';
+import { OrderArchiveItem,  } from './Types';
 import { PriceExtended, PriceItem, ProcessCardItem, TMCItem } from 'domain/dictionary/Types';
+import { DiscountItem } from 'domain/orders';
 import { extendsPriceList } from "domain/dictionary/helpers";
 
 export function enrichOrdersArchive(order: OrderArchiveItem, en: (id: string) => PriceExtended) {
@@ -16,7 +17,13 @@ export function byPriceId(order: OrderArchiveItem, start: Record<string, number>
 }
 
 export function orderSum(order: OrderArchiveItem) {
-  return order.items.reduce((a, v) => a + v.quantity * v.valuation, 0) / 1000;
+  const ds = discountSum(order.discounts);
+  return order.items.reduce((a, v) => a + v.quantity * v.valuation, - ds) / 1000;
+}
+
+export function discountSum(discounts?: ReadonlyArray<DiscountItem>): number {
+  if (!discounts || discounts.length < 1) return 0;
+  return discounts.reduce((a, v) => a + v.valuation, 0);
 }
 
 export function extendsItems(

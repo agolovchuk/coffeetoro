@@ -35,3 +35,11 @@ export function validateArray<T>(adapter: DAFactory<T>): (list: null | unknown[]
   return (list: null | unknown[]): T => (list || [])
     .reduce((a: T, v) => (adapter(a, v) || a), {} as T)
 }
+
+export function validate<A, O, I>(contract: t.Type<A, O, I>, v: I): A | null {
+  try {
+    return valueOrThrow(contract, v)
+  } catch (err) {
+    return null;
+  }
+}

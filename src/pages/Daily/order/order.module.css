@@ -14,6 +14,10 @@
   width: 100%;
   padding: 0 5px;
 }
+.discount.discount {
+  background-color: var(--orange-color);
+  color: #fff;
+}
 .params dt {
   flex: 1 1 100%;
   min-width: 0;

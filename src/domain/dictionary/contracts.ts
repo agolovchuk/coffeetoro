@@ -13,7 +13,7 @@ const priceContainer = {
   id: t.string,
   parentId: t.string,
   add: date,
-  expiry: t.union([date, t.null]),
+  expiry: t.union([date, t.null, t.undefined]),
   valuation: t.number,
   sortIndex: t.number,
 }
