@@ -13,10 +13,11 @@ function Profile({ className, user }: Props) {
   return (
     <section className={cx(className, styles.container)}>
       {
-        user.role === 'manager' && (<Link to="/manager" className={styles.gear} />)
+        user.role === 'manager' && (
+          <Link to="/manager" className={cx(styles.roundBtn, styles.gear)} />
+        )
       }
       <Link to="/user" className={styles.btn}>
-        <h3 className={styles.name}>{user.name}</h3>
         {
           user.ava ? (
             <img src={user.ava} alt={user.name} className={styles.ava} />
@@ -24,8 +25,9 @@ function Profile({ className, user }: Props) {
             <div className={cx(styles.ava, styles.noava)}>{user.name.slice(0, 1)}</div>
           )
         }
+        <h3 className={styles.name}>{user.name}</h3>
       </Link>
-      <Link to="/logout" className={styles.logout} />
+      <Link to="/logout" className={cx(styles.roundBtn, styles.logout)} />
     </section>
   )
 }

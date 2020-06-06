@@ -49,14 +49,14 @@ function Header({ onBack, location, user }: Props) {
         activeClassName={styles.active}
       />
       <button
-        className={cx(styles.btn, styles.fullscreen, {[styles.isfs]: isFS })}
+        className={cx(styles.btn, styles.roundBtn, styles.fullscreen, {[styles.isfs]: isFS })}
         onClick={handleFullScreen}
         type="button"
       />
       <NavLink
         to="/report"
         exact
-        className={cx(styles.btn, styles.report)}
+        className={cx(styles.btn, styles.roundBtn, styles.report)}
         activeClassName={styles.active}
       />
       {

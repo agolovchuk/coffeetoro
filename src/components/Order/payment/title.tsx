@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PopupHeader } from 'components/Popup'
 import styles from './title.module.css';
 
 interface Props {
@@ -8,13 +9,15 @@ interface Props {
 
 export default function Title({ onBack, title }: Props) {
   return (
-    <h2 className={styles.title}>
-      <button
-        type="button"
-        onClick={onBack}
-        className={styles.back}
-      />
-      {title}
-    </h2>
+    <PopupHeader className={styles.title} title={(
+      <React.Fragment>
+        <button
+          type="button"
+          onClick={onBack}
+          className={styles.back}
+        />
+        {title}
+      </React.Fragment>
+    )}/>
   )
 }

@@ -10,14 +10,18 @@
 .back:disabled {
   background-color: #D2D2D2;
 }
-.profile {
-  /* margin-left: auto; */
-}
 .btn {
   width: 60px;
   height: 60px;
   border-radius: 6px;
   border: 0 none;
+  background-position: center;
+  background-size: 36px 36px;
+  background-repeat: no-repeat;
+}
+.roundBtn {
+  border-radius: 50%;
+  background-color: #7BCBB0;
 }
 .orders {
   background: url('./table.svg') scroll no-repeat center center #cccccc;
@@ -31,17 +35,16 @@
 
 .fullscreen {
   margin-left: auto;
-  margin-right: 10px;
-  background: url("./fullscreen.svg") scroll no-repeat center center;
+  margin-right: 24px;
+  background-image: url("./fullscreen.svg");
   background-size: 40px 40px;
 }
 .isfs {
   background-image: url("./fullscreen_exit.svg");
 }
 .report {
-  background-image: url("./score-black-24dp.svg");
+  background-image: url("./chart.svg");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 36px 36px;
-  margin-right: 10px;
+  margin-right: 24px;
 }
