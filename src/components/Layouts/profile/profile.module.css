@@ -9,6 +9,15 @@
   background: none;
   text-decoration: none;
 }
+.roundBtn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #7BCBB0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 36px 36px;
+}
 .name {
   font-size: 20px;
   color: #000000;
@@ -29,21 +38,18 @@
   align-items: center;
 }
 .gear {
-  width: 40px;
-  height: 40px;
   display: block;
   align-self: center;
-  background: url("./gear.svg") scroll no-repeat center center / cover;
+  background-image: url("./setting.svg");
+  margin-right: 24px;
 }
 .logout {
-  width: 40px;
-  height: 40px;
   display: block;
   align-self: center;
-  margin-left: 20px;
-  background: url("./logout.svg") scroll no-repeat center center / cover;
+  margin-left: 24px;
+  background-image: url("./logout.svg");
 }
-.list{
+.list {
   display: flex;
   height: 35px;
   align-self: center;
