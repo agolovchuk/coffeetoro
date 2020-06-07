@@ -45,9 +45,9 @@ function Report({ getDailyReport, summary, completeReport, match, articles, orde
 
   const [isReport, setReport] = React.useState(false);
 
-  const dateBefore = React.useMemo(before, []);
+  const dateBefore = React.useMemo(before, [before]);
 
-  const dayBefore = React.useMemo(() => get(dailyParams, dateBefore), [dailyParams])
+  const dayBefore = React.useMemo(() => get(dailyParams, dateBefore), [dailyParams, dateBefore])
 
   const date = React.useMemo(() =>
     match.params.date || format(new Date(), FORMAT), [match]);
@@ -66,7 +66,7 @@ function Report({ getDailyReport, summary, completeReport, match, articles, orde
     return () => {
       completeReport(date);
     }
-  }, [ getDailyReport, completeReport, date ]);
+  }, [ getDailyReport, completeReport, date, dateBefore, getDayParams]);
 
   return (
     <section className={cx("scroll-section", styles.container)}>
