@@ -3,6 +3,13 @@ import cx from 'classnames';
 import styles from './field.module.css';
 import Field from './field';
 
+type MetaField = {
+  error: string;
+  touched?: boolean;
+}
+
+interface Meta extends MetaField {}
+
 interface Props<T extends HTMLElement = HTMLElement> {
   id: string;
   title: string;
@@ -20,9 +27,13 @@ interface Props<T extends HTMLElement = HTMLElement> {
   inputClassName?: string;
   containerClassName?: string;
   children?: React.ReactNode;
+  meta: Meta;
 }
 
 const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName, onComplete, containerClassName, children, ...rest }: Props, ref: any) => {
+  const { error, touched } = rest.meta;
+
+  const isError = React.useMemo(() => (error && touched), [error, touched]);
 
   const handleKey = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>): void => {
@@ -45,7 +56,7 @@ const InputField = React.forwardRef(({ id, title, inputClassName, labelClassName
         id={id}
         ref={ref}
         {...rest}
-        className={cx(styles.field, inputClassName)}
+        className={cx(styles.field, inputClassName, { [styles.error]: isError })}
         inputMode="none"
         onKeyDown={handleKey}
       />

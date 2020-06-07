@@ -77,7 +77,8 @@ function BarCode({ onComplete }: Props) {
       onChange={handleValue}
       value={state.value}
       onComplete={handleComplete}
-      inputClassName={cx(styles.barcode, { [styles.error]: state.error })}
+      meta={{ error: '', touched: state.error }}
+      inputClassName={styles.barcode}
       labelClassName={styles.barLabel}
       containerClassName={styles.container}
     />
