@@ -49,9 +49,9 @@ function Product({ quantity = 1, ...props }: Props) {
           />
         ) : null
       }
-      <div className={cx(styles.warapper, { [styles.editable]: !props.orderApi })}>
+      <div className={cx(styles.wrapper, { [styles.editable]: !props.orderApi })}>
         <div className={styles.params}>
-
+          <h3>{props.title}</h3>
         </div>
         <ul className={styles.valuation}>
           {
