@@ -34,3 +34,8 @@
   background-color: #fff;
   border: 1px solid #C4C4C4;
 }
+.field.error {
+  border-color: var(--red-color);
+  outline-color: var(--red-color);
+  color: var(--red-color);
+}

@@ -7,6 +7,7 @@ import {
   SelectField,
   BarcodeField
 } from 'components/Form/field';
+import { required } from 'components/Form/validate';
 import {TMCItem, CRUD, tmcListSelector, unitsSelectSelector } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import { Main } from '../components';
@@ -92,9 +93,13 @@ function TMCManager({ create, update, units, getAll, ...props }: Props) {
       <Field name="unitId" render={({ input}) => (
         <SelectField id="unitId" title="Unit:" list={units} {...input} />
       )}/>
-      <Field name="barcode" render={({ input}) => (
+      <Field
+        name="barcode"
+        validate={required}
+        render={({ input, meta}) => (
         <BarcodeField
           id="barcode"
+          meta={{ error: meta.error, touched: meta.touched}}
           title="Barcode:"
           {...input}
         >

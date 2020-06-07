@@ -10,6 +10,7 @@ import {
   ServiceItem,
 } from "../domain/dictionary";
 import { promisifyRequest } from "../lib/idbx";
+import compact from 'lodash/fp/compact';
 
 interface PriceByType {
   tmc: ReadonlyArray<PriceTMC>;
@@ -57,7 +58,7 @@ export async function expenseZip(list: ReadonlyArray<ExpenseItem>, osTMC: IDBInd
   )
 
   return {
-    articles,
-    services,
+    articles: compact(articles),
+    services: compact(services),
   }
 }
