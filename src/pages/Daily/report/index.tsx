@@ -11,17 +11,19 @@ interface Item {
 interface Props {
   onCancel: () => void;
   setParams: (data: Item) => void;
+  dayBefore: Item;
+  currentCache: number;
 }
 
-function DailyReport({ onCancel, setParams }: Props) {
+function DailyReport({ onCancel, setParams, dayBefore, currentCache }: Props) {
 
   const onSubmit = React.useCallback((item) => {
     setParams(item)
   }, [setParams]);
 
   const initial = React.useMemo(() => ({
-    cash: 0,
-  }), []);
+    cash: dayBefore.cash - 250000 + (currentCache * 1000),
+  }), [dayBefore, currentCache]);
 
   return (
     <Modal>

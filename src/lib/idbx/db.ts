@@ -99,13 +99,13 @@ export default class IDB {
     }
   }
 
-  async getItem<T>(table: string, adapter: Validator<T>, query: Query, indexName?: string): Promise<T | null> {
+  async getItem<T>(table: string, validator: Validator<T>, query: Query, indexName?: string): Promise<T | null> {
     const objectStore = await this.os(table, C.READ_ONLY);
     return await new Promise((resolve, reject) => {
       const request = indexName ? objectStore.index(indexName).get(query) : objectStore.get(query);
       request.onsuccess = (event) => {
         this.close();
-        resolve(adapter(get(event, ['target', 'result'])));
+        resolve(validator(get(event, ['target', 'result'])));
       };
       request.onerror = () => { this.close(); reject(); };
     });

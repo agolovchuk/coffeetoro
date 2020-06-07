@@ -14,7 +14,7 @@ import {
   ExpenseProduct,
   ExpenseService,
 } from 'domain/dictionary/Types';
-import { dayParamsAdapter } from 'domain/daily/adapters';
+import { dayParamsValidator } from 'domain/daily/adapters';
 import { DayItem } from 'domain/daily/Types';
 
 interface PriceContainer {
@@ -210,7 +210,7 @@ export const servicesHandler = handlerFactory(
 );
 
 export const dailyHandler = handlerFactory(
-  dbWrapper(C.TABLE.daily.name, dayParamsAdapter),
+  dbWrapper(C.TABLE.daily.name, dayParamsValidator),
   eqDay,
   {
     async add(data: FBDay) { await this.set(dayFBtoDB(data)); },
