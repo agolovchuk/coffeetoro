@@ -4,6 +4,7 @@ import { TMCItem } from 'domain/dictionary';
 import Search from '../add';
 import CDB from 'db';
 import { BarcodeField } from 'components/Form/field';
+import { required } from 'components/Form/validate';
 import styles from './articles.module.css';
 import { getTitle } from '../../../helper';
 
@@ -48,11 +49,14 @@ function ArticleSelector({ updateAdapter, onPicItem }: Props) {
 
   return (
     <div className={styles.container}>
-      <Field name="barcode"
+      <Field
+        name="barcode"
+        validate={required}
         render={({ input, meta }) => (
           <div className={styles.search}>
             <BarcodeField
               id="barcode"
+              meta={{ error: meta.error, touched: meta.touched }}
               title="Barcode:"
               {...input}
             />
