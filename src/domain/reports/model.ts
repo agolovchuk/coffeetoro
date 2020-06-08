@@ -1,16 +1,16 @@
+import set from "lodash/fp/set";
 import { OrderArchiveItem } from './Types';
 import * as A from "./actions";
-import concat from "lodash/fp/concat";
 
 export const reducer = {
-  reports(state: ReadonlyArray<OrderArchiveItem> = [], action: A.Action) {
+  reports(state: Record<string, OrderArchiveItem> = {}, action: A.Action) {
     switch (action.type) {
 
       case A.GET_DAILY:
-        return [];
+        return {};
 
       case A.ADD_ORDER_ITEM_SUCCESS:
-        return concat(action.payload.order)(state);
+        return set(action.payload.order.id)(action.payload.order)(state);
 
       default:
         return state;

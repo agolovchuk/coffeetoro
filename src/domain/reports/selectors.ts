@@ -1,16 +1,18 @@
 import sortBy from 'lodash/sortBy';
 import { createSelector } from 'reselect';
+import { toArray } from 'lib/dataHelper';
 import { extendsPrice } from '../dictionary/helpers';
 import { priceByNameSelector, articlesByBarcodeSelector, processCards, PriceExtended } from 'domain/dictionary';
 import { ReportState, OrderArchiveItem } from './Types';
 import { enrichOrdersArchive, byPriceId, orderSum, extendsItems, discountSum } from './helpers';
 
 const orders = (state: ReportState) => state.reports;
+const ordersListSelector = createSelector([orders], toArray);
 
-const ordersSelector = createSelector([orders], o => sortBy(o, 'date'));
+const ordersSelector = createSelector([ordersListSelector], o => sortBy(o, 'date'));
 
 export const summarySelector = createSelector(
-  [orders],
+  [ordersListSelector],
   (o) => o.reduce((a, v) => {
   return {
     cash: v.payment === 1 ? a.cash + orderSum(v) : a.cash,
