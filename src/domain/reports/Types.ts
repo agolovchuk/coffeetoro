@@ -15,5 +15,5 @@ export interface OrderArchiveItem {
 }
 
 export interface ReportState {
-  readonly reports: ReadonlyArray<OrderArchiveItem>;
+  readonly reports: Record<string, OrderArchiveItem>;
 }
