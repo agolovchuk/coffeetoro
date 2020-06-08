@@ -1,5 +1,4 @@
 import * as React from 'react';
-import  cx from 'classnames';
 import { BarcodeField } from '../field';
 import styles from './barcode.module.css';
 
