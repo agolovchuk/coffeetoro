@@ -8,9 +8,8 @@ import OrdersList from './OrdersList';
 import CacheBox from './CashBox';
 import Auth from './Auth';
 import Logout from './Auth/logout';
-import ManagerRout from 'pages/Managment';
+import ManagerRout from 'pages/Management';
 import PNF from './404';
-import UserPage from './User';
 import AsyncRoute from "../lib/AsyncRoute";
 
 const mapState = (state: AppState) => ({
@@ -22,7 +21,7 @@ const connector = connect(mapState);
 type Props = ConnectedProps<typeof connector>;
 
 function getAvailablePath(user: IUser | null): string[] {
-  const usersPath = ['/orders', '/order', '/user', '/report'];
+  const usersPath = ['/orders', '/order', '/user', '/report', '/expense'];
   const managerPath = ['/manager'];
   if (user === null) return [];
   if (user.role === 'manager') return usersPath.concat(managerPath);
@@ -31,6 +30,18 @@ function getAvailablePath(user: IUser | null): string[] {
 
 function asyncReports(): Promise<unknown> {
   return import('./Daily').then((res) => {
+    return res.default;
+  });
+}
+
+function asyncExpense(): Promise<unknown> {
+  return import('./Management/Expense').then((res) => {
+    return res.default;
+  });
+}
+
+function asyncUser(): Promise<unknown> {
+  return import('./User').then((res) => {
     return res.default;
   });
 }
@@ -44,10 +55,11 @@ function App({ user }: Props) {
       <Route path={path} render={({ location, history }) => (
         <Layout onBack={history.goBack} location={location} user={user}>
           <Switch>
-            <Route path="/user" component={UserPage} exact />
+            <AsyncRoute path="/user" importRender={asyncUser} exact />
             <Route path="/orders" component={OrdersList} exact />
-            <Route path="/order/:orderId" component={CacheBox} />
             <AsyncRoute path="/report" exact importRender={asyncReports} />
+            <AsyncRoute path="/expense" exact importRender={asyncExpense} />
+            <Route path="/order/:orderId" component={CacheBox} />
             <ManagerRout />
           </Switch>
         </Layout>

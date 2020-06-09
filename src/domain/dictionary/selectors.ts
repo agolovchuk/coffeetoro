@@ -3,6 +3,7 @@ import get from 'lodash/get';
 import { arrayToRecord, toArray } from 'lib/dataHelper';
 import {DictionaryState, CategoryItem } from './Types';
 import { params } from 'domain/routes';
+import { userSelector } from 'domain/env';
 import {
   getProductForSale,
   sortByIndex,
@@ -10,6 +11,7 @@ import {
   pcFill,
   groupFill,
   extendsExpanseList,
+  expenseByUser
 } from './helpers';
 
 const categories = (state: DictionaryState) => state.categories;
@@ -41,7 +43,7 @@ export const articlesByBarcodeSelector = createSelector(tmcListSelector, a => ar
 const priceCategorySelector = createSelector(
   [pricesListSelector, params],
   (pr, p) => pr.filter(f => f.parentId === p.categoryId),
-)
+);
 
 export const extendedPricesSelector = createSelector(
   [priceCategorySelector, articlesByBarcodeSelector, processCards],
@@ -53,31 +55,36 @@ export const categoryByNameSelector = createSelector(categories, c => c);
 export const currentCategorySelector = createSelector(
   [categories, params],
   (c, p) => p.categoryId ? get(c, p.categoryId, {} as CategoryItem) : {} as CategoryItem,
-)
+);
 
 export const currentCategoriesSelector = createSelector(
   [categoriesListSelector, params],
   (c, p) => c.filter(f => f.parentId === (p.categoryId || 'root')),
-)
+);
 
 export const priceByNameSelector = createSelector(prices, p => p);
 
 export const productItemSelector = createSelector(
   [currentCategorySelector, extendedPricesSelector, units],
   getProductForSale
-)
+);
 
 export const processCardSelector = createSelector(
   [processCards, tmc, params],
   (pc, t, p) => p.pcId ? pcFill(get(pc, p.pcId), t) : undefined,
-)
+);
 
 export const groupArticlesSelector = createSelector(
   [groupArticles, tmc, params],
   (g, t, p) => p.groupId ? groupFill(get(g, p.groupId), t) : undefined,
-)
+);
 
 export const extendedExpanseSelector = createSelector(
   [expensesListSelector, articlesByBarcodeSelector, services],
   (e, tmc, s) => extendsExpanseList(e, tmc, s)
-)
+);
+
+export const extendedExpanseByUserSelector = createSelector(
+  [extendedExpanseSelector, userSelector],
+  (ex, u) => expenseByUser(ex, u),
+);

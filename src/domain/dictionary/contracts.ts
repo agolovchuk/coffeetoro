@@ -78,6 +78,7 @@ export const expenseBase = {
   valuation: t.number,
   date: date,
   quantity: t.number,
+  createBy: t.union([t.string, t.undefined]),
   source: t.union([t.literal('cash'), t.literal('bank'), t.string]),
 }
 

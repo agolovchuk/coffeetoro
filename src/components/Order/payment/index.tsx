@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
-import { Modal, Popup } from 'components/Popup';
+import { Modal, Popup, PopupHeader } from 'components/Popup';
 import Title from './title';
 import PaymentCash from './cash';
 import styles from './payment.module.css';
@@ -22,7 +22,7 @@ function Payment({ onCancel, onComplete, valuation }: Props) {
             [styles.checkout]: method !== PaymentMethod.Opened,
           })}>
             <section className={cx(styles.frame, styles.method)}>
-              <h2 className={styles.title}>Способ оплаты</h2>
+              <PopupHeader title="Способ оплаты" />
               <div className={styles.btnGroup}>
                 <button
                   type="button"
