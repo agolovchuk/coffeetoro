@@ -17,7 +17,7 @@ export const summarySelector = createSelector(
   return {
     cash: v.payment === 1 ? a.cash + orderSum(v) : a.cash,
     bank: v.payment === 2 ? a.bank + orderSum(v) : a.bank,
-    discount: a.discount + (discountSum(v.discounts) / 1000),
+    discount: a.discount + (discountSum(v.discounts)),
     income: a.income + orderSum(v),
     orders: a.orders + 1,
     items: byPriceId(v, a.items),
