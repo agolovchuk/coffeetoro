@@ -36,6 +36,9 @@ const mapDispatch = {
   getDayParams: getDayParamsAction,
 };
 
+function toMoney(m: number) {
+  return (m / 1000).toFixed(2);
+}
 
 const connector = connect(mapState, mapDispatch);
 
@@ -74,13 +77,13 @@ function Report({ getDailyReport, summary, completeReport, match, articles, orde
         <div className={styles.header}>
           <h1 className={styles.title}>Report for {date}</h1>
           <h4>Заказов: {summary.orders}</h4>
-          <h4>Всего: {summary.income}</h4>
+          <h4>Всего: {toMoney(summary.income)}</h4>
           <dl className={styles.cache}>
             <dt><h5>Из них</h5></dt>
             <dd>
-              <div>по кассе: {summary.cash}</div>
-              <div>по банку: {summary.bank}</div>
-              <div>скидка: {summary.discount}</div>
+              <div>по кассе: {toMoney(summary.cash)}</div>
+              <div>по банку: {toMoney(summary.bank)}</div>
+              <div>скидка: {toMoney(summary.discount)}</div>
             </dd>
           </dl>
         </div>

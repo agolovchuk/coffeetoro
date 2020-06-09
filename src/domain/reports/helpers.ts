@@ -18,7 +18,7 @@ export function byPriceId(order: OrderArchiveItem, start: Record<string, number>
 
 export function orderSum(order: OrderArchiveItem) {
   const ds = discountSum(order.discounts);
-  return order.items.reduce((a, v) => a + v.quantity * v.valuation, - ds) / 1000;
+  return order.items.reduce((a, v) => a + v.quantity * v.valuation, - ds);
 }
 
 export function discountSum(discounts?: ReadonlyArray<DiscountItem>): number {
