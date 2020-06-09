@@ -18,7 +18,8 @@ function AsyncRoute({ importRender, render, ...props }: Props) {
         }
       });
     return () => { isMount = false; }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [importRender]);
+
   return Component ? (
     <Route {...props} component={Component} />
   ) : null

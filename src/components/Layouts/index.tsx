@@ -15,7 +15,7 @@ interface Props {
   user: IUser | null;
 }
 
-function Layout({ children, ...props}: Props) {
+function Layout({ children, ...props }: Props) {
   return (
     <div className={styles.container}>
       <Header {...props} />

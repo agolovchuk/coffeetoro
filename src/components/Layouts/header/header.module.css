@@ -42,6 +42,10 @@
 .isfs {
   background-image: url("./fullscreen_exit.svg");
 }
+.expense {
+  background-image: url("./expense.svg");
+  margin-right: 24px;
+}
 .report {
   background-image: url("./chart.svg");
   background-repeat: no-repeat;
