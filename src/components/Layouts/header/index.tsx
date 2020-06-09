@@ -54,6 +54,12 @@ function Header({ onBack, location, user }: Props) {
         type="button"
       />
       <NavLink
+        to="/expense"
+        exact
+        className={cx(styles.btn, styles.roundBtn, styles.expense)}
+        activeClassName={styles.active}
+      />
+      <NavLink
         to="/report"
         exact
         className={cx(styles.btn, styles.roundBtn, styles.report)}

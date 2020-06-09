@@ -1,8 +1,6 @@
 import { getId } from "lib/id";
 import { ExpenseExtended } from "domain/dictionary";
 
-
-
 export function articleUpdateAdapter({ type, refId, barcode, quantity, ...rest }: any) {
   return {
     ...rest,
@@ -31,6 +29,7 @@ export function editAdapter(value: ExpenseExtended) {
 export function createItem(): ExpenseExtended {
   return {
     id: getId(8),
+    createBy: '',
     title: '',
     foreignId: '',
     valuation: 0,

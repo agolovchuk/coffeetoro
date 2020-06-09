@@ -22,7 +22,7 @@ async function coffeeToro() {
     if (typeof m === 'undefined') throw new Error('Cant load Translation from' + lang);
     messages = m;
   } catch (err) {
-
+    console.warn(err);
   } finally {
     ReactDOM.render(
       <Provider store={store}>

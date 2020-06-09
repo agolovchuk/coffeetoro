@@ -1,5 +1,6 @@
 import get from 'lodash/get';
 import pick from 'lodash/pick';
+import isToday from 'date-fns/isToday';
 import {
   ProductForSale,
   PriceItem,
@@ -13,6 +14,7 @@ import {
   ProcessCardArticle, GroupArticles, ExpenseItem, Services,
   ExpenseExtended,
 } from './Types';
+import { IUser } from 'domain/env/Types';
 
 function priceAdapter(units: Units) {
   return (e: PriceExtended) => ({
@@ -93,4 +95,10 @@ export function extendsExpanseList(list: ReadonlyArray<ExpenseItem>, tmc: TMC, s
     const { title, description } = pick(get(services, v.refId), ['title', 'description']);
     return  {...v, title, description }
   }, []);
+}
+
+export function expenseByUser(ex: ReadonlyArray<ExpenseExtended>, user: IUser | null) {
+  if (!user) return [];
+  if (user.role === 'manager') return  ex;
+  return ex.filter(e => isToday(e.date) && (e.createBy === user.id));
 }
