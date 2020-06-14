@@ -41,6 +41,7 @@ export const reducer = {
     [A.UPDATE_PRICE]: (state, action: A.UpdatePrice) => set(action.payload.id)(action.payload)(state),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.prices }),
     [ReportAction.ADD_ORDER_ITEM_SUCCESS]: (state, action: ReportAction.AddOrderItem) => ({ ...state, ...action.payload.prices }),
+    [ReportAction.GET_ORDERS]: (state, action: ReportAction.GetDailyLocal) => ({ ...state, ...action.payload.prices }),
   }),
 
   tmc: createReducer({} as TMC, {
@@ -52,6 +53,7 @@ export const reducer = {
     [A.GRT_GROUP_ARTICLES]: (state, action: A.GetGroupArticles) => ({ ...state, ...action.payload.articles }),
     [A.PUT_ARTICLES]: (state, action: A.PutArticles) => ({ ...state, ...action.payload }),
     [ReportAction.ADD_ORDER_ITEM_SUCCESS]: (state, action: ReportAction.AddOrderItem) => ({ ...state, ...action.payload.articles}),
+    [ReportAction.GET_ORDERS]: (state, action: ReportAction.GetDailyLocal) => ({ ...state, ...action.payload.articles}),
     [A.GET_EXPENSE]: (state, action: A.GetExpense) => ({ ...state, ...action.payload.articles }),
   }),
 
@@ -62,6 +64,7 @@ export const reducer = {
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<ProcessCardItem, 'id'>('processCards', 'id'),
     [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.processCards }),
     [ReportAction.ADD_ORDER_ITEM_SUCCESS]: (state, action: ReportAction.AddOrderItem) => ({ ...state, ...action.payload.processCards}),
+    [ReportAction.GET_ORDERS]: (state, action: ReportAction.GetDailyLocal) => ({ ...state, ...action.payload.processCards}),
   }),
 
   groupArticles: createReducer({} as Groups, {

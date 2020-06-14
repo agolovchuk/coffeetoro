@@ -11,6 +11,7 @@ export const TABLE = {
       client: 'client',
       owner: 'owner',
       orderIdPayment: 'orderIdPayment',
+      date: 'date',
     },
   },
   orderItem: {

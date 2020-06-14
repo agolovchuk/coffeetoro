@@ -1,26 +1,19 @@
-import * as React from "react";
-import { RouteComponentProps } from 'react-router-dom';
+import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { format, subDays } from 'date-fns';
-import cx from 'classnames';
+import { RouteComponentProps } from "react-router-dom";
+import { format, subDays } from "date-fns";
 import get from 'lodash/get';
-
+import { AppState } from "domain/StoreType";
 import {
-  getDailyReportAction,
-  summarySelector,
-  completeReportAction,
   articlesSelector,
+  completeReportAction,
   enrichedOrdersSelector,
-} from 'domain/reports';
-import { setDayParamsAction, getDayParamsAction, dailyParamsSelector } from 'domain/daily';
-import { AppState } from 'domain/StoreType';
-import Item from "./item";
-import Order from './order';
-import DailyReport from "./report";
-import styles from "./report.module.css";
-
-const FORMAT = 'yyyy-MM-dd';
-const before = () => format(subDays(new Date(), 1), FORMAT);
+  summarySelector, getDailyLocalAction
+} from "domain/reports";
+import { dailyParamsSelector, getDayParamsAction, setDayParamsAction } from "domain/daily";
+import Daily from 'components/Daily';
+import Report from 'components/Daily/report';
+import { FORMAT } from "lib/dateHelper";
 
 const mapState = (state: AppState) => ({
   summary: summarySelector(state),
@@ -30,98 +23,47 @@ const mapState = (state: AppState) => ({
 });
 
 const mapDispatch = {
-  getDailyReport: getDailyReportAction,
+  getDailyReport: getDailyLocalAction,
   completeReport: completeReportAction,
   setDayParams: setDayParamsAction,
   getDayParams: getDayParamsAction,
 };
 
-function toMoney(m: number) {
-  return (m / 1000).toFixed(2);
-}
-
 const connector = connect(mapState, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector>, RouteComponentProps<{ date: string }> {};
 
-function Report({ getDailyReport, summary, completeReport, match, articles, orders, setDayParams, history, getDayParams, dailyParams }: Props) {
+function DailyReport({ match: { params }, setDayParams, getDayParams, history, dailyParams, ...props }: Props) {
 
-  const [isReport, setReport] = React.useState(false);
-
-  const dateBefore = React.useMemo(before, [before]);
-
-  const dayBefore = React.useMemo(() => get(dailyParams, dateBefore), [dailyParams, dateBefore])
+  const { cash } = props.summary;
 
   const date = React.useMemo(() =>
-    match.params.date || format(new Date(), FORMAT), [match]);
+    params.date || format(new Date(), FORMAT), [params]);
 
-  const createReport = React.useCallback((data) => {
-    const date = () => format(new Date(), FORMAT);
-    setDayParams(data, date(), () => {
-      setReport(false);
-      history.replace('/logout');
-    });
-  }, [setDayParams, history]);
+  const addReport = React.useCallback((data) => {
+    setDayParams(data, date, () => { history.replace('/logout'); })
+  }, [history, date, setDayParams]);
+
+  const dateBefore = React.useMemo(() => format(subDays(new Date(), 1), FORMAT), []);
+
+  const predictCache = React.useMemo(() => {
+    const before = get(dailyParams, [dateBefore, 'cash']);
+    return before - 250000 + cash;
+  }, [dailyParams, dateBefore, cash]);
 
   React.useEffect(() => {
-    getDailyReport(date);
     getDayParams(dateBefore);
-    return () => {
-      completeReport(date);
-    }
-  }, [ getDailyReport, completeReport, date, dateBefore, getDayParams]);
+  }, [getDayParams, dateBefore]);
 
   return (
-    <section className={cx("scroll-section", styles.container)}>
-      <div  className={styles.column}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Report for {date}</h1>
-          <h4>Заказов: {summary.orders}</h4>
-          <h4>Всего: {toMoney(summary.income)}</h4>
-          <dl className={styles.cache}>
-            <dt><h5>Из них</h5></dt>
-            <dd>
-              <div>по кассе: {toMoney(summary.cash)}</div>
-              <div>по банку: {toMoney(summary.bank)}</div>
-              <div>скидка: {toMoney(summary.discount)}</div>
-            </dd>
-          </dl>
-        </div>
-        <div className={styles.btnGroup}>
-          <button
-            className={styles.btn}
-            onClick={() => setReport(true)}
-          >Закрыть смену</button>
-        </div>
-      </div>
-      <div className={styles.column}>
-        <ul className={styles.list}>
-          {
-            articles.map(e => (
-              <Item {...e} key={e.id} />
-            ))
-          }
-        </ul>
-        <ul className={styles.list}>
-          {
-            orders.map(e => (
-              <Order key={e.id} {...e} />
-            ))
-          }
-        </ul>
-      </div>
-      {
-        isReport && (
-          <DailyReport
-            onCancel={() => setReport(false)}
-            setParams={createReport}
-            dayBefore={dayBefore}
-            currentCache={summary.cash}
-          />
-        )
-      }
-    </section>
-  );
+    <Daily date={date} linkPrefix="/report" {...props}>
+      <Report
+        createReport={addReport}
+        predictCache={predictCache}
+        date={date}
+      />
+    </Daily>
+  )
 }
 
-export default connector(Report);
+export default connector(DailyReport);

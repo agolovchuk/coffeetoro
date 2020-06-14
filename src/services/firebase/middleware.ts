@@ -128,9 +128,12 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           break;
 
         case ReportsAction.GET_DAILY:
-          orders.startAt(action.payload).on('child_added', (snapshot) => dispatch(
-            ReportsAction.addOrderItemAction(snapshot.val()))
-          );
+          orders
+            .startAt(action.payload.from)
+            .endAt(action.payload.to)
+            .on('child_added', (snapshot) => dispatch(
+              ReportsAction.addOrderItemAction(snapshot.val()))
+            );
           break;
 
         case ReportsAction.COMPLETE:
