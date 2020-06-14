@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+.btn {
+  background: var(--green-button);
+  color: #fff;
+  padding: 0 20px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 4px;
+  margin: 0 5px;
+  text-decoration: none;
+  font-weight: bold;
+  white-space: nowrap;
+}

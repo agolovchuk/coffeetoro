@@ -299,5 +299,18 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
   }
+  if (ev.oldVersion < 5) {
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.orders.name)
+        .createIndex(
+          C.TABLE.orders.field.date,
+          C.TABLE.orders.field.date, {
+            unique: false,
+          }
+        );
+    }
+
+  }
   return fixtures;
 }

@@ -21,7 +21,7 @@ const connector = connect(mapState);
 type Props = ConnectedProps<typeof connector>;
 
 function getAvailablePath(user: IUser | null): string[] {
-  const usersPath = ['/orders', '/order', '/user', '/report', '/expense'];
+  const usersPath = ['/orders', '/order', '/user', '/report', '/report/:date', '/expense'];
   const managerPath = ['/manager'];
   if (user === null) return [];
   if (user.role === 'manager') return usersPath.concat(managerPath);
@@ -57,7 +57,7 @@ function App({ user }: Props) {
           <Switch>
             <AsyncRoute path="/user" importRender={asyncUser} exact />
             <Route path="/orders" component={OrdersList} exact />
-            <AsyncRoute path="/report" exact importRender={asyncReports} />
+            <AsyncRoute path={["/report", "/report/:date"]} exact importRender={asyncReports} />
             <AsyncRoute path="/expense" exact importRender={asyncExpense} />
             <Route path="/order/:orderId" component={CacheBox} />
             <ManagerRout />

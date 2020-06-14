@@ -2,3 +2,5 @@ export function sortByDate<T extends Record<K, Date>, K extends keyof T>(field: 
   const getTime = (t: Date) => t.getTime();
   return (a: T, b: T) => getTime(a[field]) - getTime(b[field]);
 }
+
+export const FORMAT = 'yyyy-MM-dd';
