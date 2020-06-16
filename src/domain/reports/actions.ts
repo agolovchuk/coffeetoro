@@ -6,6 +6,8 @@ import { ThunkAction } from '../StoreType';
 import CDB from 'db';
 import * as adapters from "../dictionary/adapters";
 import { PriceItem, ProcessCardItem, TMCItem } from "../dictionary";
+import { orderItemsArchive } from 'domain/orders/helpers';
+import { OrderItem } from 'domain/orders';
 
 export const GET_DAILY = 'REPORTS/GET_DAILY';
 export const ADD_ORDER_ITEM_SUCCESS = 'REPORT/ADD_ORDER_ITEM_SUCCESS';
@@ -48,20 +50,20 @@ export function getDailyLocalAction(from: string, to?: string): ThunkAction<GetD
     const toDate = endOfDay(new Date(to || from));
     try {
       const idb = new CDB();
-      const { articles, orders,  orderItems, processCards, prices, discounts } = await idb.getOrdersByDate(fromDate, toDate);
+      const { articles, orders, orderItems, processCards, prices, discounts } = await idb.getOrdersByDate(fromDate, toDate);
       const it = groupBy('orderId')(orderItems);
       const d = groupBy('orderId')(discounts);
+      const priceDictionary = adapters.pricesToDictionary(prices);
       const o = orders.reduce((a, v) => ({
         ...a,
         [v.id]: {
-          client: v.client,
+          ...v,
           date: v.date.toISOString(),
-          id: v.id,
-          items: get(it, v.id, []),
+          items: orderItemsArchive(get(it, v.id, []) as ReadonlyArray<OrderItem>, priceDictionary),
           discounts: get(d, v.id),
         }
       }), {});
-      const priceDictionary = adapters.pricesToDictionary(prices);
+
       dispatch({
         type: GET_ORDERS,
         payload: {

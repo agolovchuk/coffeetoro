@@ -1,3 +1,4 @@
+import { startOfDay, endOfDay, startOfMonth } from 'date-fns';
 import { validateArray } from 'lib/contracts';
 import CDB, { promisifyRequest } from 'db';
 import * as C from 'db/constants';
@@ -278,10 +279,12 @@ export interface GetExpense {
   }
 }
 
-export function getExpenseAction(): ThunkAction<GetExpense> {
+export function getExpenseAction(f?: string, t?: string): ThunkAction<GetExpense> {
+  const from = f ? startOfDay(new Date(f)) : startOfMonth(new Date());
+  const to = t ? endOfDay(new Date(t)) : endOfDay(new Date());
   return async (dispatch) => {
     const idb = new CDB();
-    const { expenses, articles, services } = await idb.getExpense();
+    const { expenses, articles, services } = await idb.getExpense(from, to);
     dispatch({
       type: GET_EXPENSE,
       payload: {

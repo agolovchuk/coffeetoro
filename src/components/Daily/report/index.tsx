@@ -5,20 +5,19 @@ import { DayReportParams } from '../Types';
 import styles from './daily.module.css';
 
 interface Props {
-  predictCache: number;
+  predict: {
+    cash: number,
+    bank: number,
+  };
   createReport(data: DayReportParams): void;
   date: string;
 }
 
-function DailyReport({ predictCache, createReport, date }: Props) {
+function DailyReport({ predict, createReport, date }: Props) {
 
   const [isReport, setReport] = React.useState(false);
 
   const isDayToday = React.useMemo(() => isToday(new Date(date)), [date]);
-
-  const initial = React.useMemo(() => ({
-    cash: predictCache,
-  }), [predictCache]);
 
   const handleCancel = React.useCallback(() => { setReport(false); }, [])
 
@@ -38,7 +37,7 @@ function DailyReport({ predictCache, createReport, date }: Props) {
         isReport ? (
           <ReportPopup
             onCancel={handleCancel}
-            initial={initial}
+            initial={predict}
             onSubmit={createReport}
           />
         ) : null
