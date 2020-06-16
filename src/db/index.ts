@@ -24,7 +24,7 @@ export * from '../lib/idbx';
 
 export default class CDB extends IDB {
   constructor() {
-    super(DB_NAME, requestUpgrade, 5);
+    super(DB_NAME, requestUpgrade, 6);
   }
 
   getPriceByBarcode = async (barcode: string) => {
@@ -222,15 +222,16 @@ export default class CDB extends IDB {
     return  { prices, articles, processCards };
   }
 
-  getExpense = async (query = null) => {
+  getExpense = async (from: Date, to: Date) => {
     const idb = await this.open();
+    const query = IDBKeyRange.bound(from, to);
     const transaction = idb.transaction([
       TABLE.expenses.name,
       TABLE.tmc.name,
       TABLE.services.name,
     ], READ_ONLY);
     transaction.oncomplete = () => { idb.close(); };
-    const osExpenses = transaction.objectStore(TABLE.expenses.name);
+    const osExpenses = transaction.objectStore(TABLE.expenses.name).index(TABLE.expenses.index.date);
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const osServices = transaction.objectStore(TABLE.services.name);
     const expenses = await promisifyCursor<ExpenseItem>(osExpenses, query);
@@ -256,7 +257,9 @@ export default class CDB extends IDB {
     transaction.oncomplete = () => { idb.close(); };
     const osOrders = transaction.objectStore(TABLE.orders.name);
     const osOrderItems = transaction.objectStore(TABLE.orderItem.name).index(TABLE.orderItem.field.orderId);
+
     const orders = await promisifyRequest<Order[]>(osOrders.index(TABLE.orders.field.date).getAll(range));
+
     const priceStore = transaction.objectStore(TABLE.price.name);
     const osTMC = transaction.objectStore(TABLE.tmc.name).index(TABLE.tmc.index.barcode);
     const osPC = transaction.objectStore(TABLE.processCards.name);
@@ -284,7 +287,7 @@ export default class CDB extends IDB {
       prices,
       articles,
       processCards,
-      discounts,
+      discounts: flatten(discounts),
     }
   }
 }

@@ -8,9 +8,12 @@ import {
   articlesSelector,
   completeReportAction,
   enrichedOrdersSelector,
-  summarySelector, getDailyLocalAction
+  summarySelector,
+  // getDailyLocalAction,
+  getDailyReportAction,
 } from "domain/reports";
 import { dailyParamsSelector, getDayParamsAction, setDayParamsAction } from "domain/daily";
+import { getExpenseAction, expanseSumSelector } from 'domain/dictionary';
 import Daily from 'components/Daily';
 import Report from 'components/Daily/report';
 import { FORMAT } from "lib/dateHelper";
@@ -20,22 +23,24 @@ const mapState = (state: AppState) => ({
   articles: articlesSelector(state),
   orders: enrichedOrdersSelector(state),
   dailyParams: dailyParamsSelector(state),
+  expanseSum: expanseSumSelector(state),
 });
 
 const mapDispatch = {
-  getDailyReport: getDailyLocalAction,
+  getDailyReport: getDailyReportAction,
   completeReport: completeReportAction,
   setDayParams: setDayParamsAction,
   getDayParams: getDayParamsAction,
+  getExpense: getExpenseAction,
 };
 
 const connector = connect(mapState, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector>, RouteComponentProps<{ date: string }> {};
 
-function DailyReport({ match: { params }, setDayParams, getDayParams, history, dailyParams, ...props }: Props) {
+function DailyReport({ match: { params }, setDayParams, getDayParams, history, dailyParams, getExpense, expanseSum, ...props }: Props) {
 
-  const { cash } = props.summary;
+  const { cash, bank } = props.summary;
 
   const date = React.useMemo(() =>
     params.date || format(new Date(), FORMAT), [params]);
@@ -48,18 +53,23 @@ function DailyReport({ match: { params }, setDayParams, getDayParams, history, d
 
   const predictCache = React.useMemo(() => {
     const before = get(dailyParams, [dateBefore, 'cash']);
-    return before - 250000 + cash;
-  }, [dailyParams, dateBefore, cash]);
+    const c = before - 250000 + cash - get(expanseSum, 'cash', 0);
+    return {
+      cash: c,
+      bank,
+    }
+  }, [dailyParams, dateBefore, cash, bank, expanseSum]);
 
   React.useEffect(() => {
     getDayParams(dateBefore);
-  }, [getDayParams, dateBefore]);
+    getExpense(date);
+  }, [getDayParams, dateBefore, getExpense, date]);
 
   return (
     <Daily date={date} linkPrefix="/report" {...props}>
       <Report
         createReport={addReport}
-        predictCache={predictCache}
+        predict={predictCache}
         date={date}
       />
     </Daily>

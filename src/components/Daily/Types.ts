@@ -1,3 +1,4 @@
 export interface DayReportParams {
-  cash: number
+  cash: number,
+  bank: number,
 }

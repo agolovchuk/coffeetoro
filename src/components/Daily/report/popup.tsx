@@ -23,7 +23,14 @@ function ReportPopup({ onSubmit, onCancel, initial }: Props) {
                 name="cash"
                 render={({ input, meta }) => (
                   <PriceField id="cash" title="Сумма в кассе:" {...input} />
-                )}/>
+                )}
+              />
+              <Field
+                name="bank"
+                render={({ input, meta }) => (
+                  <PriceField id="bank" title="Платежный терминал:" {...input} />
+                )}
+              />
               <div className={styles.btnGroup}>
                 <button type="button" onClick={onCancel} className={styles.close}>Cancel</button>
                 <button type="submit" className={styles.ok}>Ok</button>

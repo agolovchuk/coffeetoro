@@ -20,7 +20,7 @@ function DayNavigator({ date, prefix }: Props) {
         to={`${prefix}/${format(subDays(new Date(date), 1), FORMAT)}`}>Prev</Link>
       <Link
         className={styles.btn}
-        to={prefix}>To Day</Link>
+        to={prefix}>Today</Link>
       {
         isDayToday ? null : (
           <Link

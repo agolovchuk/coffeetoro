@@ -95,6 +95,7 @@ export const TABLE = {
       id: 'id',
       foreignId: 'foreignId',
       barcode: 'barcode',
+      date: 'date',
     }
   },
   services: {
