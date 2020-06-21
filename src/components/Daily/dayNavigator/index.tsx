@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { addDays, format, isToday, subDays } from "date-fns";
 import { FORMAT } from '../helpers';
 import styles from "./navigator.module.css";
@@ -15,18 +15,19 @@ function DayNavigator({ date, prefix }: Props) {
 
   return (
     <div className={styles.container}>
-      <Link
+      <NavLink
         className={styles.btn}
-        to={`${prefix}/${format(subDays(new Date(date), 1), FORMAT)}`}>Prev</Link>
-      <Link
+        to={`${prefix}/${format(subDays(new Date(date), 1), FORMAT)}`}>Prev</NavLink>
+      <NavLink
         className={styles.btn}
-        to={prefix}>Today</Link>
+        activeClassName={styles.active}
+        to={prefix}>Today</NavLink>
       {
         isDayToday ? null : (
-          <Link
+          <NavLink
             className={styles.btn}
             to={`${prefix}/${format(addDays(new Date(date), 1), FORMAT)}`}
-          >Next</Link>
+          >Next</NavLink>
         )
       }
     </div>

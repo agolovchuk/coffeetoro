@@ -78,7 +78,7 @@ export const reducer = {
     [A.CRUD.createItemAction.type]: A.CRUD.creat<ExpenseItem, 'id'>('expenses', 'id'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<ExpenseItem, 'id'>('expenses', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('expenses'),
-    [A.GET_EXPENSE]: (state, action: A.GetExpense) => ({ ...state, ...action.payload.expenses }),
+    [A.GET_EXPENSE]: (state, action: A.GetExpense) => action.payload.expenses,
   }),
 
   services: createReducer({} as Services, {
