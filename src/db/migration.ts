@@ -323,5 +323,28 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
         );
     }
   }
+  if (ev.oldVersion < 7) {
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.category.name)
+        .createIndex(
+          C.TABLE.category.index.group,
+          C.TABLE.category.index.group, {
+            unique: false,
+          }
+        );
+      this.transaction
+        .objectStore(C.TABLE.category.name)
+        .deleteIndex(C.TABLE.category.index.name);
+      this.transaction
+        .objectStore(C.TABLE.category.name)
+        .createIndex(
+          C.TABLE.category.index.name,
+          C.TABLE.category.index.name, {
+            unique: false,
+          }
+        );
+    }
+  }
   return fixtures;
 }

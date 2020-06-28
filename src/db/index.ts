@@ -24,7 +24,7 @@ export * from '../lib/idbx';
 
 export default class CDB extends IDB {
   constructor() {
-    super(DB_NAME, requestUpgrade, 6);
+    super(DB_NAME, requestUpgrade, 7);
   }
 
   getPriceByBarcode = async (barcode: string) => {

@@ -47,7 +47,7 @@ function prepareAction<T>(name: DKeys, data: T): Action<T> {
   }
 }
 
-function actionWraper<T>(name: DKeys, fn: Reducer<T>): Reducer<T> {
+function actionWrapper<T>(name: DKeys, fn: Reducer<T>): Reducer<T> {
   return (state, action) => {
     if (action.payload.name === name) {
       return fn(state, action);
@@ -65,7 +65,7 @@ export function effect<T>(name: DKeys, action: Action<T>, fn: Effect<T>) {
 }
 
 export function creat<T extends Record<K, any>, K extends keyof T>(name: DKeys, field: keyof T): Reducer<T> {
-  return actionWraper(
+  return actionWrapper(
     name,
     (state, action) => ({
       ...state,
@@ -75,14 +75,14 @@ export function creat<T extends Record<K, any>, K extends keyof T>(name: DKeys, 
 }
 
 export function getAll<T extends Record<string, T>>(name: DKeys): Reducer<T> {
-  return actionWraper(
+  return actionWrapper(
     name,
     (_, action) => action.payload.data,
   )
 }
 
 export function mergeAll<T extends Record<string, T>>(name: DKeys): Reducer<T> {
-  return actionWraper(
+  return actionWrapper(
     name,
     (state, action) => ({
       ...state,

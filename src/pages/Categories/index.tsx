@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { match } from 'react-router-dom';
-import { currentCategoriesSelector, getCategoriesAction, CountedCategoryItem } from 'domain/dictionary';
+import { currentCategoriesSelector, getPriceCategoriesAction, CountedCategoryItem } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import Grid from 'components/Grid';
 
@@ -19,7 +19,7 @@ const mapState = (state: AppState, props: PropsFromRouter) => ({
 });
 
 const mapDispatch = {
-  getCategories: getCategoriesAction,
+  getCategories: getPriceCategoriesAction,
 }
 
 const connector = connect(mapState, mapDispatch);

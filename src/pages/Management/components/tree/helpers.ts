@@ -16,7 +16,7 @@ function getDip(nodeId: string, g: PIDGroup, list: string[]) {
   return;
 }
 
-export function getChildrend(nodeId: string, g: PIDGroup): string[] {
+export function getChildren(nodeId: string, g: PIDGroup): string[] {
   const list: string[] = [];
   getDip(nodeId, g, list);
   return list;

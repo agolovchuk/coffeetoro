@@ -16,5 +16,6 @@
   white-space: nowrap;
 }
 .active {
+  cursor: default;
   background-color: var(--medium-gray-color);
 }
