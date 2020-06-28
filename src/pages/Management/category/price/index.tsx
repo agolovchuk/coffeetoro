@@ -149,7 +149,7 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
           >
             {
               item.isEdit ? (
-                <Field name="expiry" render={({ input }) => (
+                <Field name="expiry" type="checkbox" render={({ input }) => (
                   <CheckBoxField id="expiry" title="Mark as deleted" {...input} />
                 )}/>
               ) : null
