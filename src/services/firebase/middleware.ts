@@ -75,6 +75,7 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           database.ref('price/' + action.payload.id).set({
             ...action.payload,
             add: action.payload.add.toISOString(),
+            expiry: action.payload.expiry ? action.payload.expiry.toISOString() : null,
           });
           break;
 

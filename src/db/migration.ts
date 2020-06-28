@@ -346,5 +346,21 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
         );
     }
   }
+  if (ev.oldVersion < 9) {
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.price.name)
+        .deleteIndex(C.TABLE.price.index.barcode);
+
+      this.transaction
+        .objectStore(C.TABLE.price.name)
+        .createIndex(
+          C.TABLE.price.index.barcode,
+          C.TABLE.price.index.barcode, {
+            unique: false,
+          }
+        );
+    }
+  }
   return fixtures;
 }
