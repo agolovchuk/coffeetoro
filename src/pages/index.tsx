@@ -47,7 +47,9 @@ function asyncUser(): Promise<unknown> {
 }
 
 function App({ user }: Props) {
-  const path = React.useMemo(() => getAvailablePath(user), []); // eslint-disable-line
+
+  const path = React.useMemo(() => getAvailablePath(user), [user]);
+
   return (
     <Switch>
       <Route path="/login" exact component={Auth} />

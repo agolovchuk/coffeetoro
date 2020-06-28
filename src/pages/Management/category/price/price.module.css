@@ -14,5 +14,18 @@
   display: flex;
   justify-content: space-between;
   flex: 1 1 100%;
-  margin-right: 12px;
+  padding-right: 12px;
+  min-width: 0;
+}
+.itemTitle dt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1 1 100%;
+}
+.itemTitle dd {
+  flex: 0 0 100px;
+  padding-left: 8px;
+  text-align: right;
 }
