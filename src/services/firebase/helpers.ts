@@ -46,6 +46,7 @@ export function eqPrice(fBPrice: FBPriceItem, { add, expiry, ...dbp }: PriceItem
   return eq({
     ...dbp,
     add: add.toISOString(),
+    expiry: expiry ? expiry.toISOString() : undefined,
   }, fBPrice);
 }
 
