@@ -1,4 +1,4 @@
-import { getChildrend, getParent } from '../components/tree/helpers';
+import { getChildren, getParent } from '../components/tree/helpers';
 
 interface Item {
   id: string;
@@ -10,7 +10,7 @@ interface Item {
 export function getParentsList<T extends Item>(list: ReadonlyArray<T>, group: Record<string, T[]>) {
   const l = list.filter(f => f.count === 0);
   return (current: string) => {
-    const children = getChildrend(current, group);
+    const children = getChildren(current, group);
     return [
       { name: 'root', title: '(коневой уровень)'},
       ...l.filter(f => !children.includes(f.id))

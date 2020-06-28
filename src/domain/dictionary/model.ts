@@ -24,7 +24,7 @@ export const reducer = {
     [A.CREATE_CATEGORY]: (state, action: A.CreateCategory) => set(action.payload.id)(action.payload)(state),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('categories'),
     [A.UPDATE_CATEGORY]: (state, action: A.UpdateCategory) => set(action.payload.id)(action.payload)(state),
-    [A.GET_CATEGORIES_SUCCESS]: (state, action: A.GetCategoriesSuccess) => ({...state, ...action.payload }),
+    [A.GET_CATEGORIES_SUCCESS]: (state, action: A.GetCategoriesSuccess) => (action.payload),
     [A.GET_CATEGORY]: (state, action: A.GetCategory) => set(action.payload.id)(action.payload)(state),
     // [A.GET_PRICES_SUCCESS]: (state, action: A.GetPricesSuccess) => ({ ...state, ...action.payload.category })
   }),

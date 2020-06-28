@@ -37,6 +37,7 @@ export const category = t.interface({
   title: t.string,
   sortIndex: t.number,
   parentId: t.string,
+  group: t.union([t.undefined, t.string]),
 });
 
 export const tmc = t.interface({

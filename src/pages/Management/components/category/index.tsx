@@ -1,32 +1,28 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
-import { Route, match } from 'react-router-dom';
 import { Field } from 'react-final-form';
 import groupBy from 'lodash/groupBy'
 import get from 'lodash/get'
-// import createDecorator from "final-form-calculate";
-// import { Decorator } from 'final-form';
 import {
   CRUD,
   categoriesListSelector,
   updateCategory,
   CategoryItem,
   CountedCategoryItem,
-  getPriceCategoriesAction,
+  getCategoriesAction,
   createCategoryAction,
   categoryByNameSelector,
 } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import { InputField, SelectField } from 'components/Form/field';
 import { getId } from 'lib/id';
-import { ManagementPopup, MItem, Header } from '../components';
-import Price from './price'
-import Tree from '../components/tree';
-import { getMax } from '../helper';
-import { EitherEdit } from '../Types';
+import { ManagementPopup, MItem, Header } from '../index';
+import Tree from '../tree';
+import { getMax } from '../../helper';
+import { EitherEdit } from '../../Types';
 import styles from './category.module.css';
-// import { translite } from "lib/commonHelpers";
-import { getParentsList, getParents } from './helpers';
+import { getParents } from '../../category/helpers';
+import { getParentsList } from './helpers';
 
 const mapState = (state: AppState) => ({
   categories: categoriesListSelector(state),
@@ -37,10 +33,10 @@ const mapDispatch = {
   getDictionary: CRUD.getAllAction,
   create: createCategoryAction,
   update: updateCategory,
-  getCategories: getPriceCategoriesAction,
+  getCategories: getCategoriesAction,
 }
 
-function createItem(sortIndex: number = 0, parentId: string = 'root'): CountedCategoryItem {
+function createItem(group: string = 'price', sortIndex: number = 0, parentId: string = 'root'): CountedCategoryItem {
   return {
     id: getId(10),
     name: '',
@@ -48,7 +44,7 @@ function createItem(sortIndex: number = 0, parentId: string = 'root'): CountedCa
     sortIndex,
     parentId,
     count: 0,
-    group: 'price',
+    group,
   }
 }
 
@@ -59,18 +55,14 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 type EitherCategory = EitherEdit<CountedCategoryItem>;
 
 interface Props extends PropsFromRedux {
-  match: match<{category?: string}>;
+  category?: string;
+  children: React.ReactNode;
+  groupName: string;
+  createLink(c: CategoryItem): string;
 }
 
-// const guessSlag = createDecorator({
-//   field: 'title',
-//   updates: {
-//     name: (v: string) => translite(v || ''),
-//   }
-// }) as Decorator<CountedCategoryItem>;
+function CategoryManager({ categories, getCategories, update, create, categoryByName, groupName, category, ...props }: Props) {
 
-function ProductManager({ categories, getCategories, update, create, categoryByName, ...props }: Props) {
-  const { params } = props.match;
   const [item, setItem] = React.useState<EitherCategory | null>(null);
 
   const edit = React.useCallback(
@@ -84,22 +76,22 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
     }, [update, create],
   );
 
-  const createLink = ({ id }: CategoryItem) => ['/manager', 'category', id].join('/');
-
   const group = React.useMemo(() => groupBy(categories, 'parentId'), [categories]);
 
-  React.useEffect(() => { getCategories('name'); }, [getCategories]);
+  React.useEffect(() => {
+    getCategories('group', groupName);
+  }, [getCategories, groupName]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const optionList = React.useMemo(() => getParentsList(categories, group), [categories]);
+  const optionList = React.useMemo(() => getParentsList(categories, group, groupName), [categories]);
 
   const getKey = React.useMemo(() => getParents(categories), [categories])
 
   const createCategory = React.useCallback(() => {
-    const categoryId = params.category ? get(categoryByName, [params.category, 'id']) : undefined;
-    const cat = createItem(getMax(categories) + 1, categoryId);
+    const categoryId = category ? get(categoryByName, [category, 'id']) : groupName;
+    const cat = createItem(groupName, getMax(categories) + 1, categoryId);
     setItem(cat);
-  }, [params, categories, categoryByName]);
+  }, [category, categories, categoryByName, groupName]);
 
   return (
     <div className={styles.container}>
@@ -107,7 +99,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
         <div className={styles.view}>
           <Tree
             data={group}
-            getName={e => e ? e.id : 'root'}
+            getName={e => e ? e.id : groupName}
             getKey={getKey}
           >
             {
@@ -115,7 +107,7 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
                 <MItem
                   data={data}
                   title={data.title}
-                  getLink={createLink}
+                  getLink={props.createLink}
                   onEdit={(value) => setItem({ ...value, isEdit: true })}
                 />
               ) : (
@@ -128,7 +120,9 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
           </Tree>
         </div>
       </section>
-      <Route path="/manager/category/:categoryId" component={Price} />
+      {
+        props.children
+      }
       {
         item !== null ? (
           <ManagementPopup
@@ -136,7 +130,6 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
             onCancel={() => setItem(null)}
             onSubmit={edit}
             initialValues={item}
-            // decorators={[ guessSlag ]}
           >
             <Field name="parentId" render={({ input, meta }) => (
               <SelectField
@@ -159,4 +152,4 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
   )
 }
 
-export default connector(ProductManager);
+export default connector(CategoryManager);

@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import { AnyAction, MiddlewareAPI, Action } from 'redux';
+import omit from 'lodash/fp/omit';
 import { AppState, ThunkAction } from 'domain/StoreType';
 import * as OrderSelector from 'domain/orders/selectors';
 import * as OrderAction from 'domain/orders/actions';
@@ -78,11 +79,15 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           break;
 
         case DictionaryAction.CREATE_CATEGORY:
-          database.ref('category/' + action.payload.id).set(action.payload);
+          database.ref('category/' + action.payload.id).set(
+            omit('count')(action.payload),
+          );
           break;
 
         case DictionaryAction.UPDATE_CATEGORY:
-          database.ref('category/' + action.payload.id).set(action.payload);
+          database.ref('category/' + action.payload.id).set(
+            omit('count')(action.payload),
+          );
           break;
 
         case DictionaryAction.CRUD.createItemAction.type:

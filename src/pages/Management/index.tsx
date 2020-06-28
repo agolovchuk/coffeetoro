@@ -71,7 +71,7 @@ function ManagerRout() {
       <AsyncRoute path="/manager/users" importRender={asyncUsers} />
       <AsyncRoute path="/manager/maintenance" importRender={asyncMaintenance} />
       <AsyncRoute path="/manager/config" importRender={asyncConfig} />
-      <AsyncRoute path="/manager/articles" importRender={asyncTMC} />
+      <AsyncRoute path={["/manager/articles", "/manager/articles/:category"]} importRender={asyncTMC} />
       <AsyncRoute path="/manager/pc" importRender={asyncPC} />
       <AsyncRoute path="/manager/group" importRender={asyncGroupArticles} />
       <AsyncRoute path={["/manager/reports", "/manager/reports/:date"]} exact importRender={asyncReports} />

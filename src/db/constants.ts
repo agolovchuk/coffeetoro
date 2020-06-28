@@ -35,6 +35,7 @@ export const TABLE = {
       id: 'id',
       name: 'name',
       parentId: 'parentId',
+      group: 'group',
     },
   },
   price: {
