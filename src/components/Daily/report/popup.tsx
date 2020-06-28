@@ -1,30 +1,17 @@
 import * as React from "react";
-import { Form, Field } from 'react-final-form';
-import { PriceField } from 'components/Form/field'
-import { Modal, Popup, PopupHeader } from 'components/Popup';
-import styles from './daily.module.css';
-
-interface Item {
-  cash: number
-}
+import { Modal, Popup, PopupHeader } from "components/Popup";
+import styles from "./daily.module.css";
+import {Field, Form} from "react-final-form";
+import { PriceField } from "components/Form/field";
+import { DayReportParams } from '../Types';
 
 interface Props {
-  onCancel: () => void;
-  setParams: (data: Item) => void;
-  dayBefore: Item;
-  currentCache: number;
+  onSubmit(d: DayReportParams): void;
+  onCancel(): void;
+  initial: DayReportParams;
 }
 
-function DailyReport({ onCancel, setParams, dayBefore, currentCache }: Props) {
-
-  const onSubmit = React.useCallback((item) => {
-    setParams(item)
-  }, [setParams]);
-
-  const initial = React.useMemo(() => ({
-    cash: dayBefore.cash - 250000 + (currentCache * 1000),
-  }), [dayBefore, currentCache]);
-
+function ReportPopup({ onSubmit, onCancel, initial }: Props) {
   return (
     <Modal>
       <Popup onCancel={onCancel}>
@@ -36,7 +23,14 @@ function DailyReport({ onCancel, setParams, dayBefore, currentCache }: Props) {
                 name="cash"
                 render={({ input, meta }) => (
                   <PriceField id="cash" title="Сумма в кассе:" {...input} />
-              )}/>
+                )}
+              />
+              <Field
+                name="bank"
+                render={({ input, meta }) => (
+                  <PriceField id="bank" title="Платежный терминал:" {...input} />
+                )}
+              />
               <div className={styles.btnGroup}>
                 <button type="button" onClick={onCancel} className={styles.close}>Cancel</button>
                 <button type="submit" className={styles.ok}>Ok</button>
@@ -49,4 +43,4 @@ function DailyReport({ onCancel, setParams, dayBefore, currentCache }: Props) {
   );
 }
 
-export default DailyReport;
+export default ReportPopup;

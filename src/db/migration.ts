@@ -299,5 +299,52 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
       }
     );
   }
+  if (ev.oldVersion < 5) {
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.orders.name)
+        .createIndex(
+          C.TABLE.orders.field.date,
+          C.TABLE.orders.field.date, {
+            unique: false,
+          }
+        );
+    }
+  }
+  if (ev.oldVersion < 6) {
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.expenses.name)
+        .createIndex(
+          C.TABLE.expenses.index.date,
+          C.TABLE.expenses.index.date, {
+            unique: false,
+          }
+        );
+    }
+  }
+  if (ev.oldVersion < 7) {
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.category.name)
+        .createIndex(
+          C.TABLE.category.index.group,
+          C.TABLE.category.index.group, {
+            unique: false,
+          }
+        );
+      this.transaction
+        .objectStore(C.TABLE.category.name)
+        .deleteIndex(C.TABLE.category.index.name);
+      this.transaction
+        .objectStore(C.TABLE.category.name)
+        .createIndex(
+          C.TABLE.category.index.name,
+          C.TABLE.category.index.name, {
+            unique: false,
+          }
+        );
+    }
+  }
   return fixtures;
 }

@@ -37,6 +37,7 @@ export function createItem(): ExpenseExtended {
     type: 'product',
     barcode: '',
     quantity: 1,
-    source: 'cash'
+    source: 'cash',
+    about: '',
   }
 }

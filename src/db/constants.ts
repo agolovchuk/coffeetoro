@@ -11,6 +11,7 @@ export const TABLE = {
       client: 'client',
       owner: 'owner',
       orderIdPayment: 'orderIdPayment',
+      date: 'date',
     },
   },
   orderItem: {
@@ -34,6 +35,7 @@ export const TABLE = {
       id: 'id',
       name: 'name',
       parentId: 'parentId',
+      group: 'group',
     },
   },
   price: {
@@ -94,6 +96,7 @@ export const TABLE = {
       id: 'id',
       foreignId: 'foreignId',
       barcode: 'barcode',
+      date: 'date',
     }
   },
   services: {

@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
 import { AnyAction, MiddlewareAPI, Action } from 'redux';
+import omit from 'lodash/fp/omit';
 import { AppState, ThunkAction } from 'domain/StoreType';
 import * as OrderSelector from 'domain/orders/selectors';
 import * as OrderAction from 'domain/orders/actions';
@@ -78,11 +79,15 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           break;
 
         case DictionaryAction.CREATE_CATEGORY:
-          database.ref('category/' + action.payload.id).set(action.payload);
+          database.ref('category/' + action.payload.id).set(
+            omit('count')(action.payload),
+          );
           break;
 
         case DictionaryAction.UPDATE_CATEGORY:
-          database.ref('category/' + action.payload.id).set(action.payload);
+          database.ref('category/' + action.payload.id).set(
+            omit('count')(action.payload),
+          );
           break;
 
         case DictionaryAction.CRUD.createItemAction.type:
@@ -128,9 +133,12 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           break;
 
         case ReportsAction.GET_DAILY:
-          orders.startAt(action.payload).on('child_added', (snapshot) => dispatch(
-            ReportsAction.addOrderItemAction(snapshot.val()))
-          );
+          orders
+            .startAt(action.payload.from)
+            .endAt(action.payload.to)
+            .on('child_added', (snapshot) => dispatch(
+              ReportsAction.addOrderItemAction(snapshot.val()))
+            );
           break;
 
         case ReportsAction.COMPLETE:

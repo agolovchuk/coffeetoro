@@ -63,6 +63,9 @@ function ManagerForm({ putArticle }: Props) {
           <PriceField id="valuation" title="Цена за единицу:" {...input} />
         )}/>
       </div>
+      <Field name="about" render={({ input}) => (
+        <InputField id="about" title="Описание:" {...input} />
+      )}/>
     </React.Fragment>
   )
 }

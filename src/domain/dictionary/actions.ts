@@ -1,3 +1,4 @@
+import { startOfDay, endOfDay, startOfMonth } from 'date-fns';
 import { validateArray } from 'lib/contracts';
 import CDB, { promisifyRequest } from 'db';
 import * as C from 'db/constants';
@@ -40,9 +41,9 @@ export interface GetCategoriesSuccess {
   payload: Record<string, CountedCategoryItem>;
 }
 
-type CategoryIndex = 'name' | 'parentId';
+type CategoryIndex = 'name' | 'parentId' | 'group';
 
-export function getCategoriesAction(index: CategoryIndex, query?: string): ThunkAction<GetCategoriesSuccess> {
+export function getPriceCategoriesAction(index: CategoryIndex, query?: string): ThunkAction<GetCategoriesSuccess> {
   return async(dispatch) => {
     const Idb = new CDB();
     const db = await Idb.open();
@@ -64,6 +65,24 @@ export function getCategoriesAction(index: CategoryIndex, query?: string): Thunk
       categories.map(({ id }) => promisifyRequest<number>(priceStore.index('parentId').count(id)))
     )
   };
+}
+
+export function getCategoriesAction(index: CategoryIndex, query?: string): ThunkAction<GetCategoriesSuccess> {
+  return async(dispatch) => {
+    try {
+      const Idb = new CDB();
+      const db = await Idb.open();
+      const transaction = db.transaction(['categories']);
+      const categoryStore = transaction.objectStore('categories');
+      const categories = await promisifyRequest<CategoryItem[]>(categoryStore.index(index).getAll(query));
+      dispatch({
+        type: GET_CATEGORIES_SUCCESS,
+        payload: validateArray(adapters.categories)(categories),
+      });
+    } catch (err) {
+      console.warn(err);
+    }
+  }
 }
 
 export interface GetPricesSuccess {
@@ -278,10 +297,12 @@ export interface GetExpense {
   }
 }
 
-export function getExpenseAction(): ThunkAction<GetExpense> {
+export function getExpenseAction(f?: string, t?: string): ThunkAction<GetExpense> {
+  const from = f ? startOfDay(new Date(f)) : startOfMonth(new Date());
+  const to = t ? endOfDay(new Date(t)) : endOfDay(new Date());
   return async (dispatch) => {
     const idb = new CDB();
-    const { expenses, articles, services } = await idb.getExpense();
+    const { expenses, articles, services } = await idb.getExpense(from, to);
     dispatch({
       type: GET_EXPENSE,
       payload: {

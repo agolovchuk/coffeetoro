@@ -12,6 +12,9 @@ export const reducer = {
       case A.ADD_ORDER_ITEM_SUCCESS:
         return set(action.payload.order.id)(action.payload.order)(state);
 
+      case A.GET_ORDERS:
+        return action.payload.orders;
+
       default:
         return state;
     }

@@ -7,7 +7,6 @@ import { Order, PaymentMethod, OrderItem, DiscountItem } from './Types';
 import {
   PriceItem,
   pricesToDictionary,
-
   pcToDictionary,
   TMCItem,
   ProcessCardItem,
@@ -28,7 +27,6 @@ export const COMPLETE = 'ORDER/COMPLETE';
 export const GET_ORDER = 'ORDER/GET_ORDER';
 
 export const GET_ORDERS_LIST = 'ORDER/GET_ORDERS_LIST';
-export const GET_ORDER_ITEMS_SUCCESS = 'ORDER/GET_ORDER_ITEMS_SUCCESS';
 
 export const ADD_DISCOUNT = 'ORDER/ADD_DISCOUNT';
 export const REMOVE_DISCOUNT = 'ORDER/REMOVE_DISCOUNT';
@@ -80,16 +78,17 @@ export function fastAddAction(orderId: string, barcode: string): ThunkAction<IAd
 export function addItemAction(orderId: string, priceId: string): ThunkAction<IAddItem> {
   return async(dispatch, getState) => {
     const { prices, orderItems, processCards } = getState();
+    const oi = get(orderItems, priceId)
     const tmc = articlesByBarcodeSelector(getState());
     const price = get(prices, priceId);
     const item = {
       orderId,
       priceId,
-      quantity: (get(orderItems, [priceId, 'quantity'], 0) + 1),
+      quantity: (oi ? oi.quantity + 1 : 1),
     };
     try {
       const idb = new CDB();
-      await idb.addItem(C.TABLE.orderItem.name, item);
+      await idb[oi ? 'updateItem' : 'addItem'](C.TABLE.orderItem.name, item);
       const dict = prepareDictionary(price, tmc, processCards);
       dispatch({
         type: ADD_ITEM,

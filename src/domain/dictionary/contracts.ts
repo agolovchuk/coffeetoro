@@ -37,6 +37,7 @@ export const category = t.interface({
   title: t.string,
   sortIndex: t.number,
   parentId: t.string,
+  group: t.union([t.undefined, t.string]),
 });
 
 export const tmc = t.interface({
@@ -80,6 +81,7 @@ export const expenseBase = {
   quantity: t.number,
   createBy: t.union([t.string, t.undefined]),
   source: t.union([t.literal('cash'), t.literal('bank'), t.string]),
+  about: t.union([t.string, t.undefined]),
 }
 
 export const expense = t.union([
