@@ -3,6 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { match } from 'react-router-dom';
 import { getId } from 'lib/id';
 import { Field } from 'react-final-form';
+import pick from "lodash/pick";
 import cx from 'classnames';
 import {
   SelectField,
@@ -16,6 +17,7 @@ import {
   extendedPricesSelector,
   PriceBase,
   PriceTMC,
+  PricePC,
   priceByNameSelector,
   currentCategorySelector,
   createPriceAction,
@@ -27,8 +29,8 @@ import { getMax } from '../../helper';
 import { ArticleSelector, ProcessCardSelector } from '../../components/selectors';
 import { EitherEdit } from '../../Types';
 import { getTitle } from '../../helper';
+import { cleanPrice } from '../helpers';
 import styles from './price.module.css';
-import pick from "lodash/pick";
 
 const TYPE = [
   { name: 'tmc', title: 'TMC' },
@@ -61,7 +63,7 @@ const mapState = (state: AppState, props: PropsFromRouter) => ({
   category: currentCategorySelector(state, props),
   prices: extendedPricesSelector(state, props),
   products: priceByNameSelector(state),
-})
+});
 
 const mapDispatch = {
   getPrices: getPricesByCategoryAction,
@@ -82,14 +84,15 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
 
   const edit = React.useCallback(
     ({ isEdit, expiry, valuation, ...value }) => {
+      const v: PriceTMC | PricePC = cleanPrice(value);
       if (isEdit) {
         update({
-          ...value,
+          ...v,
           expiry: expiry ? new Date() : null,
           valuation: Number(valuation)
         });
       } else {
-        create({...value, valuation: Number(valuation)});
+        create({...v, valuation: Number(valuation)});
       }
       setItem(null);
     }, [update, create],

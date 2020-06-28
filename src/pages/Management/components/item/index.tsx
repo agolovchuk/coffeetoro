@@ -20,6 +20,7 @@ function MItem<T extends Data>({ data, onEdit, getLink, title }: Props<T>) {
         to={link}
         className={styles.link}
         activeClassName={styles.active}
+        title={typeof title === 'string' ? title : undefined}
       >{title}</NavLink>
       <button
         type="button"
