@@ -13,6 +13,7 @@ export interface OrderArchiveItem {
   payment: 1 | 2;
   items: ReadonlyArray<OrderArchiveContent>;
   discounts: ReadonlyArray<DiscountItem>;
+  owner: string;
 }
 
 export interface EntryPriceItem {
