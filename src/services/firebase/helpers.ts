@@ -52,6 +52,12 @@ export function eqPrice(fBPrice: FBPriceItem, { add, expiry, ...dbp }: PriceItem
 
 type FBDay = Omit<DayItem, 'date'> & { date: string };
 
+function compactObject(o: Record<string, any>) {
+  return Object
+    .entries(o)
+    .reduce((a, [key, value]) => typeof value === 'undefined' ? a : {...a, [key]: value }, {});
+}
+
 function eqDay(fBDay: FBDay, { date, ...rest }: DayItem) {
   return eq({
       ...rest,
@@ -186,7 +192,7 @@ function eqExpense(fb: ExpenseFB, { date, ...rest }: ExpenseItem): boolean {
   return eq(
     fb,
     {
-      ...rest,
+      ...compactObject(rest),
       date: date.toISOString(),
     }
   )

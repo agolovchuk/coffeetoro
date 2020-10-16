@@ -1,0 +1,39 @@
+.form {
+  flex: 1 0 50%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 10px;
+}
+.btn {
+  height: 40px;
+  border-radius: 4px;
+  background: var(--green-button);
+  color: #fff;
+  font-size: 18px;
+  border: 0 none;
+  padding: 0 40px;
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+  font-weight: bold;
+  outline: none;
+}
+.btn:disabled {
+  background: var(--medium-gray-color);
+}
+.btn:focus, .btn:active {
+  opacity: 0.8;
+}
+.field {
+  margin: 0 10px;
+  flex: 1 1 30%;
+}
+.label {
+  flex-basis: auto;
+  min-width: 0;
+}
+.input {
+  min-width: 0;
+  width: 140px;
+}

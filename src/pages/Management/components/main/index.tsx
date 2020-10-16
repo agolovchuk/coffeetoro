@@ -13,6 +13,7 @@ interface Props<T> {
   createLink: (data: T) => string;
   createTitle: (data: T) => string | React.ReactNode;
   orderBy?: (a: T, b: T) => number;
+  header?: React.ReactNode;
 }
 
 interface DataType {
@@ -48,7 +49,11 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
 
   return (
     <section className="scroll-section">
-      <Header title={props.title} onCreate={handleCreat} isSticky />
+      <Header title={props.title} onCreate={handleCreat} isSticky>
+        {
+          props.header
+        }
+      </Header>
       <ItemList list={props.list} getKey={e => e.id} orderBy={props.orderBy}>
         {
           (data) => (

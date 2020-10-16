@@ -133,6 +133,17 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           });
           break;
 
+        case ReportsAction.GET_ORDERS_REQUEST:
+          orders
+            .startAt(action.payload.from)
+            .endAt(action.payload.to)
+            .once('value')
+            .then(snapshot => {
+              // snapshot.child('orders')
+              dispatch(ReportsAction.getOrdersSuccessAction(snapshot.val()));
+            });
+          break;
+
         case ReportsAction.GET_DAILY:
           orders
             .startAt(action.payload.from)
@@ -143,7 +154,7 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           break;
 
         case ReportsAction.COMPLETE:
-          orders.equalTo(action.payload).off('child_added');
+          orders.off('child_added');
           break;
 
         case DailyAction.SET_DAY_PARAMS:

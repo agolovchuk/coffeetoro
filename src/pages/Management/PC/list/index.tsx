@@ -12,6 +12,8 @@ import { getTitle } from "../../helper";
 function createItem(): ProcessCardItem {
   return {
     id: getId(12),
+    primeCost: 0,
+    prescription: '',
     title: '',
     description: '',
     parentId: '',

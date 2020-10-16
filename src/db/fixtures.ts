@@ -108,5 +108,6 @@ export const users: ReadonlyArray<User> = [
     lastName: "",
     ava: "",
     lang: "ru",
+    active: true,
   }
 ]

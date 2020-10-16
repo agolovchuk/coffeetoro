@@ -5,6 +5,7 @@ export interface OrderArchiveContent {
   quantity: number;
   valuation: number;
 }
+
 export interface OrderArchiveItem {
   client: string;
   date: string;
@@ -14,6 +15,14 @@ export interface OrderArchiveItem {
   discounts: ReadonlyArray<DiscountItem>;
 }
 
+export interface EntryPriceItem {
+  s: number,
+  q: number,
+  min: number,
+  max: number,
+}
+
 export interface ReportState {
   readonly reports: Record<string, OrderArchiveItem>;
+  readonly entryPrice: Record<string, EntryPriceItem>;
 }

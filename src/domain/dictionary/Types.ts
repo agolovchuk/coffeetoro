@@ -32,6 +32,7 @@ export interface PriceTMC extends PriceBase {
 export interface PricePC extends PriceBase {
   type: 'pc';
   refId: string;
+  primeCost?: number,
 }
 /** ++++++++++++++++*/
 const baseContract = t.interface(contracts.expenseBase);
@@ -50,7 +51,11 @@ export interface ExpenseService extends ExpenseBase {
   refId: string;
 }
 
-export type ExpenseExtended = ExpenseExtendedBase & ExpenseProduct | ExpenseExtendedBase & ExpenseService;
+export interface ExpenseRemittance extends Omit<ExpenseBase, 'foreignId'> {
+  type: 'remittance',
+}
+
+export type ExpenseExtended = ExpenseExtendedBase & ExpenseProduct | ExpenseExtendedBase & ExpenseService | ExpenseRemittance;
 /** ++++++++++++++++*/
 
 export type PriceExtended = PriceExtendedBase & PriceTMC | PriceExtendedBase & PricePC;

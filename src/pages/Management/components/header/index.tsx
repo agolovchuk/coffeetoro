@@ -6,12 +6,16 @@ interface Props {
   title: string;
   onCreate?: () => void;
   isSticky?: boolean;
+  children?: React.ReactNode;
 }
 
-function Header({ title, onCreate, isSticky }: Props) {
+function Header({ title, onCreate, isSticky, children }: Props) {
   return (
     <div className={cx(styles.container, { [styles.sticky]: isSticky })}>
       <h2 className={styles.title}>{title}</h2>
+      {
+        children
+      }
       {
         typeof onCreate === 'function' ? (
           <button

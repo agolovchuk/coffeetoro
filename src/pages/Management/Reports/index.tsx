@@ -1,45 +1,48 @@
-import * as React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { AppState } from "domain/StoreType";
-import {
-  articlesSelector,
-  completeReportAction,
-  enrichedOrdersSelector,
-  getDailyReportAction,
-  summarySelector
-} from "domain/reports";
-import { dailyParamsSelector, getDayParamsAction, setDayParamsAction } from "domain/daily";
-import Daily from 'components/Daily';
-import {RouteComponentProps} from "react-router-dom";
-import {format} from "date-fns";
-import {FORMAT} from "../../../components/Daily/helpers";
+import * as React from "react";
+import { match, Switch, Route } from 'react-router-dom';
+import Grid from "components/Grid";
+import Daily from './daily';
+import Consolidated from './consolidated';
+import { getLink } from "../helper";
 
-const mapState = (state: AppState) => ({
-  summary: summarySelector(state),
-  articles: articlesSelector(state),
-  orders: enrichedOrdersSelector(state),
-  dailyParams: dailyParamsSelector(state),
-});
+const LIST = [
+  {
+    id: '0',
+    name: 'daily',
+    title: 'Daily'
+  },
+  {
+    id: '1',
+    name: 'consolidated',
+    title: 'Consolidated'
+  }
+];
 
-const mapDispatch = {
-  getDailyReport: getDailyReportAction,
-  completeReport: completeReportAction,
-  setDayParams: setDayParamsAction,
-  getDayParams: getDayParamsAction,
-};
+interface List {
+  id: string;
+  name: string;
+  title: string;
+}
 
-const connector = connect(mapState, mapDispatch);
+interface Props {
+  match: match
+}
 
-interface Props extends ConnectedProps<typeof connector>, RouteComponentProps<{ date: string }> {};
-
-function DailyReport({ match: { params }, ...props }: Props) {
-
-  const date = React.useMemo(() =>
-    params.date || format(new Date(), FORMAT), [params]);
-
+function Reports({ match }: Props) {
+  const createLink = ({ name }: List) => getLink(match.url, name);
   return (
-    <Daily date={date} linkPrefix="/manager/reports" {...props} />
+    <Switch>
+      <Route path="/manager/reports" exact>
+        <Grid
+          list={LIST}
+          getLink={createLink}
+          getKey={e => e.name}
+        />
+      </Route>
+      <Route path={["/manager/reports/daily/:date", "/manager/reports/daily"]} component={Daily} />
+      <Route path="/manager/reports/consolidated" component={Consolidated} />
+    </Switch>
   )
 }
 
-export default connector(DailyReport);
+export default React.memo(Reports);

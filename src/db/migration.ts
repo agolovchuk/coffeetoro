@@ -362,5 +362,17 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
         );
     }
   }
+  if (ev.oldVersion < 10) {
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.expenses.name)
+        .createIndex(
+          C.TABLE.expenses.index.type,
+          C.TABLE.expenses.index.type, {
+            unique: false,
+          }
+        );
+    }
+  }
   return fixtures;
 }

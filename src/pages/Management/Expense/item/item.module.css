@@ -1,6 +1,14 @@
 .container {
   display: flex;
 }
+.service {
+  background: rgba(123, 203, 176, 0.3);
+}
+.product {
+}
+.remittance {
+  background: rgba(55, 150, 246, 0.3);
+}
 .container > * {
   flex: 1 1 100%;
 }

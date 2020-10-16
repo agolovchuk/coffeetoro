@@ -15,10 +15,13 @@ function UserForm({ putArticle }: Props) {
     <React.Fragment>
       <ArticleSelector updateAdapter={articleUpdateAdapter} onPicItem={putArticle} />
       <Field name="quantity" render={({ input}) => (
-        <InputField id="quantity" title="Количество:" {...input} />
+        <InputField id="quantity" title="Количество:" inputMode="decimal" {...input} />
       )}/>
       <Field name="valuation" render={({ input}) => (
         <PriceField id="valuation" title="Цена за единицу:" {...input} />
+      )}/>
+      <Field name="about" render={({ input}) => (
+        <InputField id="about" title="Описание:" {...input} />
       )}/>
     </React.Fragment>
   );

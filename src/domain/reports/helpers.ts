@@ -1,24 +1,29 @@
-import { OrderArchiveItem,  } from './Types';
+import get from 'lodash/get';
+import {OrderArchiveContent, OrderArchiveItem,} from './Types';
 import { PriceExtended, PriceItem, ProcessCardItem, TMCItem } from 'domain/dictionary/Types';
 import { DiscountItem } from 'domain/orders';
 import { extendsPriceList } from "domain/dictionary/helpers";
 
+function getOrderItems(o: OrderArchiveItem): ReadonlyArray<OrderArchiveContent> {
+  return get(o, 'items', [] as ReadonlyArray<OrderArchiveContent>);
+}
+
 export function enrichOrdersArchive(order: OrderArchiveItem, en: (id: string) => PriceExtended) {
   return {
     ...order,
-    items: order.items.map(e => ({ ...en(e.priceId), quantity: e.quantity })),
+    items: getOrderItems(order).map(e => ({ ...en(e.priceId), quantity: e.quantity })),
   }
 }
 
 export function byPriceId(order: OrderArchiveItem, start: Record<string, number>) {
-  return order
-    .items
+  return getOrderItems(order)
     .reduce((a, v) => ({ ...a, [v.priceId]: (a[v.priceId] || 0) + v.quantity }), start);
 }
 
 export function orderSum(order: OrderArchiveItem) {
   const ds = discountSum(order.discounts);
-  return order.items.reduce((a, v) => a + v.quantity * v.valuation, - ds);
+  return getOrderItems(order)
+    .reduce((a, v) => a + v.quantity * v.valuation, - ds);
 }
 
 export function discountSum(discounts?: ReadonlyArray<DiscountItem>): number {
