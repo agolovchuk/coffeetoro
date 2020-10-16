@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormattedNumber } from 'react-intl';
+import { useIntl } from 'react-intl';
 import UnitsContext from './helpers';
 
 interface PriceProps {
@@ -11,21 +11,20 @@ interface PriceProps {
 
 export default function Price({ value, sign, currencyDisplay, notation }: PriceProps) {
 
-  const data = React.useContext(UnitsContext);
+  const { currency, getPrice } = React.useContext(UnitsContext);
+
+  const { formatNumber } = useIntl();
+
+  const result = formatNumber(getPrice(value), {
+    compactDisplay: "short",
+    currencyDisplay,
+    currencySign: "standard",
+    notation,
+    style: sign ? 'currency' : 'unit',
+    currency,
+  });
 
   return (
-    <FormattedNumber
-      value={data.getPrice(value)}
-      compactDisplay="short"
-      currencyDisplay={currencyDisplay}
-      currencySign="standard"
-      notation={notation}
-      style={sign ? 'currency' : 'unit'} // eslint-disable-line react/style-prop-object
-      currency={data.currency}
-    >
-      {
-        (c: string) => c
-      }
-    </FormattedNumber>
+    <React.Fragment>{result}</React.Fragment>
   );
 }

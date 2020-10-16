@@ -36,11 +36,10 @@ async function coffeeToro() {
       </Provider>,
       document.getElementById('root')
     );
-    serviceWorker.register();
   }
 }
-
 coffeeToro();
+serviceWorker.register();
 
 
 // If you want your app to work offline and load faster, you can change

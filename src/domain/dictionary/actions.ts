@@ -310,7 +310,7 @@ export function getExpenseAction(f?: string, t?: string): ThunkAction<GetExpense
         articles: adapters.articlesToDictionary(articles),
         services: adapters.servicesToDictionary(services),
       }
-    })
+    });
   }
 }
 

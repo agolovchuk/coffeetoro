@@ -9,6 +9,7 @@ import styles from "./form.module.css";
 const TYPE = [
   { name: 'product', title: 'Товары' },
   { name: 'service', title: 'Услуги' },
+  { name: 'remittance', title: 'Переводы' },
 ]
 
 const SOURCE = [
@@ -34,9 +35,16 @@ function ManagerForm({ putArticle }: Props) {
         />
       )}/>
       <div className={styles.line}>
-        <Field name="foreignId" render={({ input}) => (
-          <InputField id="foreignId" title="Накладная:" {...input} />
-        )}/>
+        <Condition when="type" is="product" >
+          <Field name="foreignId" render={({ input}) => (
+            <InputField id="foreignId" title="Накладная:" {...input} />
+          )}/>
+        </Condition>
+        <Condition when="type" is="service" >
+          <Field name="foreignId" render={({ input}) => (
+            <InputField id="foreignId" title="Накладная:" {...input} />
+          )}/>
+        </Condition>
         <Field name="date" render={({ input}) => (
           <InputField id="date" title="Дата:" type='date' {...input} />
         )}/>
@@ -47,18 +55,23 @@ function ManagerForm({ putArticle }: Props) {
       <Condition when="type" is="service" >
         <ServiceSelector updateAdapter={serviceUpdateAdapter} />
       </Condition>
+      {/*<Condition when="type" is="remittance" >*/}
+      {/*  <ServiceSelector updateAdapter={remittanceUpdateAdapter} />*/}
+      {/*</Condition>*/}
       <Field name="source" render={({ input}) => (
         <SelectField
           list={SOURCE}
           id="source"
-          title="Источник денег:"
+          title="Источник средств:"
           {...input}
         />
       )}/>
       <div className={styles.line}>
-        <Field name="quantity" render={({ input}) => (
-          <InputField id="quantity" title="Количество:" {...input} />
-        )}/>
+        <Condition when="type" is="product" >
+          <Field name="quantity" render={({ input}) => (
+            <InputField id="quantity" title="Количество:" inputMode="decimal" {...input} />
+          )}/>
+        </Condition>
         <Field name="valuation" render={({ input}) => (
           <PriceField id="valuation" title="Цена за единицу:" {...input} />
         )}/>

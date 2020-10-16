@@ -8,6 +8,7 @@ import {
   ExpenseService,
   ExpenseItem,
   ServiceItem,
+  ExpenseRemittance,
 } from "../domain/dictionary";
 import { promisifyRequest } from "../lib/idbx";
 import compact from 'lodash/fp/compact';
@@ -20,6 +21,7 @@ interface PriceByType {
 interface ExpenseByType {
   product: ReadonlyArray<ExpenseProduct>;
   service: ReadonlyArray<ExpenseService>;
+  remittance: ReadonlyArray<ExpenseRemittance>;
 }
 
 export function separatePrice(prices: PriceItem[]) {
@@ -45,7 +47,7 @@ export async function priceZip(prices: PriceItem[], osTMC: IDBIndex, osPC: IDBOb
 export function separateExpense(list: ReadonlyArray<ExpenseItem>) {
   return list.reduce((a, v) => (
     { ...a, [v.type]: [...a[v.type], v] }
-  ), { product: [], service: [] } as ExpenseByType);
+  ), { product: [], service: [], remittance: [] } as ExpenseByType);
 }
 
 export async function expenseZip(list: ReadonlyArray<ExpenseItem>, osTMC: IDBIndex, osServices: IDBObjectStore) {

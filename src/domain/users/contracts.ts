@@ -9,4 +9,5 @@ export const user = t.interface({
   ava: t.string,
   hash: t.string,
   lang: t.union([t.literal('en'), t.literal('ru')]),
+  active: t.union([t.boolean, t.undefined]),
 });

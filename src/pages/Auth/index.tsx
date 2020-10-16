@@ -4,14 +4,14 @@ import { RouteComponentProps } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import cx from 'classnames';
 import { AppState } from 'domain/StoreType';
-import { getUsersAction, usersListSelector } from 'domain/users';
+import { getUsersAction, activeUserListSelector } from 'domain/users';
 import { loginAction, userSelector } from 'domain/env';
 import { Modal, Popup } from 'components/Popup';
 import styles from './auth.module.css';
 import { FormattedMessage as FM } from 'react-intl';
 
 const mapState = (state: AppState) => ({
-  users: usersListSelector(state),
+  users: activeUserListSelector(state),
   currentUser: userSelector(state),
 });
 

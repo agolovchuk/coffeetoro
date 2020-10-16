@@ -16,7 +16,7 @@ export const reducer = {
         return set('user')(action.payload)(state);
 
       case UPDATE_USER:
-        return update('user')(m => merge(m)(action.payload))(state);
+        return update('user')(m => m.id === action.payload.id ? merge(m)(action.payload) : m)(state);
 
       case A.UPDATE_FIREBASE_CONFIG:
         return set('firebaseConfig')(action.payload)(state);

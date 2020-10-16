@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { createUserAction, updateUserAction, getUsersAction, usersListSelector, User } from 'domain/users';
 import { AppState } from 'domain/StoreType';
 import { Field } from 'react-final-form';
-import { InputField, SelectField } from 'components/Form/field';
+import {CheckBoxField, InputField, SelectField} from 'components/Form/field';
 import { Main } from '../components';
 import { EitherEdit } from '../Types';
 
@@ -24,6 +24,7 @@ function createItem(): UserType {
     ava: '',
     lang: 'en',
     hash: '',
+    active: true,
   }
 }
 
@@ -47,7 +48,7 @@ function orderUsers(a: UserType, b: UserType): number {
   return a.name.localeCompare(b.name);
 }
 
-function ManagmentUsers({ createUser, getUsers, updateUser, ...props }: Props) {
+function ManagementUsers({ createUser, getUsers, updateUser, ...props }: Props) {
 
   React.useEffect(() => { getUsers(); }, [getUsers]);
 
@@ -66,6 +67,7 @@ function ManagmentUsers({ createUser, getUsers, updateUser, ...props }: Props) {
 
   const editAdapter = React.useCallback((value: UserType) => ({
     ...value,
+    active: typeof value.active === 'undefined' ? true : value.active,
     isEdit: true,
   }), []);
 
@@ -81,6 +83,9 @@ function ManagmentUsers({ createUser, getUsers, updateUser, ...props }: Props) {
       createTitle={({ name }) => name}
       orderBy={orderUsers}
     >
+      <Field name="active" type="checkbox" render={({ input}) => (
+        <CheckBoxField id="active" title="Active:" {...input} />
+      )} />
       <Field name="role" render={({input}) => (
         <SelectField
           list={ROLES}
@@ -96,4 +101,4 @@ function ManagmentUsers({ createUser, getUsers, updateUser, ...props }: Props) {
   );
 }
 
-export default connector(ManagmentUsers);
+export default connector(ManagementUsers);

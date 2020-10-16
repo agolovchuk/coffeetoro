@@ -8,7 +8,7 @@ import {
   ProcessCardItem,
   PriceItem,
   PriceTMC,
-  GroupArticles, ExpenseItem,
+  GroupArticles, ExpenseItem, ExpenseProduct,
 } from 'domain/dictionary/Types';
 import {
   DiscountItem,
@@ -24,7 +24,7 @@ export * from '../lib/idbx';
 
 export default class CDB extends IDB {
   constructor() {
-    super(DB_NAME, requestUpgrade, 8);
+    super(DB_NAME, requestUpgrade, 10);
   }
 
   getPriceByBarcode = async (barcode: string) => {
@@ -289,6 +289,29 @@ export default class CDB extends IDB {
       processCards,
       discounts: flatten(discounts),
     }
+  }
+
+  getEntryPrice = async () => {
+    const idb = await this.open();
+    const transaction = idb.transaction([
+      TABLE.expenses.name,
+    ], READ_ONLY);
+    transaction.oncomplete = () => { idb.close(); };
+    const osExpenses = transaction.objectStore(TABLE.expenses.name).index(TABLE.expenses.index.type);
+    const expanse = await promisifyCursor<ExpenseProduct>(osExpenses, 'product');
+    const def = { s: 0, q: 0, min: Infinity, max: 0 };
+    return expanse.reduce((a, v) => {
+      const current = get(a, v.barcode, def);
+      return {
+        ...a,
+        [v.barcode]: {
+          s: (v.quantity * v.valuation) + current.s,
+          q: v.quantity + current.q,
+          min: Math.min(v.valuation, current.min),
+          max: Math.max(v.valuation, current.max)
+        },
+      }
+    }, {});
   }
 }
 

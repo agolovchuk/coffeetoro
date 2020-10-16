@@ -41,10 +41,12 @@ export function getDayParamsAction(date: string): ThunkAction<GetDayParams> {
     try {
       const Idb = new CDB();
       const data = await Idb.getItem(C.TABLE.daily.name, adapter.dayParamsValidator, date);
-      dispatch({
-        type: GET_DAY_PARAMS,
-        payload: data,
-      })
+      if (data) {
+        dispatch({
+          type: GET_DAY_PARAMS,
+          payload: data,
+        });
+      }
     } catch (err) {
       console.warn(err);
     }

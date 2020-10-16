@@ -74,7 +74,7 @@ function ManagerRout() {
       <AsyncRoute path={["/manager/articles", "/manager/articles/:category"]} importRender={asyncTMC} />
       <AsyncRoute path="/manager/pc" importRender={asyncPC} />
       <AsyncRoute path="/manager/group" importRender={asyncGroupArticles} />
-      <AsyncRoute path={["/manager/reports", "/manager/reports/:date"]} exact importRender={asyncReports} />
+      <AsyncRoute path="/manager/reports" importRender={asyncReports} />
       <AsyncRoute path="/manager/expense" importRender={asyncExpense} />
       <AsyncRoute path="/manager/services" importRender={asyncServices} />
     </Switch>

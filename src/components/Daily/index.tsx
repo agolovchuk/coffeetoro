@@ -3,15 +3,10 @@ import cx from 'classnames';
 import DayNavigator from "./dayNavigator";
 import Item from "./item";
 import Order from './order';
+import Summary from "./summary/income";
 import styles from "./report.module.css";
 
-function toMoney(m: number) {
-  return (m / 1000).toFixed(2);
-}
-
 interface Props {
-  getDailyReport(d: string): void;
-  completeReport(d: string): void;
   summary: {
     cash: number;
     bank: number;
@@ -26,32 +21,14 @@ interface Props {
   linkPrefix: string;
 }
 
-function Report({ children, getDailyReport, summary, completeReport, date, ...props }: Props) {
-
-  React.useEffect(() => {
-    getDailyReport(date);
-    return () => {
-      completeReport(date);
-    }
-  }, [ getDailyReport, completeReport, date]);
+function Report({ children, summary, date, ...props }: Props) {
 
   return (
     <section className={cx("scroll-section", styles.container)}>
       <div  className={styles.column}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Report for {date}</h1>
+        <Summary summary={summary} date={date}>
           <DayNavigator date={date} prefix={props.linkPrefix} />
-          <h4>Заказов: {summary.orders}</h4>
-          <h4>Всего: {toMoney(summary.income)}</h4>
-          <dl className={styles.cache}>
-            <dt><h5>Из них</h5></dt>
-            <dd>
-              <div>по кассе: {toMoney(summary.cash)}</div>
-              <div>по банку: {toMoney(summary.bank)}</div>
-              <div>скидка: {toMoney(summary.discount)}</div>
-            </dd>
-          </dl>
-        </div>
+        </Summary>
         {
           children
         }

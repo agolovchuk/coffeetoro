@@ -58,3 +58,13 @@
   font-size: 20px;
   border-radius: 4px;
 }
+.group {
+  display: flex;
+  align-items: center;
+}
+.estimated {
+  flex: 1 1 100%;
+  margin: 0 10px 20px;
+  display: flex;
+  justify-content: space-between;
+}

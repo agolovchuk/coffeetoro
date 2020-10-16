@@ -40,14 +40,21 @@ export function promisifyRequest<T>(req: IDBRequest<T>): Promise<T> {
   });
 }
 
-export function promisifyCursor<T>(os: IDBObjectStore | IDBIndex, query: IDBValidKey | IDBKeyRange | null): Promise<T[]> {
+// function toArrayAdapter() {
+//   const res = [];
+//   return (d) => {
+//
+//   }
+// }
+
+export function promisifyCursor<T>(os: IDBObjectStore | IDBIndex, query: IDBValidKey | IDBKeyRange | null, adapter: (d: any) => T = d => d): Promise<T[]> {
   return new Promise((resolve, reject) => {
     const result: T[] = [];
     const request = os.openCursor(query);
     request.onsuccess = (event) => {
       const cursor = get(event, ['target', 'result']);
       if (cursor) {
-        result.push(cursor.value);
+        result.push(adapter(cursor.value));
         cursor.continue();
       }
       else {
