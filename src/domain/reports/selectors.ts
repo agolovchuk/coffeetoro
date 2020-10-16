@@ -11,6 +11,7 @@ import {
   processCards,
   PriceExtended, PriceExtendedBase, PriceTMC, PricePC,
 } from 'domain/dictionary';
+import { userSelector } from 'domain/env';
 import { ReportState, OrderArchiveItem, EntryPriceItem } from './Types';
 import { enrichOrdersArchive, byPriceId, orderSum, extendsItems, discountSum } from './helpers';
 
@@ -19,10 +20,15 @@ export const entryPriceSelector = (state: ReportState) => state.entryPrice;
 
 const ordersListSelector = createSelector([orders], toArray);
 
-const ordersSelector = createSelector([ordersListSelector], o => sortBy(o, 'date'));
+const userOrderListSelector = createSelector(
+  [ordersListSelector, userSelector],
+  (o, u) => o.filter(f => (u?.role === 'manager') || (f.owner === u?.id))
+)
+
+const ordersSelector = createSelector([userOrderListSelector], o => sortBy(o, 'date'));
 
 export const summarySelector = createSelector(
-  [ordersListSelector],
+  [userOrderListSelector],
   (o) => o.reduce((a, v) => {
   return {
     cash: v.payment === 1 ? a.cash + orderSum(v) : a.cash,
