@@ -1,12 +1,14 @@
 import { getId } from "lib/id";
 import { ExpenseExtended } from "domain/dictionary";
+import omit from 'lodash/omit';
 
 export function articleUpdateAdapter({ type, refId, barcode, quantity, ...rest }: any) {
+  const q = Number(quantity);
   return {
     ...rest,
     type: 'product',
     barcode: barcode || '',
-    quantity: quantity || 1,
+    quantity: isNaN(q) ? 1 : q,
   }
 }
 
@@ -15,8 +17,21 @@ export function serviceUpdateAdapter({ type, barcode, refId, quantity, ...rest }
     ...rest,
     type: 'service',
     refId: refId || 'null',
-    quantity: quantity || 1,
   }
+}
+
+export function remittanceUpdateAdapter({ type, title, foreignId, description, barcode, refId, quantity, ...rest }: any) {
+  return {
+    ...rest,
+    type: 'remittance',
+  }
+}
+
+export function cleanExp(d: any) {
+  const v = omit(d, ['title', 'description']);
+  if (v.type === 'remittance') return remittanceUpdateAdapter(v);
+  if (v.type === 'service') return serviceUpdateAdapter(v);
+  return articleUpdateAdapter(v);
 }
 
 export function editAdapter(value: ExpenseExtended) {

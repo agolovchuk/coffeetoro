@@ -7,13 +7,14 @@ interface Props {
   title: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   checked?: boolean;
+  disabled?: boolean;
 }
 
 function CheckBox({ id, title, ...props }: Props) {
   return (
     <Field id={id} title={title}>
       <div className={styles.container}>
-        <input type="checkbox" id={id} className={styles.field} {...props} />
+        <input disabled={props.disabled} type="checkbox" id={id} className={styles.field} {...props} />
         <label htmlFor={id} className={styles.label} />
       </div>
     </Field>

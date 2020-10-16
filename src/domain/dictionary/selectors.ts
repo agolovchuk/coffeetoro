@@ -93,6 +93,6 @@ export const expanseSumSelector = createSelector(
   [expensesListSelector],
   e => e.reduce((a, v) => ({
     ...a,
-    [v.source]: get(a, v.source, 0) + (v.valuation * v.quantity),
+    [v.source]: get(a, v.source, 0) + (v.valuation * get(v, 'quantity', 1)),
   }), {}),
 );

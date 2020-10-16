@@ -5,8 +5,10 @@ import { Field, Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays'
 import { FieldArray } from 'react-final-form-arrays';
 import cx from 'classnames'
-import { InputField } from 'components/Form/field';
+import get from 'lodash/get';
+import { InputField, TextAreaField, PriceField } from 'components/Form/field';
 import Quantity from 'components/Form/Quantity';
+import Price from "components/Units/price";
 import {
   processCardSelector,
   getProcessCardAction,
@@ -16,6 +18,7 @@ import {
   TMCItem,
   putArticlesAction,
 } from 'domain/dictionary';
+import { getEntryPriceAction, entryPriceSelector } from 'domain/reports';
 import { AppState } from 'domain/StoreType';
 import Header from '../../components/header';
 import { getTitle, getUnitsTitle } from '../../helper';
@@ -36,20 +39,22 @@ type RouterProps = {
 const mapStateToProps = (state: AppState, props: RouterProps) => ({
   card: processCardSelector(state, props),
   units: unitsByIdSelector(state),
+  entryPrice: entryPriceSelector(state),
 });
 
 const mapDispatch = {
   getPC: getProcessCardAction,
   getAll: CRUD.getAllAction,
   update: CRUD.updateItemAction,
-  putArticles: putArticlesAction
+  putArticles: putArticlesAction,
+  getEntryPrice: getEntryPriceAction,
 }
 
 const connector = connect(mapStateToProps, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector>, RouterProps {}
 
-function Item({ card, getPC, match, getAll, units, update, putArticles }: Props) {
+function Item({ card, getPC, match, getAll, units, update, putArticles, getEntryPrice, entryPrice }: Props) {
   const { params: { pcId } } = match;
 
   const onSubmit = React.useCallback(({ articles, ...value }: SubmitValue) => {
@@ -63,7 +68,18 @@ function Item({ card, getPC, match, getAll, units, update, putArticles }: Props)
     getAll('units')
   }, [pcId, getPC, getAll]);
 
+  React.useEffect(() => { getEntryPrice(); }, [getEntryPrice]);
+
   const initialValues = React.useMemo(() => card, [card]);
+
+  const estimate = React.useMemo(() => {
+    if (typeof card === 'undefined') return 0;
+    return card.articles.reduce((a, v) => {
+      const p = get(entryPrice, [get(v, ['item', 'barcode'], '')]);
+      if (typeof p === 'undefined') return a;
+      return a + ((p.s / p.q) * v.quantity);
+    }, 0);
+  }, [card, entryPrice]);
 
   return card ? (
     <section className={cx('scroll-section', styles.container)}>
@@ -76,6 +92,18 @@ function Item({ card, getPC, match, getAll, units, update, putArticles }: Props)
           <form onSubmit={handleSubmit}>
             <Field name="description" render={({ input }) => (
               <InputField id="description" title="Description:" {...input} />
+            )}/>
+            <div className={styles.group}>
+              <Field name="primeCost" render={({ input }) => (
+                <PriceField id="primeCost" title="Себестоимость:" {...input} />
+              )}/>
+              <dl className={styles.estimated}>
+                <dt>Расчетная стоимость:</dt>
+                <dd><Price value={estimate} sign /></dd>
+              </dl>
+            </div>
+            <Field name="prescription" render={({ input }) => (
+              <TextAreaField id="prescription" title="Рекомендация:" {...input} />
             )}/>
             <FieldArray name="articles" >
               {

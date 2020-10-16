@@ -127,7 +127,8 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
                 <dd><Price value={data.valuation} sign currencyDisplay="symbol" /></dd>
               </dl>
               {
-                data.expiry ? null : (
+                // data.expiry ? null :
+                (
                   <button
                     type="button"
                     className="btn__edit"

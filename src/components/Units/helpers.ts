@@ -13,7 +13,7 @@ export function getPrice(multiplier: number) {
 
 function parse(value: string): number {
   const v = parseFloat(value);
-  if (isNaN(v)) throw new TypeError('Invalid valur');
+  if (isNaN(v)) throw new TypeError('Invalid value');
   return v;
 }
 
@@ -38,5 +38,5 @@ export default  React.createContext({
   getPrice: getPrice(DEFAULT_MULTIPLIER),
   currency: 'UAH',
   multiplier: DEFAULT_MULTIPLIER,
-  toInnerMoney: (value: string) => (parse(value) * DEFAULT_MULTIPLIER).toString(),
+  toInnerMoney: (value: string) => (parse(value) * DEFAULT_MULTIPLIER).toFixed(2),
 });

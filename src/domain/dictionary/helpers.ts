@@ -45,8 +45,8 @@ export function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): Pric
     const { title, description, unitId } = tmc[price.barcode];
     return { ...price, title, description, unitId };
   }
-  const { title, description } = pc[price.refId];
-  return { ...price, title, description, unitId: '1' };
+  const { title, description, primeCost } = pc[price.refId];
+  return { ...price, title, description, unitId: '1', primeCost };
 }
 
 export function extendsPriceList(priceList: ReadonlyArray<PriceItem>, tmc: TMC, pc: ProcessCards) {
@@ -82,18 +82,17 @@ export function groupFill(item: GroupArticles | undefined, tmc: Record<string, T
   return undefined;
 }
 
-export function toArray<T>(obj: Record<string, T>): ReadonlyArray<T> {
-  return Object.values(obj);
-}
-
 export function extendsExpanseList(list: ReadonlyArray<ExpenseItem>, tmc: TMC, services: Services): ReadonlyArray<ExpenseExtended> {
   return list.map((v) => {
     if(v.type === 'product') {
       const { title, description } = pick(get(tmc, v.barcode), ['title', 'description']);
       return {...v, title, description }
     }
-    const { title, description } = pick(get(services, v.refId), ['title', 'description']);
-    return  {...v, title, description }
+    if (v.type === 'service') {
+      const { title, description } = pick(get(services, v.refId), ['title', 'description']);
+      return  {...v, title, description }
+    }
+    return v;
   }, []);
 }
 

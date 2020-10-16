@@ -1,6 +1,9 @@
 import * as React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import pick from "lodash/pick";
+import get from "lodash/get";
+import filter from 'lodash/fp/filter';
+import compose from 'lodash/fp/compose';
 import { userSelector } from 'domain/env';
 import {
   CRUD,
@@ -10,14 +13,17 @@ import {
   putArticlesAction, TMCItem,
 } from "domain/dictionary";
 import { AppState } from 'domain/StoreType';
-import { Main } from "../components";
+import { Price } from "components/Units";
+import { Main, Period, Filter } from "../components";
 import { ManagerForm, UserForm } from './forms';
 import { EitherEdit } from "../Types";
 import Item from './item';
 import {
   createItem,
   editAdapter,
+  cleanExp,
 } from './helpers';
+import styles from './exp.module.css';
 
 const mapState = (state: AppState) => ({
   list: extendedExpanseByUserSelector(state),
@@ -38,20 +44,22 @@ function orderUsers(a: ExpenseExtended, b: ExpenseExtended): number {
   return a.date.getTime() - b.date.getTime();
 }
 
+type FilterState = undefined | 'bank' | 'cash';
+
 function Expense({ list, update, create, getAll, putArticles, user }: Props) {
 
+  const [filterParams, setFilter] = React.useState<FilterState>();
+
   const handleSubmit = React.useCallback(
-    ({ isEdit, title, description, quantity, date, ...value }: EitherEdit<ExpenseExtended>, cb: () => void) => {
+    ({ isEdit, date, ...value }: EitherEdit<ExpenseExtended>, cb: () => void) => {
       if (isEdit) {
         update('expenses', {
-          ...value,
-          quantity: Number(quantity),
+          ...cleanExp(value),
           date: new Date(date)
         });
       } else {
         create('expenses', {
           ...value,
-          quantity: Number(quantity),
           date: new Date(date),
           createBy: user && user.id,
         });
@@ -60,15 +68,29 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
     }, [create, update, user],
   );
 
+  const expanseList = React.useMemo(() => {
+    return compose(
+      filter((f: ExpenseExtended) => filterParams ? f.source === filterParams : true),
+    )(list)
+  }, [list, filterParams]);
+
+  const sum = React.useMemo(() => {
+    return expanseList.reduce((a: number, v: ExpenseExtended) => a + (v.valuation * get(v, 'quantity', 1)) ,0)
+  }, [expanseList]);
+
   const putArticle = React.useCallback((item: TMCItem) => {
     putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);
   }, [putArticles]);
 
   React.useEffect(() => { getAll(); }, [getAll]);
 
+  const handleSetPeriod = React.useCallback(({ from, to }) => {
+    getAll(from, to);
+  }, [getAll]);
+
   return (
     <Main
-      list={list}
+      list={expanseList}
       title="Expense"
       createItem={createItem}
       editAdapter={editAdapter}
@@ -77,6 +99,15 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
       createLink={() => '/'}
       createTitle={(d :ExpenseExtended) => (<Item {...d} />)}
       orderBy={orderUsers}
+      header={user?.role === 'manager' ? (
+        <React.Fragment>
+          <Period onSubmit={handleSetPeriod} />
+          <Filter onChange={setFilter} value={filterParams} />
+          <div className={styles.sum}>
+            <Price value={sum} sign currencyDisplay="narrowSymbol" />
+          </div>
+        </React.Fragment>
+      ) : null}
     >
       {
         (user && user.role === 'manager') ? (

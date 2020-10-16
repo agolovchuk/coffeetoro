@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { date } from 'io-ts-types/lib/date';
+import omit from 'lodash/omit';
 
 export const unit = t.interface({
   id: t.string,
@@ -62,6 +63,8 @@ export const pc = t.interface({
   title: t.string,
   description: t.string,
   add: t.string,
+  primeCost: t.union([t.number, t.undefined]),
+  prescription: t.union([t.string, t.undefined]),
   update: t.union([t.string, t.null, t.undefined]),
   articles: t.union([t.array(processCardsArticle), t.undefined]),
 });
@@ -78,7 +81,6 @@ export const expenseBase = {
   foreignId: t.union([t.string, t.undefined]),
   valuation: t.number,
   date: date,
-  quantity: t.number,
   createBy: t.union([t.string, t.undefined]),
   source: t.union([t.literal('cash'), t.literal('bank'), t.string]),
   about: t.union([t.string, t.undefined]),
@@ -88,12 +90,17 @@ export const expense = t.union([
   t.interface({
     ...expenseBase,
     type: t.literal('product'),
+    quantity: t.number,
     barcode: t.string,
   }),
   t.interface({
     ...expenseBase,
     type: t.literal('service'),
     refId: t.string,
+  }),
+  t.interface({
+    ...omit(expenseBase, 'foreignId'),
+    type: t.literal('remittance'),
   }),
 ]);
 

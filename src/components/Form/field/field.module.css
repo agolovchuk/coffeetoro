@@ -39,3 +39,10 @@
   outline-color: var(--red-color);
   color: var(--red-color);
 }
+.textarea {
+  composes: field;
+  height: 100px;
+}
+.textareaContainer {
+  align-items: flex-start;
+}
