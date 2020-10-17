@@ -95,6 +95,7 @@ export const env: ReadonlyArray<IEnv> = [
     currency: 'UAH',
     user: null,
     firebaseConfig: null,
+    session: undefined,
   }
 ];
 
@@ -107,7 +108,7 @@ export const users: ReadonlyArray<User> = [
     firstName: "",
     lastName: "",
     ava: "",
-    lang: "ru",
+    lang: "en",
     active: true,
   }
 ]
