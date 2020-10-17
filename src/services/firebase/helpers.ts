@@ -96,7 +96,7 @@ function dbWrapper<T, F>(table: string, validator: Validator<T>): DBWrapper<T, F
   const dbx = (): IDB => new CDB();
   return {
     get: (key: string) => dbx().getItem(table, validator, key),
-    set: (data) => dbx().addItem(table, data),
+    set: (data) => dbx().updateIfExist(table, data),
     put: (data) => dbx().updateItem(table, data),
   };
 }

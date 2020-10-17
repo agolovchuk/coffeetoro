@@ -1,14 +1,18 @@
 import get from'lodash/get';
+import pick from 'lodash/pick';
 import { ThunkAction } from '../StoreType';
-import { IUser, FirebaseConfig } from './Types';
+import { IUser, FirebaseConfig, ISession } from './Types';
 import CDB, { promisifyRequest } from 'db';
-import { pbkdf2Verify } from 'domain/users/helpers'
+import { prepareEnvSession } from './helpers';
+import { pbkdf2Verify } from 'domain/users/helpers';
 import * as C from 'db/constants';
 import { envSelector } from './selectors';
+import { DayReportParams } from "../../components/Daily/Types";
 
 export const LOGOUT = 'AUTH/LOGOUT';
 export const LOGIN = 'AUTH/LOGIN';
 export const UPDATE_FIREBASE_CONFIG = 'ENV/UPDATE_FIREBASE_CONFIG';
+export const CLOSE_SESSION = 'ENV/CLOSE_SESSION';
 
 export interface Logout {
   type: typeof LOGOUT;
@@ -45,7 +49,10 @@ interface UserAuth {
 
 interface Login {
   type: typeof LOGIN;
-  payload: IUser;
+  payload: {
+    user: IUser,
+    session: ISession,
+  };
 }
 
 function loginAction({ id, password, onError }: UserAuth): ThunkAction<Login | any> {
@@ -61,12 +68,16 @@ function loginAction({ id, password, onError }: UserAuth): ThunkAction<Login | a
       const { hash, ...user  } = await promisifyRequest(checkRequest);
       const res = await pbkdf2Verify(hash, password);
       if (res) {
-        const { env } = getState();
+
+        const env = prepareEnvSession(getState().env, id)
+
         const updateRequest = db
           .transaction(C.TABLE.env.name, C.READ_WRITE)
-          .objectStore(C.TABLE.env.name).put({ ...env, user: id });
+          .objectStore(C.TABLE.env.name)
+          .put(env);
         await promisifyRequest(updateRequest);
-        dispatch({ type: LOGIN, payload: user });
+
+        dispatch({ type: LOGIN, payload: { user, session: env.session } });
       } else {
         onError('Invalid password');
       }
@@ -108,9 +119,35 @@ export function updateFirebaseConfigAction(config: FirebaseConfig | null): Thunk
   }
 }
 
+interface CloseSession {
+  type: typeof CLOSE_SESSION,
+  payload: DayReportParams & Omit<ISession, 'end'> & { end: Date } & { userId: string, userName: string } ,
+}
+
+export function closeSessionAction(data: DayReportParams, cb: () => void): ThunkAction<CloseSession> {
+  return async (dispatch, getState) => {
+    const { env: { session, user }} = getState();
+    const { id: userId, name: userName } = pick(user, ['id', 'name']);
+    dispatch({
+      type: CLOSE_SESSION,
+      payload: {
+        ...data,
+        ...session,
+        end: new Date(),
+        userId,
+        userName,
+      }
+    });
+    cb();
+  }
+}
+
 export {
   loginAction,
   logoutAction,
 }
 
-export type Action = Login | Logout | UpdateFirebaseConfig;
+export type Action = Login
+  | Logout
+  | UpdateFirebaseConfig
+  | CloseSession;

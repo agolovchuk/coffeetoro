@@ -1,4 +1,5 @@
 import * as t from 'io-ts';
+import { date } from 'io-ts-types/lib/date';
 
 export const lang = t.union([t.literal('ru'), t.literal('en')]);
 
@@ -21,10 +22,24 @@ export const firebaseConfig = t.interface({
   storageBucket: t.string,
 });
 
+export const session = t.interface({
+  creator: t.string, // Session creator userId
+  id: t.string,
+  start: date, // Time of the start session
+  end: t.union([
+    t.undefined,
+    date,
+  ]),
+});
+
 export const env = t.interface({
   id: t.string,
   multiplier: t.number,
   currency: t.string,
   user: t.union([t.null, user]),
   firebaseConfig: t.union([t.null, firebaseConfig]),
+  session: t.union([
+    t.undefined,
+    session,
+  ]),
 });

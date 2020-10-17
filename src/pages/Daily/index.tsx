@@ -13,8 +13,10 @@ import {
 } from "domain/reports";
 import { dailyParamsSelector, getDayParamsAction, setDayParamsAction } from "domain/daily";
 import { getExpenseAction, expanseSumSelector } from 'domain/dictionary';
+import { closeSessionAction } from 'domain/env';
 import Daily from 'components/Daily';
 import Report from 'components/Daily/report';
+import { DayReportParams } from "components/Daily/Types";
 import { FORMAT } from "lib/dateHelper";
 
 const mapState = (state: AppState) => ({
@@ -31,22 +33,23 @@ const mapDispatch = {
   setDayParams: setDayParamsAction,
   getDayParams: getDayParamsAction,
   getExpense: getExpenseAction,
+  closeSession: closeSessionAction,
 };
 
 const connector = connect(mapState, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector>, RouteComponentProps<{ date: string }> {};
 
-function DailyReport({ match: { params }, setDayParams, getDayParams, history, dailyParams, getExpense, expanseSum, getDailyReport, completeReport, ...props }: Props) {
+function DailyReport({ match: { params }, closeSession, getDayParams, history, dailyParams, getExpense, expanseSum, getDailyReport, completeReport, ...props }: Props) {
 
   const { bank } = props.summary;
 
   const date = React.useMemo(() =>
     params.date || format(new Date(), FORMAT), [params]);
 
-  const addReport = React.useCallback((data) => {
-    setDayParams(data, date, () => { history.replace('/logout'); })
-  }, [history, date, setDayParams]);
+  const addReport = React.useCallback((data: DayReportParams) => {
+    closeSession(data, () => { history.replace('/logout'); })
+  }, [history, date, closeSession]);
 
   const dateBefore = React.useMemo(() => format(subDays(new Date(), 1), FORMAT), []);
 
