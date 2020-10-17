@@ -8,3 +8,4 @@ export const multiplierSelector = createSelector(envSelector, e => e.multiplier)
 export const userSelector = createSelector(envSelector, e => e.user);
 export const langSelector = createSelector(userSelector, e => e ? e.lang : 'en');
 export const firebaseConfigSelector = createSelector(envSelector, e => e.firebaseConfig);
+export const sessionSelector = createSelector(envSelector, e => e.session);

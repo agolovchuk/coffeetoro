@@ -85,7 +85,7 @@ function UserPage({ user, updateUser, updatePassword }: Props) {
             </form>
           )}
         />
-
+        <div className={styles.version}>{require('../../../package.json').version}</div>
       </div>
       <div className={styles.column}>
         <FM id="user.updatePassword" defaultMessage="Update password">

@@ -1,7 +1,29 @@
 import CDB, { promisifyRequest } from 'db';
+import { getId } from 'lib/id';
 import * as C from 'db/constants';
 import { User } from 'domain/users';
-import { IEnv, DBEnv } from './Types';
+import { IEnv, DBEnv, ISession } from './Types';
+import cond from "lodash/cond";
+import set from "lodash/fp/set";
+import compose from "lodash/fp/compose";
+
+function createNewSession(creator: string): ISession {
+  return {
+    id: getId(12,'session'),
+    start: new Date(),
+    creator,
+    end: undefined,
+  }
+}
+
+export function prepareEnvSession(env: IEnv, userId: string): IEnv {
+  const condition = cond([
+    [(d: IEnv) => (typeof d.session === 'undefined'), set('session')(createNewSession(userId))],
+    [() => true, d => d],
+  ]);
+  return compose(condition, set('user')(userId))(env);
+}
+
 
 export async function getEnv(): Promise<IEnv> {
   const dbx = new CDB();

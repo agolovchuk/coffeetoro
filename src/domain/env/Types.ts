@@ -1,5 +1,5 @@
 import { TypeOf } from 'io-ts';
-import { role, lang, env, firebaseConfig } from './contracts';
+import { role, lang, env, firebaseConfig, session } from './contracts';
 
 export type RoleType = TypeOf<typeof role>;
 export type LangType = TypeOf<typeof lang>;
@@ -14,6 +14,8 @@ export interface IUser {
   readonly ava: string;
   readonly lang: LangType;
 }
+
+export type ISession = TypeOf<typeof session>;
 
 export type IEnv = TypeOf<typeof env>;
 
