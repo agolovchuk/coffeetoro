@@ -1,6 +1,11 @@
 import { TypeOf } from 'io-ts';
 import { role, lang, env, firebaseConfig, session } from './contracts';
 
+export enum UserRole {
+  USER = 'user',
+  MANAGER = 'manager',
+}
+
 export type RoleType = TypeOf<typeof role>;
 export type LangType = TypeOf<typeof lang>;
 export type FirebaseConfig = TypeOf<typeof firebaseConfig>;

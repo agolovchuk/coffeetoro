@@ -14,6 +14,7 @@ import {
 import { dailyParamsSelector, getDayParamsAction, setDayParamsAction } from "domain/daily";
 import { getExpenseAction, expanseSumSelector } from 'domain/dictionary';
 import { closeSessionAction } from 'domain/env';
+import { myOrdersListSelector, getOrdersListAction } from 'domain/orders';
 import Daily from 'components/Daily';
 import Report from 'components/Daily/report';
 import { DayReportParams } from "components/Daily/Types";
@@ -25,6 +26,7 @@ const mapState = (state: AppState) => ({
   orders: enrichedOrdersSelector(state),
   dailyParams: dailyParamsSelector(state),
   expanseSum: expanseSumSelector(state),
+  myOrders: myOrdersListSelector(state),
 });
 
 const mapDispatch = {
@@ -34,13 +36,14 @@ const mapDispatch = {
   getDayParams: getDayParamsAction,
   getExpense: getExpenseAction,
   closeSession: closeSessionAction,
+  getOrdersList: getOrdersListAction,
 };
 
 const connector = connect(mapState, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector>, RouteComponentProps<{ date: string }> {};
 
-function DailyReport({ match: { params }, closeSession, getDayParams, history, dailyParams, getExpense, expanseSum, getDailyReport, completeReport, ...props }: Props) {
+function DailyReport({ match: { params }, closeSession, getDayParams, history, dailyParams, getExpense, expanseSum, getDailyReport, completeReport, getOrdersList, ...props }: Props) {
 
   const { bank } = props.summary;
 
@@ -67,10 +70,11 @@ function DailyReport({ match: { params }, closeSession, getDayParams, history, d
     getDayParams(dateBefore);
     getExpense(date);
     getDailyReport(date);
+    getOrdersList();
     return () => {
       completeReport(date);
     }
-  }, [getDayParams, dateBefore, getExpense, date, getDailyReport, completeReport]);
+  }, [getDayParams, dateBefore, getExpense, date, getDailyReport, completeReport, getOrdersList]);
 
   return (
     <Daily date={date} linkPrefix="/report" {...props}>
@@ -78,6 +82,7 @@ function DailyReport({ match: { params }, closeSession, getDayParams, history, d
         createReport={addReport}
         predict={predictCache}
         date={date}
+        disabled={Boolean(props.myOrders.length)}
       />
     </Daily>
   )
