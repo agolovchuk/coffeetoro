@@ -169,6 +169,7 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
               start: action.payload.start.toISOString(),
               end: action.payload.end.toISOString(),
             })
+          break;
 
         // case DailyAction.SET_DAY_PARAMS:
         //   database

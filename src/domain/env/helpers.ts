@@ -9,7 +9,7 @@ import compose from "lodash/fp/compose";
 
 function createNewSession(creator: string): ISession {
   return {
-    id: getId(12,'session'),
+    id: getId(12),
     start: new Date(),
     creator,
     end: undefined,
@@ -17,11 +17,13 @@ function createNewSession(creator: string): ISession {
 }
 
 export function prepareEnvSession(env: IEnv, userId: string): IEnv {
-  const condition = cond([
-    [(d: IEnv) => (typeof d.session === 'undefined'), set('session')(createNewSession(userId))],
-    [() => true, d => d],
-  ]);
-  return compose(condition, set('user')(userId))(env);
+  return compose(
+    cond([
+      [(d: IEnv) => (typeof d.session === 'undefined'), set('session')(createNewSession(userId))],
+      [() => true, d => d],
+    ]),
+    set('user')(userId)
+  )(env);
 }
 
 
