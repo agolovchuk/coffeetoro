@@ -2,14 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import { connect, ConnectedProps } from 'react-redux';
-import { ordersListSelector, createOrderAction, getOrdersListAction, removeOrderAction } from 'domain/orders';
+import { myOrdersListSelector, createOrderAction, getOrdersListAction, removeOrderAction } from 'domain/orders';
 import { AppState } from 'domain/StoreType';
 import { FormattedMessage as FM } from 'react-intl';
 
 import styles from './orders.module.css';
 
 const mapState = (state: AppState) => ({
-  orders: ordersListSelector(state),
+  orders: myOrdersListSelector(state),
 });
 
 const mapDispatch = {
@@ -55,7 +55,7 @@ function Orders({ orders, createOrder, getOrdersList, removeOrder }: Props) {
                   <span className={styles.index}>{i + 1}</span>
                 </Link>
                 {
-                  e.count === 0 ? (
+                  (typeof e.count === 'undefined' || e.count === 0) ? (
                     <button
                       className={styles.remove}
                       type="button"

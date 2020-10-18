@@ -2,6 +2,7 @@ import * as React from "react";
 import { isToday } from "date-fns";
 import ReportPopup from './popup';
 import { DayReportParams } from '../Types';
+import cx from 'classnames';
 import styles from './daily.module.css';
 
 interface Props {
@@ -11,9 +12,10 @@ interface Props {
   };
   createReport(data: DayReportParams): void;
   date: string;
+  disabled: boolean;
 }
 
-function DailyReport({ predict, createReport, date }: Props) {
+function DailyReport({ predict, createReport, date, disabled }: Props) {
 
   const [isReport, setReport] = React.useState(false);
 
@@ -27,10 +29,14 @@ function DailyReport({ predict, createReport, date }: Props) {
         {
           isDayToday ? (
             <button
-              className={styles.btn}
+              className={cx('btn', styles.btn)}
               onClick={() => setReport(true)}
+              disabled={disabled}
             >Закрыть смену</button>
           ) : null
+        }
+        {
+          (isDayToday && disabled) && (<div className={styles.warning}>Есть не закрытые ордера</div>)
         }
       </div>
       {

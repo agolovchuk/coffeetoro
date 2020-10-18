@@ -4,6 +4,11 @@
   height: 40px;
   border-radius: 4px;
   cursor: pointer;
+  border: 0 none;
+}
+.btn:disabled {
+  background: var(--medium-gray-color);
+  cursor: not-allowed;
 }
 .btn__positive {
   border: 1px solid var(--green-color);
