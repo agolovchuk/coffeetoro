@@ -49,7 +49,7 @@ function DailyReport({ match: { params }, closeSession, getDayParams, history, d
 
   const addReport = React.useCallback((data: DayReportParams) => {
     closeSession(data, () => { history.replace('/logout'); })
-  }, [history, date, closeSession]);
+  }, [history, closeSession]);
 
   const dateBefore = React.useMemo(() => format(subDays(new Date(), 1), FORMAT), []);
 
