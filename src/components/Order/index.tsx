@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Price } from 'components/Units';
 import BarCode from 'components/Form/BarCode';
 import { PaymentMethod } from 'domain/orders/Types';
+import { summa } from 'lib/decimal';
 import Item from './item';
 import Payment from './payment';
 import styles from './order.module.css';
@@ -20,7 +21,7 @@ interface Props {
 }
 
 function getSumm(list: ReadonlyArray<OrderItemContainer>, ds: ReadonlyArray<DiscountItem>): number {
-  const discount = ds.reduce((a, v) => a + v.valuation, 0);
+  const discount = summa(ds);
   const order = list.reduce((a, v) => a + (v.price.valuation * v.quantity), 0);
   return Math.max(order - discount, 0)
 }

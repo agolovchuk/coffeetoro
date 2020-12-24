@@ -1,6 +1,7 @@
 .wrapper {
   height: 100%;
   overflow-y: auto;
+  padding: var(--wrapper-padding);
 }
 .btn {
   width: 160px;

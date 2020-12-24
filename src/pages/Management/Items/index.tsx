@@ -54,11 +54,11 @@ const LIST: List[] = [
     name: 'incoming-balances',
     title: 'Incoming Balances'
   },
-  {
-    id: '08',
-    name: 'incoming',
-    title: 'Incoming'
-  },
+  // {
+  //   id: '08',
+  //   name: 'trial-balance',
+  //   title: 'Trial Balance'
+  // },
   {
     id: '09',
     name: 'expense',

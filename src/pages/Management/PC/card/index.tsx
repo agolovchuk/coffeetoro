@@ -89,7 +89,7 @@ function Item({ card, getPC, match, getAll, units, update, putArticles, getEntry
         initialValues={initialValues}
         mutators={{ ...arrayMutators }}
         render={({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className={styles.form}>
             <Field name="description" render={({ input }) => (
               <InputField id="description" title="Description:" {...input} />
             )}/>

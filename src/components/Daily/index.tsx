@@ -25,7 +25,7 @@ function Report({ children, summary, date, ...props }: Props) {
 
   return (
     <section className={cx("scroll-section", styles.container)}>
-      <div  className={styles.column}>
+      <div  className={cx(styles.column, styles.wrapper)}>
         <Summary summary={summary} date={date}>
           <DayNavigator date={date} prefix={props.linkPrefix} />
         </Summary>

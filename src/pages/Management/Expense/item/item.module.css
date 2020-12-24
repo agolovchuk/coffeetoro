@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  padding: 0 0 0 8px;
 }
 .service {
   background: rgba(123, 203, 176, 0.3);

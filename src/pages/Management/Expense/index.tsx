@@ -1,9 +1,9 @@
 import * as React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import pick from "lodash/pick";
-import get from "lodash/get";
 import filter from 'lodash/fp/filter';
 import compose from 'lodash/fp/compose';
+import { summa } from 'lib/decimal';
 import { userSelector } from 'domain/env';
 import {
   CRUD,
@@ -74,9 +74,7 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
     )(list)
   }, [list, filterParams]);
 
-  const sum = React.useMemo(() => {
-    return expanseList.reduce((a: number, v: ExpenseExtended) => a + (v.valuation * get(v, 'quantity', 1)) ,0)
-  }, [expanseList]);
+  const sum = React.useMemo(() => summa(expanseList), [expanseList]);
 
   const putArticle = React.useCallback((item: TMCItem) => {
     putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);

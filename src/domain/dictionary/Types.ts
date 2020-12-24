@@ -10,6 +10,8 @@ export type GroupArticles = t.TypeOf<typeof contracts.groupArticles>;
 export type ExpenseItem = t.TypeOf<typeof contracts.expense>;
 export type ServiceItem = t.TypeOf<typeof contracts.service>;
 
+
+
 export interface CountedCategoryItem extends CategoryItem {
   count: number;
 }
@@ -42,17 +44,17 @@ interface ExpenseExtendedBase {
 }
 type ExpenseBase = t.TypeOf<typeof baseContract>;
 export interface ExpenseProduct extends ExpenseBase {
-  type: 'product';
+  type: contracts.DocumentType.PRODUCT;
   barcode: string;
   quantity: number;
 }
 export interface ExpenseService extends ExpenseBase {
-  type: 'service';
+  type: contracts.DocumentType.SERVICE;
   refId: string;
 }
 
 export interface ExpenseRemittance extends Omit<ExpenseBase, 'foreignId'> {
-  type: 'remittance',
+  type: contracts.DocumentType.REMITTANCE,
 }
 
 export type ExpenseExtended = ExpenseExtendedBase & ExpenseProduct | ExpenseExtendedBase & ExpenseService | ExpenseRemittance;
@@ -63,6 +65,21 @@ export type PriceExtended = PriceExtendedBase & PriceTMC | PriceExtendedBase & P
 export interface SaleParams {
   readonly price: PriceExtended;
   readonly volume: string;
+}
+
+export { MoneySource, DocumentType, SheetType } from './contracts';
+
+export interface DocumentItem {
+  id: string;
+  date: Date;
+  createBy: string | undefined;
+  type: contracts.SheetType;
+  account: contracts.MoneySource;
+  about: string | undefined;
+}
+
+export interface Summa {
+  summa: number;
 }
 
 export interface ProductForSale {
@@ -79,6 +96,7 @@ export type ProcessCards = Record<string, ProcessCardItem>;
 export type Groups = Record<string, GroupArticles>;
 export type Expenses = Record<string, ExpenseItem>;
 export type Services = Record<string, ServiceItem>;
+export type DocumentList = Record<string, DocumentItem>;
 
 export interface DictionaryState {
   categories: Categories;
@@ -89,4 +107,5 @@ export interface DictionaryState {
   groupArticles: Groups;
   expenses: Expenses;
   services: Services;
+  documents: DocumentList;
 };

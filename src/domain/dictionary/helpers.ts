@@ -98,6 +98,6 @@ export function extendsExpanseList(list: ReadonlyArray<ExpenseItem>, tmc: TMC, s
 
 export function expenseByUser(ex: ReadonlyArray<ExpenseExtended>, user: IUser | null) {
   if (!user) return [];
-  if (user.role === 'manager') return  ex;
+  if (user.role === 'manager') return ex;
   return ex.filter(e => isToday(e.date) && (e.source === 'cash'));
 }

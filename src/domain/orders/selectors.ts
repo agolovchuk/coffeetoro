@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 import { params } from 'domain/routes';
-import { userSelector, IUser, UserRole } from 'domain/env';
+import { userSelector } from 'domain/env';
 import { sortByDate } from 'lib/dateHelper';
 import { arrayToRecord } from 'lib/dataHelper';
-import { getOrderItem, orderItemsArchive } from './helpers';
-import { OrderState, PaymentMethod, Order } from './Types';
+import { getOrderItem, orderItemsArchive, orderFilter } from './helpers';
+import { OrderState } from './Types';
 import { extendsPriceList } from 'domain/dictionary/helpers';
 import { toArray } from 'lib/dataHelper';
 
@@ -53,11 +53,7 @@ const ordersList = createSelector(
   o => Object.values(o).sort(sortByDate('date')),
 )
 
-function orderFilter<T extends Order>(o: T[], u: IUser | null): T[] {
-  if (u?.role === UserRole.MANAGER) return o;
-  const filter = (f: T) => f.owner === u?.id && f.payment === PaymentMethod.Opened;
-  return o.filter(filter);
-}
+
 
 export const myOrdersListSelector = createSelector(
   [ordersList, userSelector],
