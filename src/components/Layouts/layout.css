@@ -20,6 +20,8 @@
 
   --grid-item-width: 180px;
   --grid-item-height: 180px;
+
+  --wrapper-padding: 10px;
 }
 /** Column */
 .column_wrapper {

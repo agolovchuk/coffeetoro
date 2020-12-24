@@ -5,3 +5,6 @@
 .item:nth-child(even) {
   background-color: #f5f5f5;
 }
+.list {
+  padding: 5px;
+}

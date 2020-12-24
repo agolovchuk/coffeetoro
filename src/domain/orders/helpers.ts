@@ -1,7 +1,8 @@
 import get from 'lodash/get';
 import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from 'domain/dictionary/Types';
-import { DiscountItem } from 'domain/orders/Types';
-import { OrderItem, OrderItemContainer } from './Types';
+import { PaymentMethod } from 'domain/orders/Types';
+import { OrderItem, OrderItemContainer, Order } from './Types';
+import { IUser, UserRole } from "../env";
 
 function priceAdapter(
   order: OrderItem,
@@ -60,16 +61,8 @@ export function prepareDictionary(
   }
 }
 
-interface Order {
-  valuation: number;
-  quantity: number;
-}
-
-
-export function getSumOfOrder(list: ReadonlyArray<Order>): number {
-  return list.reduce((a, v) => a + (v.valuation * v.quantity), 0);
-}
-
-export function getSumOdDiscount(discounts: ReadonlyArray<DiscountItem>): number {
-  return discounts.reduce((a, v) => a + v.valuation, 0)
+export function orderFilter<T extends Order>(o: T[], u: IUser | null): T[] {
+  if (u?.role === UserRole.MANAGER) return o;
+  const filter = (f: T) => f.owner === u?.id && f.payment === PaymentMethod.Opened;
+  return o.filter(filter);
 }

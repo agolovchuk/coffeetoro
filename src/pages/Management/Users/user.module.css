@@ -7,3 +7,6 @@
 .container {
   padding-bottom: 30px;
 }
+.disabled {
+  opacity: 0.4;
+}

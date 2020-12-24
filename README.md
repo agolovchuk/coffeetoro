@@ -8,3 +8,5 @@
 * Group of Articles 6
 * Expense key 8
 * Service key 8
+* Session key 12
+* documentId key 8

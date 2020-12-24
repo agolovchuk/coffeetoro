@@ -1,9 +1,11 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
+import groupBy from 'lodash/groupBy';
 import { arrayToRecord, toArray } from 'lib/dataHelper';
-import {DictionaryState, CategoryItem } from './Types';
+import { DictionaryState, CategoryItem, DocumentItem } from './Types';
 import { params } from 'domain/routes';
 import { userSelector } from 'domain/env';
+import { summa } from 'lib/decimal';
 import {
   getProductForSale,
   sortByIndex,
@@ -11,8 +13,9 @@ import {
   pcFill,
   groupFill,
   extendsExpanseList,
-  expenseByUser
+  expenseByUser,
 } from './helpers';
+import pick from "lodash/pick";
 
 const categories = (state: DictionaryState) => state.categories;
 const prices = (state: DictionaryState) => state.prices;
@@ -88,6 +91,19 @@ export const extendedExpanseByUserSelector = createSelector(
   [extendedExpanseSelector, userSelector],
   (ex, u) => expenseByUser(ex, u),
 );
+
+// export const balanceListSelector = createSelector(
+//   [expensesListSelector],
+//   (b) => Object
+//     .entries(groupBy(b, 'foreignId'))
+//     .reduce((a, [id, v]) => [...a, {
+//       id,
+//       ...pick(get(v, 0), ['date', 'createBy', 'source', 'about']),
+//       summa: summa(v),
+//     }], [] as DocumentGroup[]),
+// );
+
+export const balanceListSelector = createSelector([], () => []);
 
 export const expanseSumSelector = createSelector(
   [expensesListSelector],

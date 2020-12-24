@@ -100,6 +100,12 @@ export const TABLE = {
       type: 'type',
     }
   },
+  balance: {
+    name: 'balance',
+    index: {
+      id: 'id',
+    }
+  },
   services: {
     name: 'services',
     index: {

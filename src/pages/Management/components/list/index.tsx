@@ -16,7 +16,7 @@ function ItemList<T>({ list, children, getKey, orderBy }: Props<T>) {
   const orderedList: ReadonlyArray<T> = React.useMemo(() => list.slice().sort(orderBy), [list, orderBy]);
 
   return (
-    <ul>
+    <ul className={styles.list}>
       {
         orderedList.map(e => (
           <li key={getKey(e)} className={styles.item}>

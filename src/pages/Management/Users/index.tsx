@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import cx from 'classnames';
 import { createUserAction, updateUserAction, getUsersAction, usersListSelector, User } from 'domain/users';
 import { AppState } from 'domain/StoreType';
 import { Field } from 'react-final-form';
-import {CheckBoxField, InputField, SelectField} from 'components/Form/field';
+import { CheckBoxField, InputField, SelectField } from 'components/Form/field';
 import { Main } from '../components';
 import { EitherEdit } from '../Types';
+import styles from './user.module.css';
 
 type UserType = User;
 
@@ -80,7 +82,7 @@ function ManagementUsers({ createUser, getUsers, updateUser, ...props }: Props) 
       popupTitle="Create user"
       createLink={createLink}
       editAdapter={editAdapter}
-      createTitle={({ name }) => name}
+      createTitle={({ name, active }) => <span className={cx({[styles.disabled]: active === false })}>{name}</span>}
       orderBy={orderUsers}
     >
       <Field name="active" type="checkbox" render={({ input}) => (

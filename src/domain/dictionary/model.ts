@@ -15,6 +15,8 @@ import {
   ExpenseItem,
   Services,
   ServiceItem,
+  DocumentList,
+  DocumentItem,
 } from './Types';
 import * as A from './actions';
 import * as ReportAction from '../reports/actions';
@@ -86,6 +88,12 @@ export const reducer = {
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<ServiceItem, 'id'>('services', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('services'),
     [A.GET_EXPENSE]: (state, action: A.GetExpense) => ({ ...state, ...action.payload.services }),
+  }),
+
+  documents: createReducer({} as DocumentList, {
+    [A.CRUD.createItemAction.type]: A.CRUD.creat<DocumentItem, 'id'>('documents', 'id'),
+    [A.CRUD.updateItemAction.type]: A.CRUD.creat<DocumentItem, 'id'>('documents', 'id'),
+    [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('documents'),
   }),
 
 };
