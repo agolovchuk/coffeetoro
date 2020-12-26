@@ -77,7 +77,7 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
   const sum = React.useMemo(() => summa(expanseList), [expanseList]);
 
   const putArticle = React.useCallback((item: TMCItem) => {
-    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);
+    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update', 'boxing'])]);
   }, [putArticles]);
 
   React.useEffect(() => { getAll(); }, [getAll]);

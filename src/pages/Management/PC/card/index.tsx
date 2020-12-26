@@ -7,7 +7,7 @@ import { FieldArray } from 'react-final-form-arrays';
 import cx from 'classnames'
 import get from 'lodash/get';
 import { InputField, TextAreaField, PriceField } from 'components/Form/field';
-import Quantity from 'components/Form/Quantity';
+import Quantity from 'components/Form/Decimal';
 import Price from "components/Units/price";
 import {
   processCardSelector,

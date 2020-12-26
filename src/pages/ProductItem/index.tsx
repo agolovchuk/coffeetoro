@@ -79,22 +79,24 @@ function ProductItem({ addItem, getPrices, orderByProduct, getCategory, ...props
   return (
     <section className="scroll-section">
       <h1 className={styles.title}>{props.product.title}</h1>
-      {
-        orderByProduct.map((order) => (
-          <Product
-            key={order.price.id}
-            onChange={() => null}
-            title={order.price.title}
-            valuation={props.product.valuation}
-            orderApi={api(order)}
-            quantity={order.quantity}
-          />
-        ))
-      }
-      <Articles
-        onChange={addHandler}
-        valuation={props.product.valuation}
-      />
+      <div className={styles.wrapper}>
+        {
+          orderByProduct.map((order) => (
+            <Product
+              key={order.price.id}
+              onChange={() => null}
+              title={order.price.title}
+              valuation={props.product.valuation}
+              orderApi={api(order)}
+              quantity={order.quantity}
+            />
+          ))
+        }
+        <Articles
+          onChange={addHandler}
+          valuation={props.product.valuation}
+        />
+      </div>
     </section>
   );
 }

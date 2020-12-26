@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Header, ItemList, ManagementPopup, MItem} from "../index";
+import { Header, ItemList, ManagementPopup, MItem } from "../index";
 import { EitherEdit } from "../../Types";
 
 interface Props<T> {

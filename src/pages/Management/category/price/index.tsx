@@ -99,7 +99,7 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
   )
 
   const putArticle = React.useCallback((item: TMCItem) => {
-    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);
+    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update', 'boxing'])]);
   }, [putArticles]);
 
   const createPrice = React.useCallback(() => {

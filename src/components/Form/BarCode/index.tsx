@@ -34,7 +34,7 @@ function  reducer(state: State, action: Action) {
     case "clearError":
       return  {value: '', error: false };
     default:
-      throw new Error('unexpectable action');
+      throw new Error('unexpected action');
   }
 }
 

@@ -11,10 +11,11 @@ interface Props<T extends Record<string, any>> {
   children: React.ReactNode;
   initialValues: T,
   onSubmit: (value: T) => void;
-  decorators?: Decorator<T>[]
+  decorators?: Decorator<T>[];
+  validate?: () => Record<string, string>;
 }
 
-function ManagmentPopup<T>({ title, onCancel, children, initialValues, onSubmit, decorators }: Props<T>) {
+function ManagementPopup<T>({ title, onCancel, children, initialValues, onSubmit, decorators, validate }: Props<T>) {
   return (
     <Modal>
       <Popup onCancel={onCancel}>
@@ -24,8 +25,9 @@ function ManagmentPopup<T>({ title, onCancel, children, initialValues, onSubmit,
             <Form
               onSubmit={onSubmit}
               initialValues={initialValues}
+              validate={validate}
               decorators={decorators}
-              render={({ handleSubmit }) => (
+              render={({ handleSubmit, submitting }) => (
                 <form onSubmit={handleSubmit}>
                   {
                     children
@@ -38,7 +40,8 @@ function ManagmentPopup<T>({ title, onCancel, children, initialValues, onSubmit,
                     >Cancel</button>
                     <button
                       type="submit"
-                      className={cx(styles.btn, styles.ok )}
+                      disabled={submitting}
+                      className={cx(styles.btn, styles.ok)}
                     >Ok</button>
                   </div>
                 </form>
@@ -51,4 +54,4 @@ function ManagmentPopup<T>({ title, onCancel, children, initialValues, onSubmit,
   )
 }
 
-export default ManagmentPopup;
+export default ManagementPopup;
