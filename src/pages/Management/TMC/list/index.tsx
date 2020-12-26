@@ -8,7 +8,7 @@ import {
   SelectField,
   BarcodeField
 } from 'components/Form/field';
-import { required } from 'components/Form/validate';
+import { isRequired } from 'components/Form/validate';
 import {
   TMCItem,
   CRUD,
@@ -22,6 +22,7 @@ import { categoriesList } from '../../components/category/helpers';
 import SetBarcode from './setBarcode';
 import { getTitle } from '../../helper';
 import { EitherEdit } from '../../Types';
+import BoxingField from 'components/Form/Boxing';
 
 function createItem(parentId: string = ''): TMCItem {
   return {
@@ -33,6 +34,7 @@ function createItem(parentId: string = ''): TMCItem {
     add: new Date().toISOString(),
     update: null,
     barcode: '',
+    boxing: 0,
   }
 }
 
@@ -114,12 +116,10 @@ function TMCManager({ create, update, units, getAll, categories, ...props }: Pro
       <Field name="description" render={({ input}) => (
         <InputField id="description" title="Description:" {...input} />
       )}/>
-      <Field name="unitId" render={({ input}) => (
-        <SelectField id="unitId" title="Unit:" list={units} {...input} />
-      )}/>
+      <BoxingField units={units} label="Упаковка:" />
       <Field
         name="barcode"
-        validate={required}
+        validate={isRequired}
         render={({ input, meta}) => (
         <BarcodeField
           id="barcode"

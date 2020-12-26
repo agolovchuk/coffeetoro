@@ -1,6 +1,6 @@
 import * as React from 'react'
 import UnitsContext from './helpers';
-import Input from 'components/Form/Quantity';
+import Input from 'components/Form/Decimal';
 
 interface Props {
   className?: string;

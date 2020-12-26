@@ -4,7 +4,7 @@ import { TMCItem } from 'domain/dictionary';
 import Search from '../add';
 import CDB from 'db';
 import { BarcodeField } from 'components/Form/field';
-import { required } from 'components/Form/validate';
+import { isRequired } from 'components/Form/validate';
 import styles from './articles.module.css';
 import { getTitle } from '../../../helper';
 
@@ -51,7 +51,7 @@ function ArticleSelector({ updateAdapter, onPicItem }: Props) {
     <div className={styles.container}>
       <Field
         name="barcode"
-        validate={required}
+        validate={isRequired}
         render={({ input, meta }) => (
           <div className={styles.search}>
             <BarcodeField

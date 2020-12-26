@@ -50,6 +50,7 @@ export const tmc = t.interface({
   unitId: t.string,
   add: t.string,
   update: t.union([t.string, t.null, t.undefined]),
+  boxing: t.union([t.number, t.undefined]),
 });
 
 export const processCardsArticle = t.interface({
