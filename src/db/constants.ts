@@ -60,6 +60,7 @@ export const TABLE = {
     name: 'users',
     index: {
       id: 'id',
+      name: 'name',
     },
   },
   env: {
@@ -117,6 +118,22 @@ export const TABLE = {
     index: {
       date: 'date',
       dateKey: 'dateKey',
+    }
+  },
+  transactionLog: {
+    name: 'transactionLog',
+    index: {
+      id: 'id',
+      transaction: 'transaction',
+      date: 'date',
+      account: 'account',
+      accountDate: 'accountDate',
+    },
+  },
+  account: {
+    name: 'account',
+    index: {
+      id: 'id',
     }
   }
 };

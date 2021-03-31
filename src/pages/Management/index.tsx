@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { memo } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import AsyncRoute from 'lib/AsyncRoute'
 import ManagementItems from './Items';
@@ -28,7 +28,7 @@ function asyncConfig(): Promise<unknown> {
 }
 
 function asyncTMC(): Promise<unknown> {
-  return import('./TMC').then((res) => {
+  return import('./Articles').then((res) => {
     return res.default;
   });
 }
@@ -39,11 +39,11 @@ function asyncPC(): Promise<unknown> {
   });
 }
 
-function asyncGroupArticles(): Promise<unknown> {
-  return import('./Group').then((res) => {
-    return res.default;
-  });
-}
+// function asyncGroupArticles(): Promise<unknown> {
+//   return import('./Group').then((res) => {
+//     return res.default;
+//   });
+// }
 
 function asyncReports(): Promise<unknown> {
   return import('./Reports').then((res) => {
@@ -57,11 +57,11 @@ function asyncExpense(): Promise<unknown> {
   });
 }
 
-function asyncTrialBalance(): Promise<unknown> {
-  return import('./TrialBalance').then((res) => {
-    return res.default;
-  });
-}
+// function asyncTrialBalance(): Promise<unknown> {
+//   return import('./TrialBalance').then((res) => {
+//     return res.default;
+//   });
+// }
 
 function asyncServices(): Promise<unknown> {
   return import('./Services').then((res) => {
@@ -79,13 +79,13 @@ function ManagerRout() {
       <AsyncRoute path="/manager/config" importRender={asyncConfig} />
       <AsyncRoute path={["/manager/articles", "/manager/articles/:category"]} importRender={asyncTMC} />
       <AsyncRoute path="/manager/pc" importRender={asyncPC} />
-      <AsyncRoute path="/manager/group" importRender={asyncGroupArticles} />
+      {/* <AsyncRoute path="/manager/group" importRender={asyncGroupArticles} /> */}
       <AsyncRoute path="/manager/reports" importRender={asyncReports} />
       <AsyncRoute path="/manager/expense" importRender={asyncExpense} />
       <AsyncRoute path="/manager/services" importRender={asyncServices} />
-      <AsyncRoute path="/manager/trial-balance" importRender={asyncTrialBalance} />
+      {/* <AsyncRoute path="/manager/trial-balance" importRender={asyncTrialBalance} /> */}
     </Switch>
   );
 }
 
-export default ManagerRout;
+export default memo(ManagerRout);

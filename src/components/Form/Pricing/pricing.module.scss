@@ -1,0 +1,44 @@
+.container {
+  composes: container from '../form.module.css';
+}
+.field {
+  composes: field from '../form.module.css';
+  margin-left: 5px;
+  min-width: unset;
+  flex: 1 1 100px;
+  width: 100px;
+}
+.label {
+  composes: label from '../form.module.css';
+  display: flex;
+  align-items: center;
+  min-width: unset;
+  flex: 1 1 auto;
+  margin-left: 15px;
+  margin-right: 0;
+  justify-content: flex-end;
+  &:first-child {
+    margin-left: 0;
+    .field {
+      margin-right: 0;
+    }
+  }
+  &.one {
+    max-width: 150px;
+  }
+}
+.error {
+  composes: error from '../form.module.css';
+}
+.unit {
+  margin-left: 5px;
+}
+.price_group {
+  border: 1px solid var(--light-gray-color);
+  padding: 10px 5px;
+  margin-bottom: 30px;
+  border-radius: 4px;
+  & .container:last-child {
+    margin-bottom: 0;
+  }
+}

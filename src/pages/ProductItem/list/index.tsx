@@ -1,9 +1,9 @@
 import * as React from 'react';
 import cx from 'classnames';
 import sortBy from 'lodash/sortBy';
-import { Article } from './Type';
+import { Article } from '../Types';
 import styles from './list.module.css';
-import { Price } from "components/Units";
+import Tile from '../tile';
 
 interface Props {
   valuation: ReadonlyArray<Article>;
@@ -14,7 +14,7 @@ function List({ valuation, onChange }: Props) {
 
   const list = React.useMemo(
     () => sortBy(valuation, ['price.title', 'price.description']),
-    [valuation]
+    [valuation],
   );
 
   return (
@@ -23,25 +23,9 @@ function List({ valuation, onChange }: Props) {
         list.map(e => (
           <li
             key={e.price.id}
-            className={cx('grid__item', 'tile__container', styles.tile)}
+            className={cx('grid__item', styles.tile)}
           >
-            <button
-              className={cx(styles.btn, { [styles.isTunable]: e.price.type === 'pc' })}
-              onClick={() => onChange(e.price.id)}
-            >
-              <h3 className={styles.title}>{e.price.title}</h3>
-              <div className={styles.price}>
-                <Price value={e.price.valuation} sign notation="compact" />
-              </div>
-              <div>{e.price.description}</div>
-            </button>
-            {
-              e.price.type === 'pc' ? (
-                <button
-                  className={cx('btn__tune', styles.tune)}
-                />
-              ) : null
-            }
+            <Tile onChange={onChange} price={e.price} />
           </li>
         ))
       }

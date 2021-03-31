@@ -16,6 +16,5 @@
   width: unset;
 }
 .error {
-  border-color: var(--red-color);
-  outline-color: var(--red-color);
+  composes: error from '../form.module.css';
 }

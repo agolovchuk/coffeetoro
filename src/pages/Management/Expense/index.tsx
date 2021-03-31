@@ -17,7 +17,7 @@ import { Price } from "components/Units";
 import { Main, Period, Filter } from "../components";
 import { ManagerForm, UserForm } from './forms';
 import { EitherEdit } from "../Types";
-import Item from './item';
+import Row from './row';
 import {
   createItem,
   editAdapter,
@@ -86,6 +86,8 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
     getAll(from, to);
   }, [getAll]);
 
+  const rowItem = React.useCallback((d) => <Row {...d} />, [])
+
   return (
     <Main
       list={expanseList}
@@ -94,8 +96,7 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
       editAdapter={editAdapter}
       handleSubmit={handleSubmit}
       popupTitle="Расходный ордер"
-      createLink={() => '/'}
-      createTitle={(d :ExpenseExtended) => (<Item {...d} />)}
+      createLink={rowItem}
       orderBy={orderUsers}
       header={user?.role === 'manager' ? (
         <React.Fragment>

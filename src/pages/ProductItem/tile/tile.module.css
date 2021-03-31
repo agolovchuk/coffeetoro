@@ -1,0 +1,32 @@
+.tune {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 35px;
+  height: 35px;
+  border: 1px solid var(--light-border-color);
+  background: #fff;
+  border-radius: 4px;
+}
+.title {
+  margin: 10px auto auto;
+  font-size: 18px;
+}
+.price {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.btn {
+  font-size: 18px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-items: center;
+  border: 0 none;
+  background: none;
+}
+.btn.isTunable .title {
+  margin-top: 35px;
+}

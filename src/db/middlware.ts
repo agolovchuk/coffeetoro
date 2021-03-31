@@ -4,6 +4,7 @@ import * as OrderAction from 'domain/orders/actions';
 import * as DictionaryAction from 'domain/dictionary/actions';
 import * as adapters from './adapters';
 import { validateArray } from 'lib/contracts';
+import { EEventsTag, enrichException } from 'lib/loger';
 
 type Action = OrderAction.Action | DictionaryAction.Action;
 
@@ -21,11 +22,19 @@ export default function idMiddleware() {
         break;
 
       case DictionaryAction.CRUD.createItemAction.type:
-        Idb.addItem(action.payload.name, action.payload.data);
+        try {
+          Idb.addItem(action.payload.name, action.payload.data);
+        } catch (err) {
+          enrichException(err, action.payload, EEventsTag.IDB);
+        }
         break;
 
       case DictionaryAction.CRUD.updateItemAction.type:
-        Idb.updateItem(action.payload.name, action.payload.data);
+        try {
+          Idb.updateItem(action.payload.name, action.payload.data);
+        } catch (err) {
+          enrichException(err, action.payload, EEventsTag.IDB);
+        }
         break;
 
       default:

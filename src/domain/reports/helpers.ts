@@ -38,6 +38,6 @@ export function extendsItems(
 ) {
   const prices = Object.keys(items).map(e => pricesDictionary[e]);
   return extendsPriceList(prices, articles, pc)
-    .map(e => ({ ...e, quantity: items[e.id] }))
-    .sort((a, b) => a.title.localeCompare(b.title));
+    .map(e => ({ ...e, quantity: get(items, e.id) }))
+    .sort((a, b) => get(a, 'title', '').localeCompare(get(b, 'title', '')));
 }

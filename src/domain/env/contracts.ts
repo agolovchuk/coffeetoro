@@ -1,5 +1,6 @@
 import * as t from 'io-ts';
 import { date } from 'io-ts-types/lib/date';
+import {getId} from "../../lib/id";
 
 export const lang = t.union([t.literal('ru'), t.literal('en')]);
 
@@ -42,4 +43,5 @@ export const env = t.interface({
     t.undefined,
     session,
   ]),
+  deviceId: t.string,
 });

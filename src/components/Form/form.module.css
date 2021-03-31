@@ -32,3 +32,8 @@
   text-align: right;
   min-width: 150px;
 }
+.error {
+  border-color: var(--red-color);
+  outline-color: var(--red-color);
+  color: var(--red-color);
+}

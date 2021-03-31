@@ -17,6 +17,8 @@ const priceContainer = {
   expiry: t.union([date, t.null, t.undefined]),
   valuation: t.number,
   sortIndex: t.number,
+  quantity: t.union([t.undefined, t.number]),
+  step: t.union([t.undefined, t.number]),
 }
 
 export const price = t.union([

@@ -1,4 +1,4 @@
-export default {
+const dictionary = {
   selectUser: 'Кто Вы?',
   helloMessage: 'Здравствуйте, {user}',
   activeOrders: 'Активные заказы',
@@ -6,3 +6,5 @@ export default {
   'user.updatePassword': 'Изменить пароль',
   'management.systemConfig': 'Системные настройки',
 }
+
+export default dictionary;

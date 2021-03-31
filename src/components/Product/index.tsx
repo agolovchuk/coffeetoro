@@ -2,26 +2,9 @@ import * as React from 'react';
 import cx from 'classnames';
 import Valuation from './Valuation';
 import styles from './product.module.css';
-import { ProductApi } from './Types';
 import Quantity from './Quantity';
 import Confirmation from './Confirmation';
-
-interface IPrice {
-  id: string;
-  valuation: number;
-  description?: string;
-}
-
-interface IValuation {
-  price: IPrice;
-  volume: string;
-}
-
-interface IOrderApi {
-  onQuantity: (quantity: number) => void;
-  onRemove: () => void;
-  isChecked: (id: string) => boolean;
-}
+import { ProductApi, IValuation, IOrderApi } from './Types';
 
 interface Props {
   title: string;
@@ -34,9 +17,16 @@ interface Props {
 
 export const ProductContext = React.createContext<Partial<ProductApi>>({});
 
-function Product({ quantity = 1, ...props }: Props) {
-  const changeHandler = (priceId: string) => props.onChange(priceId);
+function Product({ quantity = 1, onChange, ...props }: Props) {
+
+  const changeHandler = React.useCallback(
+    (priceId: string) => onChange(priceId),
+    [onChange]
+  );
+
   const [confirm, setConfirm] = React.useState(false);
+
+  const onCancel = React.useCallback(() => setConfirm(false), [setConfirm])
 
   return (
     <div className={styles.container}>
@@ -81,7 +71,7 @@ function Product({ quantity = 1, ...props }: Props) {
           <Confirmation
             item={props.title}
             onRemove={props.orderApi.onRemove}
-            onCancel={() => setConfirm(false)}
+            onCancel={onCancel}
           />
         ) : null
       }

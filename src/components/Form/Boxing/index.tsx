@@ -3,8 +3,8 @@ import styles from "./boxing.module.css";
 import { Field } from "react-final-form";
 import cx from 'classnames';
 import { ISelectItem } from '../Types';
-import { rulesCompose, isNumber, isRequired, isPositive } from '../validate';
-import { formatToNumber } from '../helper';
+import { rulesCompose, isInt, isRequired, isPositive } from '../validate';
+import { formatToInt } from '../helper';
 
 interface Props {
   units: ReadonlyArray<ISelectItem>;
@@ -17,8 +17,8 @@ function BoxingField({ units, label }: Props) {
       <label htmlFor="boxing" className={styles.label}>{label}</label>
       <Field
         name="boxing"
-        validate={rulesCompose(isRequired, isNumber, isPositive)}
-        format={formatToNumber}
+        validate={rulesCompose(isRequired, isInt, isPositive)}
+        format={formatToInt}
         formatOnBlur
         render={({ input, meta}) => (
           <input

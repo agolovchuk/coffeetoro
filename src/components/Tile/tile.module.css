@@ -8,6 +8,7 @@
   flex-direction: column;
   justify-content: space-around;
   padding: 12px;
+  height: 100%;
 }
 
 .title {

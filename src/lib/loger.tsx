@@ -7,3 +7,31 @@ if (ENV !== 'development') {
     environment: ENV,
   });
 }
+
+export enum EEventsTag {
+  IDB = 'INDEXED_DB',
+}
+
+export function enrichMessage(message: string, meta?: any, tag?: EEventsTag) {
+  Sentry.withScope(scope => {
+    if (typeof tag === 'string') {
+      scope.setTag('source', tag);
+    }
+    if (meta) {
+      scope.setExtra('data', JSON.stringify(meta, null, 2));
+    }
+    Sentry.captureMessage(message);
+  });
+}
+
+export function enrichException(error: Error, meta?: any, tag?: EEventsTag) {
+  Sentry.withScope(scope => {
+    if (typeof tag === 'string') {
+      scope.setTag('source', tag);
+    }
+    if (meta) {
+      scope.setExtra('data', JSON.stringify(meta, null, 2));
+    }
+    Sentry.captureException(error);
+  });
+}
