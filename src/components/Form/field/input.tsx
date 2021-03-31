@@ -1,6 +1,7 @@
 import * as React from 'react';
 import cx from 'classnames';
 import { format } from 'date-fns';
+import { FieldMetaState } from 'react-final-form';
 import styles from './field.module.css';
 import Field from './field';
 
@@ -20,9 +21,10 @@ interface Props<T extends HTMLElement = HTMLElement> {
   labelClassName?: string;
   containerClassName?: string;
   inputClassName?: string;
+  meta?: FieldMetaState<string | undefined>;
 }
 
-function InputField({ id, title, labelClassName, containerClassName, inputClassName, value, ...rest }: Props) {
+function InputField({ id, title, labelClassName, containerClassName, inputClassName, value, meta, ...rest }: Props) {
   const v = (value instanceof Date) ? format(value, 'yyyy-MM-dd') : value;
   return (
     <Field
@@ -31,7 +33,12 @@ function InputField({ id, title, labelClassName, containerClassName, inputClassN
       labelClassName={labelClassName}
       containerClassName={containerClassName}
     >
-      <input id={id} {...rest} value={v} className={cx(styles.field, inputClassName)} />
+      <input
+        id={id}
+        {...rest}
+        value={v}
+        className={cx(styles.field, {[styles.error]: meta?.error }, inputClassName)}
+      />
     </Field>
   );
 }

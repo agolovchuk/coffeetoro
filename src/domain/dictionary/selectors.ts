@@ -1,11 +1,9 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
-import groupBy from 'lodash/groupBy';
 import { arrayToRecord, toArray } from 'lib/dataHelper';
-import { DictionaryState, CategoryItem, DocumentItem } from './Types';
+import { DictionaryState, CategoryItem, CountedCategoryItem } from './Types';
 import { params } from 'domain/routes';
 import { userSelector } from 'domain/env';
-import { summa } from 'lib/decimal';
 import {
   getProductForSale,
   sortByIndex,
@@ -15,7 +13,6 @@ import {
   extendsExpanseList,
   expenseByUser,
 } from './helpers';
-import pick from "lodash/pick";
 
 const categories = (state: DictionaryState) => state.categories;
 const prices = (state: DictionaryState) => state.prices;
@@ -62,7 +59,7 @@ export const currentCategorySelector = createSelector(
 
 export const currentCategoriesSelector = createSelector(
   [categoriesListSelector, params],
-  (c, p) => c.filter(f => f.parentId === (p.categoryId || 'root')),
+  (c: ReadonlyArray<CountedCategoryItem>, p) => c.filter(f => f.parentId === (p.categoryId || 'root')),
 );
 
 export const priceByNameSelector = createSelector(prices, p => p);

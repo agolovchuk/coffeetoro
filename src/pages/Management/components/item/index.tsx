@@ -3,32 +3,45 @@ import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import styles from './item.module.css';
 
-type Data = Record<string, any>;
-
 interface Props<T> {
   data: T,
-  title: string | React.ReactNode,
-  onEdit: (data: T) => void;
+  title: string | JSX.Element,
+  onEdit(data: T): void;
   getLink: ((data: T) => string) | string;
 }
 
-function MItem<T extends Data>({ data, onEdit, getLink, title }: Props<T>) {
-  const link = typeof getLink === 'function' ? getLink(data) : getLink;
+function MItem<T>({ data, onEdit, getLink, title }: Props<T>) {
+
+  const link = React.useMemo(
+    () => (typeof getLink === 'function' ? getLink(data) : getLink),
+    [getLink, data],
+  );
+
+  const tultype = React.useMemo(
+    () => (typeof title === 'string' ? title : undefined),
+    [title],
+  )
+
+  const editHandler = React.useCallback(
+    () => onEdit(data),
+    [onEdit, data],
+  )
+
   return (
     <div className={styles.container}>
       <NavLink
         to={link}
         className={styles.link}
         activeClassName={styles.active}
-        title={typeof title === 'string' ? title : undefined}
+        title={tultype}
       >{title}</NavLink>
       <button
         type="button"
         className={cx("btn__edit", styles.btn)}
-        onClick={() => onEdit(data)}
+        onClick={editHandler}
       />
     </div>
   )
 }
 
-export default MItem;
+export default React.memo(MItem);

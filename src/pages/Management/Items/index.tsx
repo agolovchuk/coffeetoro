@@ -1,90 +1,28 @@
-import * as React from 'react';
+import { useCallback, memo } from 'react';
 import { match } from 'react-router-dom';
 import Grid from 'components/Grid';
-import { getLink } from '../helper';
+import Tile from 'components/Tile';
 
-interface List {
-  id: string;
-  name: string;
-  title: string;
-}
+import { getLink } from '../helper';
+import { LIST } from './list';
+import { IList } from './Types';
 
 interface Props {
   match: match
 }
 
-const LIST: List[] = [
-  {
-    id: '00',
-    name: 'config',
-    title: 'System Config',
-  },
-  {
-    id: '01',
-    name: 'maintenance',
-    title: 'Maintenance',
-  },
-  {
-    id: '02',
-    name: 'users',
-    title: 'Users',
-  },
-  {
-    id: '03',
-    name: 'articles',
-    title: 'Articles'
-  },
-  {
-    id: '04',
-    name: 'group',
-    title: 'Group Articles'
-  },
-  {
-    id: '05',
-    name: 'pc',
-    title: 'Process Card'
-  },
-  {
-    id: '06',
-    name: 'category',
-    title: 'Category...'
-  },
-  {
-    id: '07',
-    name: 'incoming-balances',
-    title: 'Incoming Balances'
-  },
-  // {
-  //   id: '08',
-  //   name: 'trial-balance',
-  //   title: 'Trial Balance'
-  // },
-  {
-    id: '09',
-    name: 'expense',
-    title: 'Expense'
-  },
-  {
-    id: '10',
-    name: 'services',
-    title: 'Services'
-  },
-  {
-    id: '11',
-    name: 'reports',
-    title: 'Reports'
-  }
-];
+function ManagementItems({ match: { url } }: Props) {
 
-function ManagementItems({ match }: Props) {
-  const createLink = ({ name }: List) => getLink(match.url, name);
+  const createLink = useCallback(({ name }: IList) => getLink(url, name), [url]);
+  const createKey = useCallback(({ name }: IList) => name, []);
+  const tile = useCallback((e: IList) => <Tile to={createLink(e)} {...e} />, [createLink]);
+
+
   return (
-    <Grid
-      list={LIST}
-      getLink={createLink}
-      getKey={e => e.name}
-    />
+    <div className="scroll-section">
+      <Grid list={LIST} getKey={createKey}>{tile}</Grid>
+    </div>
   );
 }
 
-export default ManagementItems;
+export default memo(ManagementItems);

@@ -25,8 +25,8 @@ export type DiscountItem = TypeOf<typeof discountItem>;
 export type Order = TypeOf<typeof order>;
 
 export interface OrderItemContainer {
-  quantity: number,
-  price: PriceExtended,
+  quantity: number;
+  price: PriceExtended;
 }
 
 export interface OrderState {

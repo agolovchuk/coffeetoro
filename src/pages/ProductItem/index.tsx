@@ -92,11 +92,11 @@ function ProductItem({ addItem, getPrices, orderByProduct, getCategory, ...props
             />
           ))
         }
-        <Articles
-          onChange={addHandler}
-          valuation={props.product.valuation}
-        />
       </div>
+      <Articles
+        onChange={addHandler}
+        valuation={props.product.valuation}
+      />
     </section>
   );
 }

@@ -42,15 +42,13 @@ export function sortByIndex<T extends ISortebaleList>(a: T, b: T) {
 
 export function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): PriceExtended {
   if (price.type === 'tmc') {
-    const { title, description, unitId } = tmc[price.barcode];
-    return { ...price, title, description, unitId };
+    return { ...price, ...pick(get(tmc, price.barcode), ['title', 'description', 'unitId']) };
   }
-  const { title, description, primeCost } = pc[price.refId];
-  return { ...price, title, description, unitId: '1', primeCost };
+  return { ...price, ...pick(get(pc, price.refId), ['title', 'description', 'primeCost']), unitId: '1' };
 }
 
 export function extendsPriceList(priceList: ReadonlyArray<PriceItem>, tmc: TMC, pc: ProcessCards) {
-  const adapter = (price: PriceItem) => extendsPrice(price, tmc, pc)
+  const adapter = (price: PriceItem) => extendsPrice(price, tmc, pc);
   return priceList.map(adapter);
 }
 

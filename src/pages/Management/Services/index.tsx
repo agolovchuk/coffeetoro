@@ -8,7 +8,7 @@ import {
 import { ServiceItem, CRUD, servicesListSelector } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import { Main } from '../components';
-import { getTitle } from '../helper';
+import Row from './row';
 import { EitherEdit } from '../Types';
 
 function createItem(): ServiceItem {
@@ -49,18 +49,14 @@ function TMCManager({ create, update, getAll, ...props }: Props) {
     }, [create, update],
   );
 
-  const createLink = React.useMemo(() => {
-    return (data: ServiceItem) => ['/manager', 'services', data.id].join('/');
-  }, []);
-
   const editAdapter = React.useCallback((value: ServiceItem) => ({
     ...value,
     isEdit: true,
   }), []);
 
-  React.useEffect(() => {
-    getAll('services');
-  }, [getAll]);
+  React.useEffect(() => { getAll('services'); }, [getAll]);
+
+  const rowItem = React.useCallback((d) => <Row {...d} />, [])
 
   return (
     <Main
@@ -70,8 +66,7 @@ function TMCManager({ create, update, getAll, ...props }: Props) {
       editAdapter={editAdapter}
       handleSubmit={handleSubmit}
       popupTitle="Add services"
-      createLink={createLink}
-      createTitle={getTitle}
+      createLink={rowItem}
     >
       <Field name="title" render={({ input}) => (
         <InputField id="title" title="Title:" {...input} />
