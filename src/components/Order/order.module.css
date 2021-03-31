@@ -5,6 +5,7 @@
   overflow-y: auto;
 }
 .footer {
+  padding: var(--wrapper-padding);
   padding-top: 5px;
 }
 .list {

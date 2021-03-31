@@ -1,3 +1,4 @@
+import firebase from 'firebase/app';
 import eq from 'deep-equal';
 import CDB from 'db';
 import * as C from 'db/constants';
@@ -24,6 +25,8 @@ interface PriceContainer {
   parentId: string;
   valuation: number;
   sortIndex: number;
+  step: number | undefined;
+  quantity: number | undefined;
 }
 
 type FBPriceItem = PriceContainer & {
@@ -36,7 +39,7 @@ type FBPriceItem = PriceContainer & {
 
 type FBCategory = Omit<CategoryItem, 'count'>;
 
-interface DBWrapper<T, F> {
+interface DBWrapper<T> {
   get: (key: string) => Promise<T | null>,
   set: (data: T) => Promise<void>,
   put: (data: T) => Promise<void>,
@@ -92,7 +95,7 @@ function eqPC(fbPC: ProcessCardItem, dbPC: ProcessCardItem) {
   }, dbPC);
 }
 
-function dbWrapper<T, F>(table: string, validator: Validator<T>): DBWrapper<T, F> {
+function dbWrapper<T>(table: string, validator: Validator<T>): DBWrapper<T> {
   const dbx = (): IDB => new CDB();
   return {
     get: (key: string) => dbx().getItem(table, validator, key),
@@ -102,11 +105,11 @@ function dbWrapper<T, F>(table: string, validator: Validator<T>): DBWrapper<T, F
 }
 
 function handlerFactory<I, F>(
-  dbw: DBWrapper<I, F>,
+  dbw: DBWrapper<I>,
   equal: (f: F, i: I) => boolean,
   action: {
-   add(this: DBWrapper<I, F>, f: F): void,
-   update(this: DBWrapper<I, F>, f: F): void,
+   add(this: DBWrapper<I>, f: F): void,
+   update(this: DBWrapper<I>, f: F): void,
   }
 ) {
   return async(s: firebase.database.DataSnapshot) => {

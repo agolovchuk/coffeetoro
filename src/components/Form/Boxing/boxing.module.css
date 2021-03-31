@@ -1,0 +1,20 @@
+.container {
+  composes: container from '../form.module.css';
+}
+.label {
+  composes: label from '../form.module.css';
+}
+.field {
+  composes: field from '../form.module.css';
+  margin-right: 10px;
+}
+.select {
+  composes: field from '../form.module.css';
+  background-color: #fff;
+  min-width: unset;
+  flex-basis: unset;
+  width: unset;
+}
+.error {
+  composes: error from '../form.module.css';
+}

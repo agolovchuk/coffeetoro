@@ -1,9 +1,8 @@
-import * as C from './constant';
-import { Mode, Fixtures } from './Types';
+import { Mode, Fixtures, ICursorOption, EMode } from './Types';
 import get from "lodash/get";
 
 export function applyFixtures(this: IDBDatabase, fx: ReadonlyArray<Fixtures>): Promise<void[]> {
-  return Promise.all(fx.map(e => addList(os.call(this, e.table, C.READ_WRITE), e.data)));
+  return Promise.all(fx.map(e => addList(os.call(this, e.table, EMode.READWRITE), e.data)));
 }
 
 export function os(this: IDBDatabase, table: string | string[], mode: Mode): IDBObjectStore {
@@ -40,21 +39,25 @@ export function promisifyRequest<T>(req: IDBRequest<T>): Promise<T> {
   });
 }
 
-// function toArrayAdapter() {
-//   const res = [];
-//   return (d) => {
-//
-//   }
-// }
-
-export function promisifyCursor<T>(os: IDBObjectStore | IDBIndex, query: IDBValidKey | IDBKeyRange | null, adapter: (d: any) => T = d => d): Promise<T[]> {
+export function promisifyCursor<T>(
+  os: IDBObjectStore | IDBIndex,
+  query: IDBValidKey | IDBKeyRange | null,
+  option?: ICursorOption<T>,
+  ): Promise<T[]> {
   return new Promise((resolve, reject) => {
     const result: T[] = [];
-    const request = os.openCursor(query);
+    const request = os.openCursor(query, option?.direction);
+    const adapter = typeof option?.adapter === 'function' ? option.adapter : (d: T) => d;
+    const isFinish = typeof option?.isFinish === 'function' ? option.isFinish : () => false;
     request.onsuccess = (event) => {
       const cursor = get(event, ['target', 'result']);
       if (cursor) {
-        result.push(adapter(cursor.value));
+        const d = adapter(cursor.value);
+        result.push(d);
+        if (isFinish(d, result)) {
+          resolve(result);
+          return;
+        }
         cursor.continue();
       }
       else {

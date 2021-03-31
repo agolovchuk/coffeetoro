@@ -1,6 +1,7 @@
 import { CategoryItem, UnitItem } from 'domain/dictionary/Types';
 import { IEnv } from 'domain/env';
 import { User } from 'domain/users';
+import {getId} from "../lib/id";
 
 export const categories: ReadonlyArray<Partial<CategoryItem>> = [
   {
@@ -96,6 +97,7 @@ export const env: ReadonlyArray<IEnv> = [
     user: null,
     firebaseConfig: null,
     session: undefined,
+    deviceId: getId(10),
   }
 ];
 

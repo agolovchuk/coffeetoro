@@ -1,5 +1,6 @@
 import get from 'lodash/get';
-import {OrderArchiveContent, OrderArchiveItem,} from './Types';
+import { summa } from 'lib/decimal';
+import { OrderArchiveContent, OrderArchiveItem } from './Types';
 import { PriceExtended, PriceItem, ProcessCardItem, TMCItem } from 'domain/dictionary/Types';
 import { DiscountItem } from 'domain/orders';
 import { extendsPriceList } from "domain/dictionary/helpers";
@@ -21,14 +22,12 @@ export function byPriceId(order: OrderArchiveItem, start: Record<string, number>
 }
 
 export function orderSum(order: OrderArchiveItem) {
-  const ds = discountSum(order.discounts);
-  return getOrderItems(order)
-    .reduce((a, v) => a + v.quantity * v.valuation, - ds);
+  return summa(getOrderItems(order)) - discountSum(order.discounts);
 }
 
 export function discountSum(discounts?: ReadonlyArray<DiscountItem>): number {
   if (!discounts || discounts.length < 1) return 0;
-  return discounts.reduce((a, v) => a + v.valuation, 0);
+  return summa(discounts);
 }
 
 export function extendsItems(
@@ -39,6 +38,6 @@ export function extendsItems(
 ) {
   const prices = Object.keys(items).map(e => pricesDictionary[e]);
   return extendsPriceList(prices, articles, pc)
-    .map(e => ({ ...e, quantity: items[e.id] }))
-    .sort((a, b) => a.title.localeCompare(b.title));
+    .map(e => ({ ...e, quantity: get(items, e.id) }))
+    .sort((a, b) => get(a, 'title', '').localeCompare(get(b, 'title', '')));
 }

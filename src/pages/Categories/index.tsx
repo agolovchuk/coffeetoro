@@ -4,6 +4,7 @@ import { match } from 'react-router-dom';
 import { currentCategoriesSelector, getPriceCategoriesAction, CountedCategoryItem } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import Grid from 'components/Grid';
+import Tile from 'components/Tile';
 
 interface ICategoryMatch {
   readonly orderId: string;
@@ -26,7 +27,7 @@ const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
-interface Props extends PropsFromRedux, PropsFromRouter {};
+interface Props extends PropsFromRedux, PropsFromRouter {}
 
 function pathMaker(orderId: string) {
   const make = (...args: string[]) => ['/order', orderId, ...args].join('/');
@@ -46,12 +47,14 @@ function Categories({ categories, match, getCategories }: Props) {
 
   const getLink = React.useMemo(() => pathMaker(orderId), [orderId]);
 
+  const getKey = React.useCallback((e) => e.id, []);
+
+  const tile = React.useCallback((e: CountedCategoryItem) => <Tile to={getLink(e)} {...e} />, [getLink]);
+
   return (
-    <Grid
-      list={categories}
-      getKey={e => e.id}
-      getLink={getLink}
-    />
+    <div className="scroll-section">
+      <Grid list={categories} getKey={getKey}>{tile}</ Grid>
+    </div>
   );
 }
 

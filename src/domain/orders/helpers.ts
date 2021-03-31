@@ -1,7 +1,9 @@
+import currency from 'currency.js';
 import get from 'lodash/get';
 import { PriceItem, PriceExtended, TMCItem, ProcessCardItem } from 'domain/dictionary/Types';
-import { DiscountItem } from 'domain/orders/Types';
-import { OrderItem, OrderItemContainer } from './Types';
+import { PaymentMethod } from 'domain/orders/Types';
+import { OrderItem, OrderItemContainer, Order, DiscountItem } from './Types';
+import { IUser, UserRole } from "../env";
 
 function priceAdapter(
   order: OrderItem,
@@ -34,7 +36,7 @@ export function orderItemsArchive(
   prices: Record<string, PriceItem>,
 ): ReadonlyArray<OrderItemArchive> {
   return orders.map(({ quantity, priceId }) => {
-    const { valuation } = prices[priceId];
+    const { valuation } = get(prices, priceId);
     return { quantity, valuation, priceId }
   });
 }
@@ -60,16 +62,23 @@ export function prepareDictionary(
   }
 }
 
-interface Order {
-  valuation: number;
-  quantity: number;
+export function orderFilter<T extends Order>(o: T[], u: IUser | null): T[] {
+  if (u?.role === UserRole.MANAGER) return o.filter(f => f.payment === PaymentMethod.Opened);
+  const filter = (f: T) => f.owner === u?.id && f.payment === PaymentMethod.Opened;
+  return o.filter(filter);
 }
 
-
-export function getSumOfOrder(list: ReadonlyArray<Order>): number {
-  return list.reduce((a, v) => a + (v.valuation * v.quantity), 0);
+export function orderItemsFromOrder(orderId: string | undefined, orderItems: ReadonlyArray<OrderItem>) {
+  return orderItems.filter(f => f.orderId === orderId);
 }
 
-export function getSumOdDiscount(discounts: ReadonlyArray<DiscountItem>): number {
-  return discounts.reduce((a, v) => a + v.valuation, 0)
+export function orderSumm(
+  order: ReadonlyArray<OrderItem>,
+  discount: ReadonlyArray<DiscountItem>,
+  prices: Record<string, PriceItem>,
+): number {
+  return order
+    .reduce((a, v) => a.add(currency(get(prices, [v.priceId, 'valuation'])).multiply(v.quantity)), currency(0))
+    .subtract(discount.reduce((a, v) => a.add(v.valuation),  currency(0)))
+    .value;
 }

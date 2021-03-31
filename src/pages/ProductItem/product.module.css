@@ -3,3 +3,13 @@
   height: 100%;
   overflow: hidden;
 }
+.wrapper {
+  padding: 0 var(--wrapper-padding);
+}
+.title {
+  /*position: sticky;*/
+  /*top: 0;*/
+  background-color: #fff;
+  z-index: 10;
+  padding: var(--wrapper-padding);
+}

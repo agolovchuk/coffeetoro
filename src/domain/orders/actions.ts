@@ -12,8 +12,10 @@ import {
   ProcessCardItem,
   articlesByBarcodeSelector,
 } from 'domain/dictionary';
+import { addOrderTransaction } from 'domain/transaction';
 import { ThunkAction } from '../StoreType';
 import * as adapters from './adapters';
+import * as selectors from './selectors';
 import { prepareDictionary } from './helpers';
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
@@ -195,6 +197,12 @@ export function completeOrderAction(id: string, method: PaymentMethod): ThunkAct
     try {
       const idb = new CDB();
       await idb.updateItem(C.TABLE.orders.name, completeOrder);
+      await addOrderTransaction(
+        getState().env.deviceId,
+        {
+        credit: selectors.orderSummSelector(getState(), { match: { params: { orderId: id }}}),
+        ...completeOrder,
+      });
       dispatch({
         type: COMPLETE,
         payload: completeOrder,

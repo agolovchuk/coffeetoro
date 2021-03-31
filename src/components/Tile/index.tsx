@@ -1,4 +1,5 @@
 import * as React from 'react';
+import get from 'lodash/get';
 import { Link } from 'react-router-dom';
 import styles from './tile.module.css';
 
@@ -19,7 +20,9 @@ interface Props {
 }
 
 function Tile({ title, to, name }: Props) {
-  const imageSrc = logos[name];
+
+  const imageSrc = React.useMemo(() => get(logos, [name, 'default']), [name]);
+
   return (
     <Link className={styles.container} to={to}>
       <h2 className={styles.title}>{title}</h2>
@@ -32,4 +35,4 @@ function Tile({ title, to, name }: Props) {
   );
 }
 
-export default Tile;
+export default React.memo(Tile);

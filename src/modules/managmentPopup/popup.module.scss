@@ -1,0 +1,38 @@
+.popup {
+  background-color: #fff;
+}
+.header {
+  background-color: #E0E0E0;
+  height: 60px;
+  font-size: 20px;
+  line-height: 60px;
+  padding: 0 15px;
+}
+.form {
+  padding: 15px;
+}
+.buttonGroup {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+.btn {
+  padding: 0 20px;
+  height: 40px;
+  border-radius: 4px;
+  border: 0 none;
+  margin: 0 20px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+  &:disabled {
+    background-color: var(--disabled-color);
+    border-color: var(--disabled-color);
+  }
+}
+.ok {
+  background-color: var(--green-button);
+}
+.cancel {
+  background-color: var(--red-color);
+}

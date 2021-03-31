@@ -1,28 +1,23 @@
-import * as React from 'react';
-import Tile from 'components/Tile';
-import styles from './grid.module.css';
-
-interface GridItem {
-  title: string;
-  name: string;
-}
+import { memo } from 'react'
 
 interface Props<T> {
   list: ReadonlyArray<T>;
-  getLink: (el: T) => string;
-  getKey: (el: T) => string;
+  getKey(el: T): string;
+  children(el: T): JSX.Element; 
 }
 
-function Grid<T extends GridItem>({ list, getLink, getKey }: Props<T>) {
+function Grid<T>({ list, getKey, children }: Props<T>) {
   return (
-    <section className={styles.container}>
+    <ul className="grid__container">
       {
         list.map((e) =>
-          <Tile key={getKey(e)} to={getLink(e)} {...e} />
+          <li key={getKey(e)} className="grid__item">
+            {children(e)}
+          </li>
         )
       }
-    </section>
+    </ul>
   );
 }
 
-export default Grid;
+export default memo(Grid);

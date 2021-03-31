@@ -1,5 +1,6 @@
 import * as C from './constants';
 import * as Fixtures from './fixtures';
+import { addDeviceId, removeUserDuplicates } from "./helpers";
 
 export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionChangeEvent): any {
   const fixtures = [];
@@ -370,6 +371,68 @@ export default function requestUpgrade(this: IDBOpenDBRequest, ev: IDBVersionCha
           C.TABLE.expenses.index.type,
           C.TABLE.expenses.index.type, {
             unique: false,
+          }
+        );
+    }
+  }
+  if (ev.oldVersion < 11) {
+    if (this.transaction) {
+      removeUserDuplicates(this.transaction);
+      addDeviceId(this.transaction);
+    }
+  }
+  if (ev.oldVersion < 12) {
+    const osTransactionLog = this.result.createObjectStore(
+      C.TABLE.transactionLog.name, {
+        keyPath: C.TABLE.transactionLog.index.id,
+        autoIncrement: true
+      }
+    );
+    osTransactionLog.createIndex(
+      C.TABLE.transactionLog.index.transaction,
+      C.TABLE.transactionLog.index.transaction, {
+        unique: false
+      }
+    );
+    osTransactionLog.createIndex(
+      C.TABLE.transactionLog.index.account,
+      C.TABLE.transactionLog.index.account, {
+        unique: false
+      }
+    );
+    osTransactionLog.createIndex(
+      C.TABLE.transactionLog.index.date,
+      C.TABLE.transactionLog.index.date, {
+        unique: false
+      }
+    );
+    osTransactionLog.createIndex(
+      C.TABLE.transactionLog.index.accountDate, [
+        C.TABLE.transactionLog.index.account,
+        C.TABLE.transactionLog.index.date,
+      ]
+    );
+
+    const osAccount = this.result.createObjectStore(
+      C.TABLE.account.name, {
+        keyPath: C.TABLE.account.index.id,
+        autoIncrement: false,
+      }
+    );
+    osAccount.createIndex(
+      C.TABLE.account.index.id,
+      C.TABLE.account.index.id,{
+        unique: true,
+      }
+    );
+
+    if (this.transaction) {
+      this.transaction
+        .objectStore(C.TABLE.users.name)
+        .createIndex(
+          C.TABLE.users.index.name,
+          C.TABLE.users.index.name, {
+            unique: true,
           }
         );
     }

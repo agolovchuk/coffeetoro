@@ -1,13 +1,5 @@
 import get from 'lodash/get';
-import {
-  RequestUpgrade,
-  Fixtures,
-  DataAdapterFactory,
-  Query,
-  Validator,
-  Mode,
-} from './Types';
-import * as C from './constant';
+import { DataAdapterFactory, EMode, Fixtures, ITableSchema, Mode, Query, RequestUpgrade, Validator } from './Types';
 import { applyFixtures } from './helpers';
 
 export default class IDB {
@@ -42,6 +34,13 @@ export default class IDB {
     this.db = null;
   }
 
+  protected async getTransaction<I extends Record<string, string>>(schema: ITableSchema<I>, mode: Mode = EMode.READONLY) {
+    const idb = await this.open();
+    const transaction = idb.transaction([schema.name], mode);
+    transaction.oncomplete = () => { idb.close(); };
+    return { transaction, table: schema.name, indexes: schema.index };
+  }
+
   open(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const request = window.indexedDB.open(this.name, this.version);
@@ -71,7 +70,7 @@ export default class IDB {
     indexName: string,
     query?: Query,
   ): Promise<T | null> {
-    const objectStore = await this.os(table, C.READ_ONLY);
+    const objectStore = await this.os(table, EMode.READONLY);
     return await new Promise((resolve, reject) => {
       let result: T | null = null;
       const request = objectStore.index(indexName).openCursor(query);
@@ -90,17 +89,8 @@ export default class IDB {
     });
   }
 
-  async addItem(table: string, value: any): Promise<void> {
-    try {
-      const objectStore = await this.os(table, C.READ_WRITE);
-      await this.request(objectStore.add(value));
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
   async getItem<T>(table: string, validator: Validator<T>, query: Query, indexName?: string): Promise<T | null> {
-    const objectStore = await this.os(table, C.READ_ONLY);
+    const objectStore = await this.os(table, EMode.READONLY);
     return await new Promise((resolve, reject) => {
       const request = indexName ? objectStore.index(indexName).get(query) : objectStore.get(query);
       request.onsuccess = (event) => {
@@ -112,7 +102,7 @@ export default class IDB {
   }
 
   async getAll<T>(table: string, adapter: (res: null | unknown[] ) => T, indexName?: string, query?: Query | null): Promise<T | null> {
-    const objectStore = await this.os(table, C.READ_ONLY);
+    const objectStore = await this.os(table, EMode.READONLY);
     return await new Promise((resolve, reject) => {
       const request = typeof indexName === 'string' ? objectStore.index(indexName).getAll(query) : objectStore.getAll(query);
       request.onsuccess = (event) => {
@@ -123,27 +113,28 @@ export default class IDB {
     });
   }
 
-  async deleteItem(table: string, query: Query): Promise<void> {
+  async addItem(table: string, value: any): Promise<void> {
     try {
-      const objectStore = await this.os(table, C.READ_WRITE);
-      await this.request(objectStore.delete(query));
+      const objectStore = await this.os(table, EMode.READWRITE);
+      await this.request(objectStore.add(value));
     } catch (err) {
       console.warn(err);
     }
   }
 
+  async deleteItem(table: string, query: Query): Promise<void> {
+    const objectStore = await this.os(table, EMode.READWRITE);
+    await this.request(objectStore.delete(query));
+  }
+
   async updateItem(table: string, value: any): Promise<void> {
-    try {
-      const objectStore = await this.os(table, C.READ_WRITE);
-      await this.request(objectStore.put(value));
-    } catch (err) {
-      console.warn(err);
-    }
+    const objectStore = await this.os(table, EMode.READWRITE);
+    await this.request(objectStore.put(value));
   }
 
   async updateIfExist(table:string, value: any): Promise<void> {
     try {
-      const objectStore = await this.os(table, C.READ_WRITE);
+      const objectStore = await this.os(table, EMode.READWRITE);
       await this.request(objectStore.add(value))
     } catch (err) {
       if (err.message === 'Key already exists in the object store.') {

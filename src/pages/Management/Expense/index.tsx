@@ -1,9 +1,9 @@
 import * as React from "react";
 import { connect, ConnectedProps } from 'react-redux';
 import pick from "lodash/pick";
-import get from "lodash/get";
 import filter from 'lodash/fp/filter';
 import compose from 'lodash/fp/compose';
+import { summa } from 'lib/decimal';
 import { userSelector } from 'domain/env';
 import {
   CRUD,
@@ -17,7 +17,7 @@ import { Price } from "components/Units";
 import { Main, Period, Filter } from "../components";
 import { ManagerForm, UserForm } from './forms';
 import { EitherEdit } from "../Types";
-import Item from './item';
+import Row from './row';
 import {
   createItem,
   editAdapter,
@@ -74,12 +74,10 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
     )(list)
   }, [list, filterParams]);
 
-  const sum = React.useMemo(() => {
-    return expanseList.reduce((a: number, v: ExpenseExtended) => a + (v.valuation * get(v, 'quantity', 1)) ,0)
-  }, [expanseList]);
+  const sum = React.useMemo(() => summa(expanseList), [expanseList]);
 
   const putArticle = React.useCallback((item: TMCItem) => {
-    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);
+    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update', 'boxing'])]);
   }, [putArticles]);
 
   React.useEffect(() => { getAll(); }, [getAll]);
@@ -87,6 +85,8 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
   const handleSetPeriod = React.useCallback(({ from, to }) => {
     getAll(from, to);
   }, [getAll]);
+
+  const rowItem = React.useCallback((d) => <Row {...d} />, [])
 
   return (
     <Main
@@ -96,8 +96,7 @@ function Expense({ list, update, create, getAll, putArticles, user }: Props) {
       editAdapter={editAdapter}
       handleSubmit={handleSubmit}
       popupTitle="Расходный ордер"
-      createLink={() => '/'}
-      createTitle={(d :ExpenseExtended) => (<Item {...d} />)}
+      createLink={rowItem}
       orderBy={orderUsers}
       header={user?.role === 'manager' ? (
         <React.Fragment>

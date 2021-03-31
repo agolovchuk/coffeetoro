@@ -9,7 +9,8 @@ import {
   completeReportAction,
   enrichedOrdersSelector,
   summarySelector,
-  getDailyReportAction,
+  // getDailyReportAction,
+  getDailyLocalAction,
 } from "domain/reports";
 import { dailyParamsSelector, getDayParamsAction, setDayParamsAction } from "domain/daily";
 import { getExpenseAction, expanseSumSelector } from 'domain/dictionary';
@@ -30,7 +31,7 @@ const mapState = (state: AppState) => ({
 });
 
 const mapDispatch = {
-  getDailyReport: getDailyReportAction,
+  getDailyReport: getDailyLocalAction,
   completeReport: completeReportAction,
   setDayParams: setDayParamsAction,
   getDayParams: getDayParamsAction,

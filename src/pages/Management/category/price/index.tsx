@@ -7,7 +7,6 @@ import pick from "lodash/pick";
 import cx from 'classnames';
 import {
   SelectField,
-  PriceField,
   Condition,
   CheckBoxField
 } from 'components/Form/field';
@@ -29,7 +28,8 @@ import { getMax } from '../../helper';
 import { ArticleSelector, ProcessCardSelector } from '../../components/selectors';
 import { EitherEdit } from '../../Types';
 import { getTitle } from '../../helper';
-import { cleanPrice } from '../helpers';
+import { cleanPrice, priceFormAdapter, priceSubmitAdapter } from '../helpers';
+import PricingGroup, { PricingField } from "components/Form/Pricing";
 import styles from './price.module.css';
 
 const TYPE = [
@@ -47,6 +47,8 @@ function createItem(parentId: string, sortIndex: number): PriceTMC {
     sortIndex,
     type: 'tmc',
     barcode: '',
+    step: 1,
+    quantity: 1,
   }
 }
 
@@ -83,23 +85,22 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
   const [item, setItem] = React.useState<EitherEdit<PriceBase> | null>(null);
 
   const edit = React.useCallback(
-    ({ isEdit, expiry, valuation, ...value }) => {
+    ({ isEdit, expiry, ...value }) => {
       const v: PriceTMC | PricePC = cleanPrice(value);
       if (isEdit) {
         update({
-          ...v,
+          ...priceSubmitAdapter(v),
           expiry: expiry ? new Date() : null,
-          valuation: Number(valuation)
         });
       } else {
-        create({...v, valuation: Number(valuation)});
+        create(priceSubmitAdapter(value));
       }
       setItem(null);
     }, [update, create],
   )
 
   const putArticle = React.useCallback((item: TMCItem) => {
-    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update'])]);
+    putArticles([pick(item, ['id', 'parentId', 'title', 'description', 'barcode', 'unitId', 'add', 'update', 'boxing'])]);
   }, [putArticles]);
 
   const createPrice = React.useCallback(() => {
@@ -143,7 +144,7 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
       {
         item !== null ? (
           <ManagementPopup
-            initialValues={item}
+            initialValues={priceFormAdapter(item)}
             onCancel={() => setItem(null)}
             title={`Цена на "${category.title}"`}
             onSubmit={edit}
@@ -174,13 +175,12 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
             )}/>
             <Condition when="type" is="tmc" >
               <ArticleSelector updateAdapter={priceUpdateAdapter} onPicItem={putArticle} />
+              <PricingGroup unit="g" />
             </Condition>
             <Condition when="type" is="pc" >
               <ProcessCardSelector />
+              <PricingField />
             </Condition>
-            <Field name="valuation" render={({ input, meta }) => (
-              <PriceField id="valuation" title="Цена за единицу:" {...input} />
-            )}/>
           </ManagementPopup>
         ) : null
       }

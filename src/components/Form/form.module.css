@@ -1,0 +1,39 @@
+.line {
+  display: flex;
+}
+.container {
+  width: 100%;
+  margin-bottom: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.field {
+  display: block;
+  height: 40px;
+  border: 1px solid #C4C4C4;
+  border-radius: 4px;
+  width: 100%;
+  padding: 0 8px;
+  font-size: 20px;
+  flex: 1 1 100%;
+  min-width: 220px;
+}
+.select {
+  background-color: #fff;
+  border: 1px solid #C4C4C4;
+}
+.label {
+  display: block;
+  color: #000000;
+  font-size: 16px;
+  margin-right: 10px;
+  flex: 0 0 150px;
+  text-align: right;
+  min-width: 150px;
+}
+.error {
+  border-color: var(--red-color);
+  outline-color: var(--red-color);
+  color: var(--red-color);
+}

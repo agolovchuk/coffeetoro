@@ -1,9 +1,9 @@
 import * as React from "react";
 import { format } from 'date-fns';
 import cx from 'classnames';
+import { summa } from 'lib/decimal';
 import { Price } from "components/Units";
 import Item from "../item";
-import { getSumOfOrder, getSumOdDiscount } from 'domain/orders/helpers';
 import { DiscountItem } from 'domain/orders/Types';
 import styles from './order.module.css';
 
@@ -22,7 +22,7 @@ interface Props {
 
 function Order({ items, date, payment, discounts }: Props) {
 
-  const sm = React.useMemo(() => getSumOfOrder(items), [items])
+  const sm = React.useMemo(() => summa(items), [items])
 
   return (
     <li className={styles.item}>
@@ -47,7 +47,7 @@ function Order({ items, date, payment, discounts }: Props) {
             <dt>Скидка:</dt>
             <dd>
               <Price
-                value={getSumOdDiscount(discounts)}
+                value={summa(discounts)}
                 sign
                 notation="compact"
                 currencyDisplay="narrowSymbol"

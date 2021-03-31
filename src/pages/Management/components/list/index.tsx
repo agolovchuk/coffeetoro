@@ -13,10 +13,10 @@ interface Props<T> {
 function ItemList<T>({ list, children, getKey, orderBy }: Props<T>) {
 
   // const orderedList: Array<T> = React.useMemo(() => sortBy(list, orderBy), [list, orderBy]);
-  const orderedList: ReadonlyArray<T> = React.useMemo(() => list.slice().sort(orderBy), [list, orderBy]);
+  const orderedList = React.useMemo<ReadonlyArray<T>>(() => list.slice().sort(orderBy), [list, orderBy]);
 
   return (
-    <ul>
+    <ul className={styles.list}>
       {
         orderedList.map(e => (
           <li key={getKey(e)} className={styles.item}>
@@ -35,7 +35,7 @@ interface Ordering {
 }
 
 ItemList.defaultProps = {
-  orderBy: (a: Ordering, b: Ordering) => get(a, 'title').localeCompare(get(b, 'title')),
+  orderBy: (a: Ordering, b: Ordering) => get(a, 'title', '').localeCompare(get(b, 'title', '')),
   // orderBy: [(a) => a.title.localeCompare(), 'description'],
 }
 

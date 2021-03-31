@@ -1,5 +1,5 @@
-import { getId } from "lib/id";
-import { ExpenseExtended } from "domain/dictionary";
+import {getId} from "lib/id";
+import {DocumentType, ExpenseExtended, MoneySource} from "domain/dictionary";
 import omit from 'lodash/omit';
 
 export function articleUpdateAdapter({ type, refId, barcode, quantity, ...rest }: any) {
@@ -41,18 +41,25 @@ export function editAdapter(value: ExpenseExtended) {
   }
 }
 
-export function createItem(): ExpenseExtended {
+export function createItem(docId?: string): ExpenseExtended {
   return {
     id: getId(8),
+    docId,
     createBy: '',
     title: '',
     foreignId: '',
     valuation: 0,
     date: new Date(),
-    type: 'product',
+    type: DocumentType.PRODUCT,
     barcode: '',
     quantity: 1,
-    source: 'cash',
+    source: MoneySource.CASH,
     about: '',
   }
 }
+
+export const TYPE = [
+  { name: DocumentType.PRODUCT, title: 'Товары' },
+  { name: DocumentType.SERVICE, title: 'Услуги' },
+  { name: DocumentType.REMITTANCE, title: 'Переводы' },
+]

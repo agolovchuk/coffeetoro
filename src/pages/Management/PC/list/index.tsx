@@ -7,7 +7,7 @@ import {ProcessCardItem, CRUD, processCardsListSelector} from 'domain/dictionary
 import { AppState } from 'domain/StoreType';
 import { Main } from '../../components';
 import { EitherEdit } from '../../Types';
-import { getTitle } from "../../helper";
+import Row from "../row";
 
 function createItem(): ProcessCardItem {
   return {
@@ -59,14 +59,12 @@ function ProcessCardList ({ create, update, getAll,  ...props }: Props) {
     update: new Date().toISOString(),
   }), []);
 
-  const createLink = React.useMemo(() => {
-    return (data: ProcessCardItem) => ['/manager', 'pc', data.id].join('/');
-  }, []);
-
   React.useEffect(() => {
     getAll('units');
     getAll('processCards');
   }, [getAll]);
+
+  const rowItem = React.useCallback((d) => <Row {...d} />, []);
 
   return (
     <Main
@@ -76,8 +74,7 @@ function ProcessCardList ({ create, update, getAll,  ...props }: Props) {
       editAdapter={editAdapter}
       handleSubmit={handleSubmit}
       popupTitle="Add Process Card"
-      createLink={createLink}
-      createTitle={getTitle}
+      createLink={rowItem}
     >
       <Field name="title" render={({ input}) => (
         <InputField id="title" title="Title:" {...input} />

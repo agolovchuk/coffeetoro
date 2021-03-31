@@ -1,5 +1,6 @@
 import * as React from "react";
-import {Header, ItemList, ManagementPopup, MItem} from "../index";
+import { ValidationErrors } from 'final-form';
+import { Header, ItemList, ManagementPopup } from "../index";
 import { EitherEdit } from "../../Types";
 
 interface Props<T> {
@@ -10,17 +11,23 @@ interface Props<T> {
   editAdapter: (data: T) => EitherEdit<T>;
   handleSubmit: (data: T, cb: () => void) => void;
   popupTitle: string;
-  createLink: (data: T) => string;
-  createTitle: (data: T) => string | React.ReactNode;
+  createLink: (d: { data: T, handleEdit(data: T): void }) => string | JSX.Element;
   orderBy?: (a: T, b: T) => number;
   header?: React.ReactNode;
+  validate?: (d: T) => (ValidationErrors | Promise<ValidationErrors>);
 }
 
 interface DataType {
   id: string
 }
 
-function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter, handleSubmit, ...props }: Props<T>) {
+function PageFactory<T extends DataType>({
+  createItem,
+  editAdapter,
+  handleSubmit,
+  createLink,
+  ...props
+}: Props<T>) {
 
   const [item, setItem] = React.useState<EitherEdit<T> | null>(null);
 
@@ -38,7 +45,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
     handleSubmit({ ...createItem(), ...value }, () => {
       status.current && setItem(null);
     });
-  }, [handleSubmit, createItem]);
+  }, [handleSubmit, createItem, setItem]);
 
   React.useEffect(() => {
     status.current = true;
@@ -46,6 +53,8 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
       status.current = false;
     }
   }, []);
+
+  const createListItem = React.useCallback((data) => createLink({ data, handleEdit }), [createLink, handleEdit]);
 
   return (
     <section className="scroll-section">
@@ -55,16 +64,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
         }
       </Header>
       <ItemList list={props.list} getKey={e => e.id} orderBy={props.orderBy}>
-        {
-          (data) => (
-            <MItem
-              data={data}
-              title={createTitle(data)}
-              getLink={props.createLink}
-              onEdit={handleEdit}
-            />
-          )
-        }
+        {createListItem}
       </ItemList>
       {
         item && (
@@ -73,6 +73,7 @@ function PageFactory<T extends DataType>({ createTitle, createItem, editAdapter,
             onCancel={() => setItem(null)}
             initialValues={item}
             onSubmit={onSubmit}
+            validate={props.validate}
           >
             {
               props.children

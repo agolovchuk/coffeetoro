@@ -17,6 +17,8 @@ const priceContainer = {
   expiry: t.union([date, t.null, t.undefined]),
   valuation: t.number,
   sortIndex: t.number,
+  quantity: t.union([t.undefined, t.number]),
+  step: t.union([t.undefined, t.number]),
 }
 
 export const price = t.union([
@@ -50,6 +52,7 @@ export const tmc = t.interface({
   unitId: t.string,
   add: t.string,
   update: t.union([t.string, t.null, t.undefined]),
+  boxing: t.union([t.number, t.undefined]),
 });
 
 export const processCardsArticle = t.interface({
@@ -76,31 +79,49 @@ export const groupArticles = t.interface({
   articles: t.union([t.array(t.string), t.undefined]),
 });
 
+export enum MoneySource {
+  CASH = 'cash',
+  BANK = 'bank',
+  INCOME = 'income',
+}
+
+export enum SheetType {
+  INCOME = 'income',
+  EXPENSE = 'expense',
+}
+
+export enum DocumentType {
+  PRODUCT = 'product',
+  SERVICE = 'service',
+  REMITTANCE = 'remittance',
+}
+
 export const expenseBase = {
   id: t.string,
+  docId: t.union([t.string, t.undefined]),
   foreignId: t.union([t.string, t.undefined]),
   valuation: t.number,
   date: date,
   createBy: t.union([t.string, t.undefined]),
-  source: t.union([t.literal('cash'), t.literal('bank'), t.string]),
+  source: t.union([t.literal(MoneySource.CASH), t.literal(MoneySource.BANK), t.literal(MoneySource.INCOME)]),
   about: t.union([t.string, t.undefined]),
 }
 
 export const expense = t.union([
   t.interface({
     ...expenseBase,
-    type: t.literal('product'),
+    type: t.literal(DocumentType.PRODUCT),
     quantity: t.number,
     barcode: t.string,
   }),
   t.interface({
     ...expenseBase,
-    type: t.literal('service'),
+    type: t.literal(DocumentType.SERVICE),
     refId: t.string,
   }),
   t.interface({
     ...omit(expenseBase, 'foreignId'),
-    type: t.literal('remittance'),
+    type: t.literal(DocumentType.REMITTANCE),
   }),
 ]);
 
@@ -109,4 +130,13 @@ export const service = t.interface({
   title: t.string,
   description: t.union([t.string, t.undefined]),
   parentId: t.string,
-})
+});
+
+export const documents = t.interface({
+  id: t.string,
+  date: date,
+  createBy: t.string,
+  type: t.union([t.literal(SheetType.EXPENSE), t.literal(SheetType.INCOME)]),
+  account: t.union([t.literal(SheetType.INCOME), t.literal(SheetType.EXPENSE)]),
+  about: t.union([t.string, t.undefined]),
+});

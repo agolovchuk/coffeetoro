@@ -1,4 +1,5 @@
 import * as React from 'react';
+import cx from 'classnames';
 import { Confirmation, Modal, Popup } from 'components/Popup';
 import { promisifyRequest } from 'lib/idbx/helpers';
 import { DB_NAME } from 'db/constants';
@@ -14,25 +15,35 @@ const clearDB = async() => {
 }
 
 function Maintenance() {
-  const [confirmation, setConfirmattion] = React.useState(false);
+
+  const [confirmation, setConfirmation] = React.useState(false);
+
+  const setClose = React.useCallback(() => setConfirmation(false), [setConfirmation]);
+
+  const setOpen = React.useCallback(() => setConfirmation(true), [setConfirmation]);
+
   return (
     <section className="scroll-section">
       <h1 className={styles.title}>Maintenance</h1>
-      <div className={styles.content}>
-        <button
-          type="button"
-          className={styles.btn}
-          onClick={() => setConfirmattion(true)}
-        >Clear Database</button>
+      <div className={cx('grid__container', styles.container)}>
+        <div className="grid__item">
+          <button
+            type="button"
+            className="tile__container"
+            onClick={setOpen}
+          >
+            <h2 className="tile__title">Clear Database</h2>
+          </button>
+        </div>
       </div>
       {
         confirmation ? (
           <Modal>
-            <Popup onCancel={() => setConfirmattion(false)}>
-            <Confirmation
+            <Popup onCancel={setClose}>
+              <Confirmation
                 title="Clear Database"
                 onConfirm={clearDB}
-                onCancel={() => setConfirmattion(false)}
+                onCancel={setClose}
               >
                 <div className={styles.popupWrapper}>
                   <h2>All Data will be lost</h2>

@@ -15,16 +15,18 @@ import {
   Order,
   OrderItem,
 } from 'domain/orders/Types';
+import { ITransaction } from 'domain/transaction/Types';
 import get from "lodash/get";
 import flatten from "lodash/fp/flatten";
 import unionBy from "lodash/unionBy";
 import { priceZip, separatePrice, expenseZip } from './helpers';
 
 export * from '../lib/idbx';
+export * from './constants';
 
 export default class CDB extends IDB {
   constructor() {
-    super(DB_NAME, requestUpgrade, 10);
+    super(DB_NAME, requestUpgrade, 12);
   }
 
   getPriceByBarcode = async (barcode: string) => {
@@ -312,6 +314,20 @@ export default class CDB extends IDB {
         },
       }
     }, {});
+  }
+
+  getLastTransactionLog = async (account: string) => {
+    const { transaction, table, indexes } = await this.getTransaction(TABLE.transactionLog);
+    const osTransactionLog = transaction.objectStore(table).index(indexes.account);
+    return promisifyCursor<ITransaction>(osTransactionLog, account, {
+      direction: "prev",
+      isFinish: (d: ITransaction, r: ITransaction[]) => (r.length === 1),
+    });
+  }
+
+  addTransaction = async (transaction: ITransaction) => {
+    await this.addItem(TABLE.transactionLog.name, transaction);
+    return transaction.transaction;
   }
 }
 

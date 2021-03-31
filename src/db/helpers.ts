@@ -12,6 +12,8 @@ import {
 } from "../domain/dictionary";
 import { promisifyRequest } from "../lib/idbx";
 import compact from 'lodash/fp/compact';
+import * as C from './constants';
+import { getId } from 'lib/id'
 
 interface PriceByType {
   tmc: ReadonlyArray<PriceTMC>;
@@ -63,4 +65,47 @@ export async function expenseZip(list: ReadonlyArray<ExpenseItem>, osTMC: IDBInd
     articles: compact(articles),
     services: compact(services),
   }
+}
+
+export async function removeUserDuplicates(t: IDBTransaction) {
+  const request = t.objectStore(C.TABLE.users.name).openCursor();
+  const users: string[] = [];
+  request.onsuccess = function (event) {
+    const cursor: IDBCursorWithValue | null = this.result;
+    if (cursor !== null) {
+      const isExist = users.includes(cursor.value.name);
+      if (!isExist && !cursor.value.active) {
+        cursor.update({ ...cursor.value, name: getId(2, cursor.value.name) });
+      }
+      if (!isExist && cursor.value.active) {
+        users.push(cursor.value.name);
+      }
+      if (isExist && !cursor.value.active) {
+        cursor.delete();
+      }
+      if (isExist && cursor.value.active) {
+        cursor.update({ ...cursor.value, name: getId(2, cursor.value.name) });
+      }
+      cursor.continue();
+    }
+  }
+  request.onerror = () => {
+    console.warn('removeUserDuplicates trouble');
+  };
+}
+
+export function addDeviceId(t: IDBTransaction) {
+  const request = t.objectStore(C.TABLE.env.name).openCursor();
+  request.onsuccess = function (event) {
+    console.log(event, '%%%');
+    const cursor = this.result;
+    if (cursor) {
+      console.log(cursor.value, '$$$');
+      cursor.update({ ...cursor.value, deviceId: getId(10) })
+      cursor.continue()
+    }
+  }
+  request.onerror = () => {
+    console.warn('addDeviceId trouble');
+  };
 }

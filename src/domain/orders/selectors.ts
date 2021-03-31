@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 import { params } from 'domain/routes';
-import { userSelector, IUser, UserRole } from 'domain/env';
+import { userSelector } from 'domain/env';
 import { sortByDate } from 'lib/dateHelper';
 import { arrayToRecord } from 'lib/dataHelper';
-import { getOrderItem, orderItemsArchive } from './helpers';
-import { OrderState, PaymentMethod, Order } from './Types';
+import { getOrderItem, orderItemsArchive, orderFilter, orderSumm, orderItemsFromOrder } from './helpers';
+import { OrderState } from './Types';
 import { extendsPriceList } from 'domain/dictionary/helpers';
 import { toArray } from 'lib/dataHelper';
 
@@ -17,13 +17,15 @@ const priceByID = createSelector(orderDictionary, d => d.prices);
 
 export const discountsListSelector = createSelector([discountItems], toArray);
 
-const extendsPriceListSelector = createSelector(orderDictionary,
-  d => extendsPriceList(Object.values(d.prices), d.articles, d.processCards)
+const extendsPriceListSelector = createSelector(
+  orderDictionary,
+  d => extendsPriceList(Object.values(d.prices), d.articles, d.processCards),
 );
 
-const extendsPriceByIdSelector = createSelector(extendsPriceListSelector,
-  p => arrayToRecord(p, 'id')
-)
+const extendsPriceByIdSelector = createSelector(
+  extendsPriceListSelector,
+  p => arrayToRecord(p, 'id'),
+);
 
 // const categoryById = createSelector(orderDictionary, d => d.categories);
 const orderItemsListSelectors = createSelector(orderItems, toArray);
@@ -31,12 +33,16 @@ const orderItemsListSelectors = createSelector(orderItems, toArray);
 // Filter order items list for specific order
 const orderItemSelector = createSelector(
   [orderItemsListSelectors, params],
-  (o, p) => o.filter(f => f.orderId === p.orderId),
-)
+  (o, p) => orderItemsFromOrder(p.orderId, o),
+);
 
 export const orderArchiveSelector = createSelector(
   [orderItemSelector, priceByID], orderItemsArchive,
 );
+
+export const orderSummSelector = createSelector(
+  [orderItemSelector, discountsListSelector, priceByID], orderSumm,
+)
 
 export const ordersSelector = createSelector(
   [orderItemSelector, extendsPriceByIdSelector],
@@ -51,15 +57,9 @@ export const orderByProductSelector = createSelector(
 const ordersList = createSelector(
   [ordersById],
   o => Object.values(o).sort(sortByDate('date')),
-)
-
-function orderFilter<T extends Order>(o: T[], u: IUser | null): T[] {
-  if (u?.role === UserRole.MANAGER) return o;
-  const filter = (f: T) => f.owner === u?.id && f.payment === PaymentMethod.Opened;
-  return o.filter(filter);
-}
+);
 
 export const myOrdersListSelector = createSelector(
   [ordersList, userSelector],
   orderFilter,
-)
+);

@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import { Field } from 'react-final-form';
 import { createUserAction, updateUserAction, getUsersAction, usersListSelector, User } from 'domain/users';
 import { AppState } from 'domain/StoreType';
-import { Field } from 'react-final-form';
-import {CheckBoxField, InputField, SelectField} from 'components/Form/field';
+import { CheckBoxField, InputField, SelectField } from 'components/Form/field';
 import { Main } from '../components';
+import Row from "./row";
 import { EitherEdit } from '../Types';
 
 type UserType = User;
@@ -42,18 +43,18 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 
 const connector = connect(mapStateToProps, mapDispatch);
 
-interface Props extends PropsFromRedux {};
+interface Props extends PropsFromRedux {}
 
 function orderUsers(a: UserType, b: UserType): number {
   return a.name.localeCompare(b.name);
 }
 
-function ManagementUsers({ createUser, getUsers, updateUser, ...props }: Props) {
+function ManagementUsers({ createUser, getUsers, updateUser, users, ...props }: Props) {
 
   React.useEffect(() => { getUsers(); }, [getUsers]);
 
   const handleCreateUser = React.useCallback(
-    async ({ isEdit, ...newUser}: EitherEdit<UserType>, cb: () => void) => {
+    async ({ isEdit, ...newUser }: EitherEdit<UserType>, cb: () => void) => {
     if (isEdit) {
       await updateUser(newUser, cb);
     } else {
@@ -61,27 +62,32 @@ function ManagementUsers({ createUser, getUsers, updateUser, ...props }: Props) 
     }
   }, [createUser, updateUser]);
 
-  const createLink = React.useMemo(() => {
-    return (data: UserType) => ['/manager', 'users', data.id].join('/');
-  }, []);
-
   const editAdapter = React.useCallback((value: UserType) => ({
     ...value,
     active: typeof value.active === 'undefined' ? true : value.active,
     isEdit: true,
   }), []);
 
+  const rowItem = React.useCallback((d) => <Row {...d} />, []);
+
+  const val = React.useCallback((r) => {
+    if (users.filter(f => f.name === r.name && r.id !== f.id).length > 0) return {
+      name: 'Already hes',
+    }
+    return {};
+  }, [users]);
+
   return (
     <Main
       title="Users"
-      list={props.users}
+      list={users}
       createItem={createItem}
       handleSubmit={handleCreateUser}
       popupTitle="Create user"
-      createLink={createLink}
+      createLink={rowItem}
       editAdapter={editAdapter}
-      createTitle={({ name }) => name}
       orderBy={orderUsers}
+      validate={val}
     >
       <Field name="active" type="checkbox" render={({ input}) => (
         <CheckBoxField id="active" title="Active:" {...input} />
@@ -94,8 +100,8 @@ function ManagementUsers({ createUser, getUsers, updateUser, ...props }: Props) 
           {...input}
         />
       )}/>
-      <Field name="name" render={({input}) => (
-        <InputField id="name" title="Name:" {...input} />
+      <Field name="name" render={({input, meta}) => (
+        <InputField id="name" title="Name:" {...input} meta={meta} />
       )}/>
     </Main>
   );

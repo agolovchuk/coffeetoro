@@ -7,7 +7,7 @@ import { FieldArray } from 'react-final-form-arrays';
 import cx from 'classnames'
 import get from 'lodash/get';
 import { InputField, TextAreaField, PriceField } from 'components/Form/field';
-import Quantity from 'components/Form/Quantity';
+import Quantity from 'components/Form/Decimal';
 import Price from "components/Units/price";
 import {
   processCardSelector,
@@ -89,7 +89,7 @@ function Item({ card, getPC, match, getAll, units, update, putArticles, getEntry
         initialValues={initialValues}
         mutators={{ ...arrayMutators }}
         render={({ handleSubmit }) => (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className={styles.form}>
             <Field name="description" render={({ input }) => (
               <InputField id="description" title="Description:" {...input} />
             )}/>

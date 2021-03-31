@@ -12,5 +12,8 @@
   font-size: 20px;
 }
 .title {
-  margin-bottom: 30px;
+  margin: 10px;
+}
+.container {
+  padding: 10px;
 }

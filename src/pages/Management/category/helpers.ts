@@ -1,24 +1,17 @@
-import { PricePC, PriceTMC } from "domain/dictionary";
-import { getChildren, getParent } from '../components/tree/helpers';
 import pick from 'lodash/pick';
+import update from 'lodash/fp/update';
+import compose from 'lodash/fp/compose';
+import Decimal from "decimal.js-light";
+import { PriceBase, PricePC, PriceTMC } from "domain/dictionary";
+import { getParent } from 'modules/tree/helpers';
+
+import { EitherEdit } from "../Types";
 
 interface Item {
   id: string;
   count: number;
   title: string;
   parentId: string;
-}
-
-export function getParentsList<T extends Item>(list: ReadonlyArray<T>, group: Record<string, T[]>) {
-  const l = list.filter(f => f.count === 0);
-  return (current: string) => {
-    const children = getChildren(current, group);
-    return [
-      { name: 'root', title: '(коневой уровень)'},
-      ...l.filter(f => !children.includes(f.id))
-        .map(({ id, title }) => ({ name: id, title })),
-    ];
-  }
 }
 
 export function getParents<T extends Item>(list: T[]) {
@@ -31,7 +24,7 @@ export function getParents<T extends Item>(list: T[]) {
 }
 
 export function cleanPrice(price: any): PriceTMC | PricePC {
-  const base = pick(price, ['id', 'parentId', 'add', 'expiry', 'valuation', 'sortIndex']);
+  const base = pick(price, ['id', 'parentId', 'add', 'expiry', 'valuation', 'sortIndex', 'quantity', 'step']);
   if (price.type === 'tmc') {
     return {
       ...base,
@@ -47,4 +40,15 @@ export function cleanPrice(price: any): PriceTMC | PricePC {
     }
   }
   throw new TypeError('Incorrect price item');
+}
+
+export function priceFormAdapter(price: EitherEdit<PriceBase>): EitherEdit<PriceBase> {
+  return compose(
+    update('valuation')(v => new Decimal(v).dividedBy(1000).toNumber()),
+    update('step')(v => typeof v === 'undefined' ? 1 : v),
+  )(price);
+}
+
+export function priceSubmitAdapter<T extends PriceBase>(price: T): T {
+  return update('valuation')(v => new Decimal(v).times(1000).toNumber())(price);
 }
