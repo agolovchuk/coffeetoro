@@ -7,7 +7,7 @@ import {
 } from 'components/Form/field';
 import { ServiceItem, CRUD, servicesListSelector } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { Main } from '../components';
+import { Main } from '../../../modules/manage';
 import Row from './row';
 import { EitherEdit } from '../Types';
 

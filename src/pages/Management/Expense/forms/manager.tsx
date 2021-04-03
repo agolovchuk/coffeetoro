@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Field } from "react-final-form";
 import { Condition, InputField, PriceField, SelectField } from "components/Form/field";
-import { ArticleSelector, ServiceSelector } from "../../components/selectors";
+import { ArticleSelector, ServiceSelector } from "../../../../modules/manage/selectors";
 import { articleUpdateAdapter, serviceUpdateAdapter } from "../helpers";
 import { TMCItem } from "domain/dictionary";
 import styles from "./form.module.css";

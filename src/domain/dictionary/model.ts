@@ -17,6 +17,8 @@ import {
   ServiceItem,
   DocumentList,
   DocumentItem,
+  IAccounts,
+  IAccountItem,
 } from './Types';
 import * as A from './actions';
 import * as ReportAction from '../reports/actions';
@@ -95,5 +97,11 @@ export const reducer = {
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<DocumentItem, 'id'>('documents', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('documents'),
   }),
+
+  account: createReducer({} as IAccounts, {
+    [A.CRUD.createItemAction.type]: A.CRUD.creat<IAccountItem, 'id'>('account', 'id'),
+    [A.CRUD.updateItemAction.type]: A.CRUD.creat<IAccountItem, 'id'>('account', 'id'),
+    [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('account'),
+  })
 
 };

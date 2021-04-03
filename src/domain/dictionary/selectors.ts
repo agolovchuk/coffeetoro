@@ -22,6 +22,7 @@ export const processCards = (state: DictionaryState) => state.processCards;
 const groupArticles = (state: DictionaryState) => state.groupArticles;
 const expenses = (state: DictionaryState) => state.expenses;
 const services = (state: DictionaryState) => state.services;
+const account = (state: DictionaryState) => state.account;
 
 export const categoriesListSelector = createSelector(categories, c => Object.values(c).sort(sortByIndex));
 export const pricesListSelector = createSelector(prices, c => Object.values(c).sort(sortByIndex));
@@ -31,6 +32,7 @@ export const processCardsListSelector = createSelector(processCards, toArray);
 export const groupArticlesListSelector = createSelector(groupArticles, toArray);
 export const expensesListSelector = createSelector(expenses, toArray);
 export const servicesListSelector = createSelector(services, toArray);
+export const accountListSelector = createSelector(account, toArray);
 
 export const unitsByIdSelector = createSelector(units, u => u);
 export const unitsSelectSelector = createSelector(

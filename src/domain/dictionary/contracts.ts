@@ -140,3 +140,8 @@ export const documents = t.interface({
   account: t.union([t.literal(SheetType.INCOME), t.literal(SheetType.EXPENSE)]),
   about: t.union([t.string, t.undefined]),
 });
+
+export const account = t.interface({
+  id: t.string,
+  name: t.string,
+});

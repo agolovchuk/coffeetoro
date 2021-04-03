@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import get from 'lodash/get';
 import { CountedCategoryItem } from 'domain/dictionary';
 import { getId } from 'lib/id';
-import { MItem, Header } from '../../../pages/Management/components';
+import { MItem, Header } from '../../manage';
 import { getMax } from '../../../pages/Management/helper';
 import { EitherCategory, IUseItem, EGroupName } from '../Types';
 import styles from './item.module.css';

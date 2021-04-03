@@ -69,6 +69,12 @@ function asyncServices(): Promise<unknown> {
   });
 }
 
+function asyncAccount(): Promise<unknown> {
+  return import('./Accounts').then((res) => {
+    return res.default;
+  });
+}
+
 function ManagerRout() {
   return (
     <Switch>
@@ -83,6 +89,7 @@ function ManagerRout() {
       <AsyncRoute path="/manager/reports" importRender={asyncReports} />
       <AsyncRoute path="/manager/expense" importRender={asyncExpense} />
       <AsyncRoute path="/manager/services" importRender={asyncServices} />
+      <AsyncRoute path="/manager/accounts" importRender={asyncAccount} />
       {/* <AsyncRoute path="/manager/trial-balance" importRender={asyncTrialBalance} /> */}
     </Switch>
   );

@@ -6,7 +6,7 @@ import CDB from 'db';
 import { BarcodeField } from 'components/Form/field';
 import { isRequired } from 'components/Form/validate';
 import styles from './articles.module.css';
-import { getTitle } from '../../../helper';
+import { getTitle } from '../../../../pages/Management/helper';
 
 interface Item {
   title: string;

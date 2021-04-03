@@ -4,7 +4,8 @@ import { Field } from 'react-final-form';
 import { createUserAction, updateUserAction, getUsersAction, usersListSelector, User } from 'domain/users';
 import { AppState } from 'domain/StoreType';
 import { CheckBoxField, InputField, SelectField } from 'components/Form/field';
-import { Main } from '../components';
+import { isRequired } from 'components/Form/validate';
+import { Main } from 'modules/manage';
 import Row from "./row";
 import { EitherEdit } from '../Types';
 
@@ -100,7 +101,7 @@ function ManagementUsers({ createUser, getUsers, updateUser, users, ...props }: 
           {...input}
         />
       )}/>
-      <Field name="name" render={({input, meta}) => (
+      <Field name="name" validate={isRequired} render={({input, meta}) => (
         <InputField id="name" title="Name:" {...input} meta={meta} />
       )}/>
     </Main>

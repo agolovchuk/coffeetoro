@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ValidationErrors } from 'final-form';
 import { Header, ItemList, ManagementPopup } from "../index";
-import { EitherEdit } from "../../Types";
+import { EitherEdit } from "modules/records/Types";
 
 interface Props<T> {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface Props<T> {
   list: ReadonlyArray<T>;
   createItem: () => T;
   editAdapter: (data: T) => EitherEdit<T>;
-  handleSubmit: (data: T, cb: () => void) => void;
+  handleSubmit: (data: EitherEdit<T>, cb: () => void) => void | Promise<void>;
   popupTitle: string;
   createLink: (d: { data: T, handleEdit(data: T): void }) => string | JSX.Element;
   orderBy?: (a: T, b: T) => number;

@@ -13,7 +13,7 @@ import {
 } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import { InputField, SelectField } from 'components/Form/field';
-import ManagementPopup from 'modules/managmentPopup';
+import ManagementPopup from 'modules/manage/popup';
 import Tree from 'modules/tree';
 import { getParentsList, getParents } from './helpers';
 import useItem from './useItem';
