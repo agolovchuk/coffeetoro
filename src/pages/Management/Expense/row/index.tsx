@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import MItem from '../../components/item';
+import MItem from '../../../../modules/manage/item';
 import Item from '../item';
 
 interface Props {

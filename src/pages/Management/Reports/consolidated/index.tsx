@@ -17,7 +17,7 @@ import {
   SummaryIncome,
   SummaryExpanse,
 } from 'components/Daily/summary';
-import SelectPeriod, { Period } from '../../components/period';
+import SelectPeriod, { Period } from '../../../../modules/manage/period';
 import { BarCharts } from './barCharts';
 import styles from './con.module.css';
 

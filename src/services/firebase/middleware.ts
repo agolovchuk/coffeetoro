@@ -114,6 +114,9 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           DictionaryAction.CRUD.effect('services', action, data => {
             database.ref('services/' + data.id).set(data);
           });
+          DictionaryAction.CRUD.effect('account', action, data => {
+            database.ref('account/' + data.id).set(data);
+          });
           break;
 
         case DictionaryAction.CRUD.updateItemAction.type:
@@ -134,6 +137,9 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           });
           DictionaryAction.CRUD.effect('services', action, data => {
             database.ref('services/' + data.id).set(data);
+          });
+          DictionaryAction.CRUD.effect('account', action, data => {
+            database.ref('account/' + data.id).set(data);
           });
           break;
 

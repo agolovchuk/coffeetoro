@@ -18,14 +18,14 @@ export const LIST: ReadonlyArray<IList> = [
   },
   {
     id: '03',
+    name: 'accounts',
+    title: 'Accounts'
+  },
+  {
+    id: '04',
     name: 'articles',
     title: 'Articles'
   },
-  // {
-  //   id: '04',
-  //   name: 'group',
-  //   title: 'Group Articles'
-  // },
   {
     id: '05',
     name: 'pc',

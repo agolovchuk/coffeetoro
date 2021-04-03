@@ -23,9 +23,9 @@ import {
   updatePriceAction,
   getPricesByCategoryAction, categoriesListSelector, TMCItem, putArticlesAction,
 } from 'domain/dictionary';
-import { ManagementPopup, ItemList, Header } from '../../components';
+import { ManagementPopup, ItemList, Header } from '../../../../modules/manage';
 import { getMax } from '../../helper';
-import { ArticleSelector, ProcessCardSelector } from '../../components/selectors';
+import { ArticleSelector, ProcessCardSelector } from '../../../../modules/manage/selectors';
 import { EitherEdit } from '../../Types';
 import { getTitle } from '../../helper';
 import { cleanPrice, priceFormAdapter, priceSubmitAdapter } from '../helpers';

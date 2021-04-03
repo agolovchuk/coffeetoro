@@ -17,7 +17,7 @@ import {
   categoriesListSelector
 } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { Main } from '../../components';
+import { Main } from '../../../../modules/manage';
 import { categoriesList } from '../../../../modules/category/helpers';
 import SetBarcode from './setBarcode';
 import Row from "../row";

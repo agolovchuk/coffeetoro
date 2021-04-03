@@ -1,0 +1,20 @@
+.container {
+  composes: container from '../../../components/Form/field/checkbox.module.css';
+  margin: 0 5px;
+}
+.field {
+  composes: field from '../../../components/Form/field/checkbox.module.css';
+}
+.label {
+  composes: label from '../../../components/Form/field/checkbox.module.css';
+  width: auto;
+  padding-left: 45px;
+}
+.label::before {
+  right: initial;
+  width: 40px;
+}
+.wrapper {
+  margin: 0 5px;
+  display: flex;
+}
