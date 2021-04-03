@@ -6,5 +6,8 @@ export function accountFactory(): IAccountItem {
   return {
     id: getId(ACCOUNT_ID_LENGTH),
     name: '',
+    cashLess: false,
+    payInOrder: false,
+    description: '',
   }
 }
