@@ -5,7 +5,7 @@ export const order = t.interface({
   id: t.string,
   date: date,
   client: t.string,
-  payment: t.number,
+  payment: t.union([t.string, t.number]),
   owner: t.string,
 });
 

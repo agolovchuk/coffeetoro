@@ -29,9 +29,10 @@ function transactionFactory(data: Partial<ITransaction> = {}): ITransaction {
   }
 }
 
-function paymentMethodToAccount(method: PaymentMethod): Promise<string> {
-  if (method === PaymentMethod.Bank) return Promise.resolve(DEFAULT_BANK_ACCOUNT);
-  if (method === PaymentMethod.Cash) return Promise.resolve(DEFAULT_ACCOUNT);
+function paymentMethodToAccount(method: PaymentMethod | string): string {
+  if (typeof method === 'string') return method;
+  if (method === PaymentMethod.Bank) return DEFAULT_BANK_ACCOUNT;
+  if (method === PaymentMethod.Cash) return DEFAULT_ACCOUNT;
   throw new Error('Incorrect payment method');
 }
 
@@ -43,8 +44,7 @@ async function getLastTransaction(account: string): Promise<ITransaction> {
 
 async function addTransaction(entry: ITransaction): Promise<string> {
   const idb = new CDB();
-  await idb.addTransaction(entry);
-  return entry.transaction;
+  return idb.addTransaction(entry);
 }
 
 type OrderValuation = Order & Pick<ITransaction, 'credit'>
@@ -66,7 +66,7 @@ async function orderToTransaction(
 }
 
 export async function addOrderTransaction(deviceId: string, order: OrderValuation): Promise<string> {
-  const account = await paymentMethodToAccount(order.payment);
+  const account = paymentMethodToAccount(order.payment);
   const transaction = await orderToTransaction(deviceId, order, account);
   return addTransaction(transaction);
 }

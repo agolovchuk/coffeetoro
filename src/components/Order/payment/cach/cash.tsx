@@ -1,6 +1,6 @@
 import * as React from 'react';
 import cx from 'classnames';
-import Title from './title';
+import { Title } from '../title';
 import styles from './cash.module.css';
 import { Price, MoneyInput } from 'components/Units';
 

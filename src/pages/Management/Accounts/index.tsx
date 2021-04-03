@@ -1,16 +1,13 @@
 import { useCallback } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { useRecords } from 'modules/records';
-import { Main } from 'modules/manage';
-import { accountFactory, CRUD, accountListSelector, IAccountItem } from 'domain/dictionary';
+import { Main, Row } from 'modules/manage';
+import { accountFactory, CRUD, accountListSelector, IAccountItem, ACCOUNT } from 'domain/dictionary';
 import * as React from "react";
 import { AppState } from "domain/StoreType";
-import Row from "modules/manage/row";
-import {CheckBoxField, InputField} from "components/Form/field";
+import { CheckBoxField, InputField } from "components/Form/field";
 import { isRequired } from "components/Form/validate";
-import {Field} from "react-final-form";
-
-const ACCOUNT = 'account'
+import { Field } from "react-final-form";
 
 const mapState = (state: AppState) => ({
   list: accountListSelector(state),
@@ -19,6 +16,7 @@ const mapState = (state: AppState) => ({
 const mapDispatch = {
   getAll: CRUD.getAllAction,
 };
+
 const connector = connect(mapState, mapDispatch);
 
 type PropsFromRedux = ConnectedProps<typeof connector>;
@@ -51,6 +49,9 @@ function Account({ getAll, list }: Props) {
       createLink={rowItem}
       validate={validate}
     >
+      <Field name="active" type="checkbox" render={({ input}) => (
+        <CheckBoxField id="active" title="Активен:" {...input} />
+      )} />
       <Field name="name" validate={isRequired} render={({input, meta}) => (
         <InputField id="name" title="Имя:" {...input} meta={meta} />
       )}/>
@@ -64,7 +65,7 @@ function Account({ getAll, list }: Props) {
         <InputField id="description" title="Описание:" {...input} meta={meta} />
       )}/>
     </Main>
-  )
+  );
 }
 
 export default connector(Account);

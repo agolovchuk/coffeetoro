@@ -8,6 +8,7 @@ export function accountFactory(): IAccountItem {
     name: '',
     cashLess: false,
     payInOrder: false,
+    active: true,
     description: '',
   }
 }
