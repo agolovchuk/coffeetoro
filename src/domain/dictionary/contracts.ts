@@ -144,4 +144,7 @@ export const documents = t.interface({
 export const account = t.interface({
   id: t.string,
   name: t.string,
+  cashLess: t.boolean,
+  payInOrder: t.boolean,
+  description: t.union([t.string, t.undefined]),
 });

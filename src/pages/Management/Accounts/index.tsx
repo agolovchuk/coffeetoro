@@ -6,7 +6,7 @@ import { accountFactory, CRUD, accountListSelector, IAccountItem } from 'domain/
 import * as React from "react";
 import { AppState } from "domain/StoreType";
 import Row from "modules/manage/row";
-import { InputField } from "components/Form/field";
+import {CheckBoxField, InputField} from "components/Form/field";
 import { isRequired } from "components/Form/validate";
 import {Field} from "react-final-form";
 
@@ -52,7 +52,16 @@ function Account({ getAll, list }: Props) {
       validate={validate}
     >
       <Field name="name" validate={isRequired} render={({input, meta}) => (
-        <InputField id="name" title="Name:" {...input} meta={meta} />
+        <InputField id="name" title="Имя:" {...input} meta={meta} />
+      )}/>
+      <Field name="cashLess" type="checkbox" render={({ input}) => (
+        <CheckBoxField id="cashLess" title="Безналичный:" {...input} />
+      )} />
+      <Field name="payInOrder" type="checkbox" render={({ input}) => (
+        <CheckBoxField id="payInOrder" title="Для оплаты:" {...input} />
+      )} />
+      <Field name="description" render={({input, meta}) => (
+        <InputField id="description" title="Описание:" {...input} meta={meta} />
       )}/>
     </Main>
   )
