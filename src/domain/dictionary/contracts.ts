@@ -146,5 +146,6 @@ export const account = t.interface({
   name: t.string,
   cashLess: t.boolean,
   payInOrder: t.boolean,
+  active: t.boolean,
   description: t.union([t.string, t.undefined]),
 });

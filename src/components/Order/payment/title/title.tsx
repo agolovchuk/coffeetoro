@@ -19,5 +19,5 @@ export default function Title({ onBack, title }: Props) {
         {title}
       </React.Fragment>
     )}/>
-  )
+  );
 }

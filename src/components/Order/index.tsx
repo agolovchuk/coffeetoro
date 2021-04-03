@@ -13,7 +13,7 @@ import Discount from "./discountItem";
 interface Props {
   orderId: string;
   list: ReadonlyArray<OrderItemContainer>;
-  onComplete: (method: PaymentMethod) => void;
+  onComplete: (method: PaymentMethod.Opened | string) => void;
   onFastAdd: (barcode: string, cb: (r: boolean) => void) => void;
   onAddDiscount: (data: DiscountItem, cb: () => void) => void;
   discounts: ReadonlyArray<DiscountItem>;

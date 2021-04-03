@@ -11,7 +11,6 @@ export type ExpenseItem = t.TypeOf<typeof contracts.expense>;
 export type ServiceItem = t.TypeOf<typeof contracts.service>;
 export type IAccountItem = t.TypeOf<typeof contracts.account>;
 
-
 export interface CountedCategoryItem extends CategoryItem {
   count: number;
 }
