@@ -5,7 +5,7 @@ import { getId } from 'lib/id';
 import { InputField } from 'components/Form/field';
 import {ProcessCardItem, CRUD, processCardsListSelector} from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
-import { Main } from '../../components';
+import { Main } from '../../../../modules/manage';
 import { EitherEdit } from '../../Types';
 import Row from "../row";
 

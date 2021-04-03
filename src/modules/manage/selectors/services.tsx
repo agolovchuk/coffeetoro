@@ -4,7 +4,7 @@ import { Field, useForm } from 'react-final-form';
 import { servicesListSelector, CRUD } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import { SelectField, orderByTitle } from 'components/Form/field';
-import { getTitle } from '../../helper';
+import { getTitle } from '../../../pages/Management/helper';
 
 const mapState = (state: AppState) => ({
   list: servicesListSelector(state),

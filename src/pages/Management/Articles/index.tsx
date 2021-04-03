@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Route } from 'react-router-dom';
-import { CategoryManager, EGroupName } from "../../../modules/category";
+import { CategoryManager, EGroupName } from "modules/category";
+import { CategoryItem } from "domain/dictionary";
 import TMCList from './list';
-import { CategoryItem } from "../../../domain/dictionary";
 
 function Articles({ match }: any) {
 

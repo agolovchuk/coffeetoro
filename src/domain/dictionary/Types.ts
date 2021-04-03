@@ -9,7 +9,7 @@ export type ProcessCardArticle = t.TypeOf<typeof contracts.processCardsArticle>;
 export type GroupArticles = t.TypeOf<typeof contracts.groupArticles>;
 export type ExpenseItem = t.TypeOf<typeof contracts.expense>;
 export type ServiceItem = t.TypeOf<typeof contracts.service>;
-
+export type IAccountItem = t.TypeOf<typeof contracts.account>;
 
 
 export interface CountedCategoryItem extends CategoryItem {
@@ -97,6 +97,7 @@ export type Groups = Record<string, GroupArticles>;
 export type Expenses = Record<string, ExpenseItem>;
 export type Services = Record<string, ServiceItem>;
 export type DocumentList = Record<string, DocumentItem>;
+export type IAccounts = Record<string, IAccountItem>;
 
 export interface DictionaryState {
   categories: Categories;
@@ -108,4 +109,5 @@ export interface DictionaryState {
   expenses: Expenses;
   services: Services;
   documents: DocumentList;
-};
+  account: IAccounts;
+}

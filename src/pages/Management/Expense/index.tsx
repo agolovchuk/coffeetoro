@@ -14,7 +14,7 @@ import {
 } from "domain/dictionary";
 import { AppState } from 'domain/StoreType';
 import { Price } from "components/Units";
-import { Main, Period, Filter } from "../components";
+import { Main, Period, Filter } from "../../../modules/manage";
 import { ManagerForm, UserForm } from './forms';
 import { EitherEdit } from "../Types";
 import Row from './row';

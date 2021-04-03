@@ -20,9 +20,9 @@ import {
 } from 'domain/dictionary';
 import { getEntryPriceAction, entryPriceSelector } from 'domain/reports';
 import { AppState } from 'domain/StoreType';
-import Header from '../../components/header';
+import Header from '../../../../modules/manage/header';
 import { getTitle, getUnitsTitle } from '../../helper';
-import Add from '../../components/selectors/add';
+import Add from '../../../../modules/manage/selectors/add';
 import styles from './card.module.css';
 
 interface SubmitValue extends Omit<ProcessCardItem, 'articles'> {

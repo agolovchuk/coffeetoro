@@ -12,4 +12,5 @@ export const dictionaryAdapters = {
   expenses: dictionaryAdapterFactory(dictionaryContracts.expense, 'id'),
   services: dictionaryAdapterFactory(dictionaryContracts.service, 'id'),
   documents: dictionaryAdapterFactory(dictionaryContracts.documents, 'id'),
+  account: dictionaryAdapterFactory(dictionaryContracts.account, 'id'),
 };

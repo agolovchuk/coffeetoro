@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import MItem from '../../components/item';
+import MItem from '../../../../modules/manage/item';
 import { getTitle } from "../../helper";
 import styles from './row.module.css';
 

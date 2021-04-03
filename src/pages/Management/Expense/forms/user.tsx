@@ -2,7 +2,7 @@ import * as React from "react";
 import { Field } from "react-final-form";
 import { TMCItem } from "domain/dictionary";
 import { InputField, PriceField } from "components/Form/field";
-import { ArticleSelector } from "../../components/selectors";
+import { ArticleSelector } from "../../../../modules/manage/selectors";
 import { articleUpdateAdapter } from "../helpers";
 
 interface Props {

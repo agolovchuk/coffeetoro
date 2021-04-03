@@ -14,7 +14,7 @@ import {
 } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import { InputField, SelectField } from 'components/Form/field';
-import { ManagementPopup } from '../components';
+import { ManagementPopup } from '../../../modules/manage';
 import Price from './price'
 import Tree from 'modules/tree';
 import { EGroupName, useItem } from 'modules/category';
