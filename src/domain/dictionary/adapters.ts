@@ -17,5 +17,6 @@ export const pcToDictionary = (arr: ProcessCardItem[]) => arrayToRecord(arr, 'id
 export const expenses = (v: unknown) => validate(contracts.expense, v);
 export const services = (v: unknown) => validate(contracts.service, v);
 export const daily = (v: unknown) => validate(contracts.service, v);
+export const account = (v: unknown) => validate(contracts.account, v);
 export const expensesToDictionary = (arr: ExpenseItem[]) => arrayToRecord(arr, 'id');
 export const servicesToDictionary = (arr: ServiceItem[]) => arrayToRecord(arr, 'id');
