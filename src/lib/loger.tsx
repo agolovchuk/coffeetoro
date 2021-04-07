@@ -10,6 +10,8 @@ if (ENV !== 'development') {
 
 export enum EEventsTag {
   IDB = 'INDEXED_DB',
+  ORDER = 'ORDER',
+  TRANSACTION = 'TRANSACTION',
 }
 
 export function enrichMessage(message: string, meta?: any, tag?: EEventsTag) {

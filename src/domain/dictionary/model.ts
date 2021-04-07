@@ -102,6 +102,6 @@ export const reducer = {
     [A.CRUD.createItemAction.type]: A.CRUD.creat<IAccountItem, 'id'>('account', 'id'),
     [A.CRUD.updateItemAction.type]: A.CRUD.creat<IAccountItem, 'id'>('account', 'id'),
     [A.CRUD.getAllActionSuccess.type]: A.CRUD.getAll<any>('account'),
-  })
+  }),
 
 };
