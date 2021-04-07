@@ -51,6 +51,8 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
     database.ref().child('expenses').on('child_changed', handler.expensesHandler);
     database.ref().child('services').on('child_added', handler.servicesHandler);
     database.ref().child('services').on('child_changed', handler.servicesHandler);
+    database.ref().child('account').on('child_added', handler.accountHandler);
+    database.ref().child('account').on('child_changed', handler.accountHandler);
     database.ref().child(TR.TRANSACTION_LOG).on('child_added', handler.transactionHandler);
     database.ref().child(TR.TRANSACTION_LOG).on('child_changed', handler.transactionHandler);
     // database.ref().child('daily').on('child_added', handler.dailyHandler);
