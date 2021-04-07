@@ -1,19 +1,39 @@
 import * as React from 'react';
 import cx from 'classnames';
-import { Modal, Popup, PopupHeader } from 'components/Popup';
-import Title from './title';
-import PaymentCash from './cash';
+import { useDispatch, useSelector } from 'react-redux';
+import { Modal, Popup } from 'components/Popup';
 import styles from './payment.module.css';
+import { CRUD, ACCOUNT, paymentMethodsSelector } from 'domain/dictionary';
 import { PaymentMethod } from 'domain/orders/Types';
+import { MethodSelector, useElements } from './methods';
 
 interface Props {
   onCancel: () => void,
-  onComplete: (method: PaymentMethod) => void,
+  onComplete: (method: PaymentMethod.Opened | string) => void,
   valuation: number,
 }
 
 function Payment({ onCancel, onComplete, valuation }: Props) {
-  const [method, setMethod] = React.useState(PaymentMethod.Opened);
+
+  const dispatch = useDispatch();
+
+  const paymentMethods = useSelector(paymentMethodsSelector);
+
+  React.useEffect(() => {
+    dispatch(CRUD.getAllAction(ACCOUNT));
+  }, [dispatch]);
+
+  const [method, setMethod] = React.useState<PaymentMethod.Opened | string>(PaymentMethod.Opened);
+
+  const resetMethod = React.useCallback(() => setMethod(PaymentMethod.Opened), [setMethod]);
+
+  const { selectedMethod } = useElements({
+    valuation,
+    onCancel: resetMethod,
+    method,
+    accounts: paymentMethods,
+  });
+
   return (
     <Modal>
       <Popup onCancel={onCancel}>
@@ -21,35 +41,9 @@ function Payment({ onCancel, onComplete, valuation }: Props) {
           <div className={cx(styles.wrapper, {
             [styles.checkout]: method !== PaymentMethod.Opened,
           })}>
-            <section className={cx(styles.frame, styles.method)}>
-              <PopupHeader title="Способ оплаты" />
-              <div className={styles.btnGroup}>
-                <button
-                  type="button"
-                  className={cx(styles.tile, styles.cash)}
-                  onClick={() => setMethod(PaymentMethod.Cash)}
-                >Наличные</button>
-                <button
-                  type="button"
-                  className={cx(styles.tile, styles.bank)}
-                  onClick={() => setMethod(PaymentMethod.Bank)}
-                >Карта</button>
-              </div>
-            </section>
+            <MethodSelector accounts={paymentMethods} setMethod={setMethod} />
             {
-              method === PaymentMethod.Bank ? (
-                <section className={cx(styles.frame, styles.bank)}>
-                  <Title
-                    onBack={() => setMethod(PaymentMethod.Opened)}
-                    title="Банковская карта"
-                  />
-                </section>
-              ) : (
-                <PaymentCash
-                  onBack={() => setMethod(PaymentMethod.Opened)}
-                  valuation={valuation}
-                />
-              )
+              selectedMethod
             }
           </div>
           <div className={styles.btnGroup}>

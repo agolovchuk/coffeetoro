@@ -9,6 +9,7 @@ import * as DictionaryAction from 'domain/dictionary/actions';
 import * as ReportsAction from 'domain/reports/actions';
 import * as DailyAction from 'domain/daily/actions';
 import * as Env from 'domain/env/actions';
+import * as TR from 'domain/transaction';
 import * as handler from './helpers';
 import { format } from "date-fns";
 import { FORMAT } from "lib/dateHelper";
@@ -17,7 +18,8 @@ type AppAction = OrderAction.Action
   | DictionaryAction.Action
   | ReportsAction.Action
   | Env.Action
-  | DailyAction.Action;
+  | DailyAction.Action
+  | TR.Action;
 
 type Ak = Action | ThunkAction<AnyAction>;
 
@@ -49,6 +51,8 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
     database.ref().child('expenses').on('child_changed', handler.expensesHandler);
     database.ref().child('services').on('child_added', handler.servicesHandler);
     database.ref().child('services').on('child_changed', handler.servicesHandler);
+    database.ref().child(TR.TRANSACTION_LOG).on('child_added', handler.transactionHandler);
+    database.ref().child(TR.TRANSACTION_LOG).on('child_changed', handler.transactionHandler);
     // database.ref().child('daily').on('child_added', handler.dailyHandler);
     // database.ref().child('daily').on('child_changed', handler.dailyHandler);
 
@@ -175,6 +179,10 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
               start: action.payload.start.toISOString(),
               end: action.payload.end.toISOString(),
             })
+          break;
+
+        case TR.ADD_TRANSACTION:
+          database.ref(TR.TRANSACTION_LOG +'/' + action.payload.id).set(action.payload);
           break;
 
         // case DailyAction.SET_DAY_PARAMS:

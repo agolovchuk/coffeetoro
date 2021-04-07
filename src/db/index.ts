@@ -15,7 +15,7 @@ import {
   Order,
   OrderItem,
 } from 'domain/orders/Types';
-import { ITransaction } from 'domain/transaction/Types';
+import { ITransactionItem, TTransactionItem } from 'domain/transaction/Types';
 import get from "lodash/get";
 import flatten from "lodash/fp/flatten";
 import unionBy from "lodash/unionBy";
@@ -319,13 +319,13 @@ export default class CDB extends IDB {
   getLastTransactionLog = async (account: string) => {
     const { transaction, table, indexes } = await this.getTransaction(TABLE.transactionLog);
     const osTransactionLog = transaction.objectStore(table).index(indexes.account);
-    return promisifyCursor<ITransaction>(osTransactionLog, account, {
+    return promisifyCursor<ITransactionItem>(osTransactionLog, account, {
       direction: "prev",
-      isFinish: (d: ITransaction, r: ITransaction[]) => (r.length === 1),
+      isFinish: (d: ITransactionItem, r: ITransactionItem[]) => (r.length === 1),
     });
   }
 
-  addTransaction = async (transaction: ITransaction) => {
+  addTransaction = async (transaction: TTransactionItem) => {
     await this.addItem(TABLE.transactionLog.name, transaction);
     return transaction.transaction;
   }

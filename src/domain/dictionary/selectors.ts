@@ -111,3 +111,7 @@ export const expanseSumSelector = createSelector(
     [v.source]: get(a, v.source, 0) + (v.valuation * get(v, 'quantity', 1)),
   }), {}),
 );
+
+export const enabledAccountsSelector = createSelector(accountListSelector, a => a.filter(f => f.active === true));
+
+export const paymentMethodsSelector = createSelector(enabledAccountsSelector, a => a.filter(f => f.payInOrder));

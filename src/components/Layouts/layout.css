@@ -7,11 +7,15 @@
   --border-color: #C4C4C4;
   --light-border-color: #DCE0E3;
   --red-color: #E62752;
+  --red-button: #E52752;
   --darck-gray-color: #95A8BC;
   --medium-gray-color: #cccccc;
   --light-gray-color: #EAEAEA;
   --orange-color: #EE8035;
   --disabled-color: #cccccc;
+
+  --green-button-shadow: 0px 30px 40px rgba(36, 156, 87, 0.15);
+  --red-button-shadow: 0px 30px 40px rgba(229, 39, 82, 0.2);
 
   --tile-width: 180px;
   --tile-height: 180px;

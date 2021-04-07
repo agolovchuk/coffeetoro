@@ -1,21 +1,21 @@
 import get from 'lodash/get';
 import CDB from 'db';
 import * as C from 'db/constants';
-import { getId } from 'lib/id';
-import { arrayToRecord } from 'lib/dataHelper';
-import { Order, PaymentMethod, OrderItem, DiscountItem } from './Types';
+import {getId} from 'lib/id';
+import {arrayToRecord} from 'lib/dataHelper';
+import {EEventsTag, enrichException} from 'lib/loger';
+import {DiscountItem, Order, OrderItem, PaymentMethod} from './Types';
 import {
+  articlesByBarcodeSelector,
+  pcToDictionary,
   PriceItem,
   pricesToDictionary,
-  pcToDictionary,
-  TMCItem,
   ProcessCardItem,
-  articlesByBarcodeSelector,
+  TMCItem,
 } from 'domain/dictionary';
-import { addOrderTransaction } from 'domain/transaction';
+import { addTransactionAction } from 'domain/transaction';
 import { ThunkAction } from '../StoreType';
 import * as adapters from './adapters';
-import * as selectors from './selectors';
 import { prepareDictionary } from './helpers';
 
 export const CREATE_ORDER = 'ORDERS/CREATE_ORDER';
@@ -190,25 +190,20 @@ interface OrderComplete {
   payload: Order;
 }
 
-export function completeOrderAction(id: string, method: PaymentMethod): ThunkAction<OrderComplete> {
+export function completeOrderAction(id: string, method: PaymentMethod.Opened | string): ThunkAction<OrderComplete> {
   return async(dispatch, getState) => {
     const order = get(getState(), ['ordersList', id]);
     const completeOrder = {...order, date: new Date(), payment: method };
     try {
       const idb = new CDB();
       await idb.updateItem(C.TABLE.orders.name, completeOrder);
-      await addOrderTransaction(
-        getState().env.deviceId,
-        {
-        credit: selectors.orderSummSelector(getState(), { match: { params: { orderId: id }}}),
-        ...completeOrder,
-      });
+      dispatch(addTransactionAction(completeOrder));
       dispatch({
         type: COMPLETE,
         payload: completeOrder,
       });
     } catch (err) {
-      console.warn(err);
+      enrichException(err, completeOrder, EEventsTag.ORDER);
     }
   }
 }

@@ -1,5 +1,6 @@
 import { dictionaryAdapterFactory } from 'lib/contracts';
 import * as dictionaryContracts from 'domain/dictionary/contracts';
+import { transactionItem } from 'domain/transaction/contracts';
 import * as adapters from 'domain/dictionary/adapters'
 
 export const dictionaryAdapters = {
@@ -13,4 +14,5 @@ export const dictionaryAdapters = {
   services: dictionaryAdapterFactory(dictionaryContracts.service, 'id'),
   documents: dictionaryAdapterFactory(dictionaryContracts.documents, 'id'),
   account: dictionaryAdapterFactory(dictionaryContracts.account, 'id'),
+  transactionLog: dictionaryAdapterFactory(transactionItem, 'id'),
 };

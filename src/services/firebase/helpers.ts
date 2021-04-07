@@ -17,6 +17,7 @@ import {
 } from 'domain/dictionary/Types';
 import { dayParamsValidator } from 'domain/daily/adapters';
 import { DayItem } from 'domain/daily/Types';
+import { ITransactionItem, transactionValidator } from 'domain/transaction';
 
 interface PriceContainer {
   id: string,
@@ -41,8 +42,8 @@ type FBCategory = Omit<CategoryItem, 'count'>;
 
 interface DBWrapper<T> {
   get: (key: string) => Promise<T | null>,
-  set: (data: T) => Promise<void>,
-  put: (data: T) => Promise<void>,
+  set: (data: T) => Promise<unknown>,
+  put: (data: T) => Promise<unknown>,
 }
 
 export function eqPrice(fBPrice: FBPriceItem, { add, expiry, ...dbp }: PriceItem) {
@@ -53,7 +54,7 @@ export function eqPrice(fBPrice: FBPriceItem, { add, expiry, ...dbp }: PriceItem
   }, fBPrice);
 }
 
-type FBDay = Omit<DayItem, 'date'> & { date: string };
+type TDateString<T extends { date: Date}> = Omit<T, 'date'> & { date: string };
 
 function compactObject(o: Record<string, any>) {
   return Object
@@ -61,18 +62,12 @@ function compactObject(o: Record<string, any>) {
     .reduce((a, [key, value]) => typeof value === 'undefined' ? a : {...a, [key]: value }, {});
 }
 
-function eqDay(fBDay: FBDay, { date, ...rest }: DayItem) {
-  return eq({
-      ...rest,
-    date: date.toISOString(),
-    }, fBDay);
+function eqDateString<T extends { date: Date }>(fbd: TDateString<T>, { date, ...rest }: T): boolean {
+  return eq({ ...rest, date: date.toISOString() }, fbd);
 }
 
-function dayFBtoDB({ date, ...rest }: FBDay): DayItem {
-  return {
-    ...rest,
-    date: new Date(date),
-  }
+function dateStringToDate<T extends { date: Date }>({ date, ...rest }: TDateString<T>) {
+  return { ...rest, date: new Date(date) };
 }
 
 export function eqCategory(fbCategory: FBCategory, dbc: CategoryItem) {
@@ -219,11 +214,20 @@ export const servicesHandler = handlerFactory(
   }
 );
 
-export const dailyHandler = handlerFactory(
+export const dailyHandler = handlerFactory<DayItem, TDateString<DayItem>>(
   dbWrapper(C.TABLE.daily.name, dayParamsValidator),
-  eqDay,
+  eqDateString,
   {
-    async add(data: FBDay) { await this.set(dayFBtoDB(data)); },
-    async update(data: FBDay) { await this.put(dayFBtoDB(data)); },
+    async add(data) { await this.set(dateStringToDate(data)); },
+    async update(data) { await this.put(dateStringToDate(data)); },
   }
 );
+
+export const transactionHandler = handlerFactory<ITransactionItem, TDateString<ITransactionItem>>(
+  dbWrapper(C.TABLE.transactionLog.name, transactionValidator),
+  eqDateString,
+  {
+    async add(data) { await this.set(dateStringToDate(data)); },
+    async update(data) { await this.put(dateStringToDate(data)); },
+  }
+)

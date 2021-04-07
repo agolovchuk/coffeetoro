@@ -3,7 +3,7 @@ import { validateArray } from 'lib/contracts';
 import CDB, { promisifyRequest } from 'db';
 import * as C from 'db/constants';
 import { ThunkAction } from '../StoreType';
-import * as CRUD from './crud';
+import * as CRUD from '../../modules/crud/crud';
 import {
   CategoryItem,
   PriceItem,
