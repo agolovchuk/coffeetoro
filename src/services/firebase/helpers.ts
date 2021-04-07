@@ -14,6 +14,7 @@ import {
   ExpenseItem,
   ExpenseProduct,
   ExpenseService,
+  IAccountItem
 } from 'domain/dictionary/Types';
 import { dayParamsValidator } from 'domain/daily/adapters';
 import { DayItem } from 'domain/daily/Types';
@@ -211,6 +212,15 @@ export const servicesHandler = handlerFactory(
   {
     async add(data: ServiceItem) { await this.set(data); },
     async update(data: ServiceItem) { await this.put(data); },
+  }
+);
+
+export const accountHandler = handlerFactory(
+  dbWrapper(C.TABLE.account.name, adapters.account),
+  eq,
+  {
+    async add(data: IAccountItem) { await this.set(data); },
+    async update(data: IAccountItem) { await this.put(data); },
   }
 );
 
