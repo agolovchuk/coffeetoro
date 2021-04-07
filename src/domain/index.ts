@@ -53,6 +53,7 @@ export default async function configureStore(): Promise<Store<AppState>> {
     ...require('./users').reducer,
     ...require('./reports').reducer,
     ...require('./daily').reducer,
+    ...require('./transaction').reducer,
   });
 
   const store = createStore(

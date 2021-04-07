@@ -1,16 +1,14 @@
-export interface ITransaction {
-  id?: number;
-  transaction: string;
-  owner: string;
-  date: Date;
-  account: string;
-  description?: string;
-  notes?: string;
-  debit: number;
-  credit: number;
-  balance: number;
-  prev?: number;
-  deviceId: string;
+import * as t from 'io-ts';
+import * as contracts from './contracts';
+import { ADD_TRANSACTION } from './constants';
+
+export type ITransactionItem = t.TypeOf<typeof contracts.transactionItem>;
+
+export type TTransactionItem = Omit<ITransactionItem, 'id'>;
+
+export interface IAddTransaction {
+  type: typeof ADD_TRANSACTION;
+  payload: ITransactionItem;
 }
 
 export interface IWarehouse {
@@ -25,4 +23,12 @@ export interface IWarehouse {
 
 export interface ICredit {
   credit: number;
+}
+
+export type ITransactions = Record<string, ITransactionItem>;
+
+export type Action = IAddTransaction;
+
+export interface ITransactionState {
+  transactionLog: ITransactions;
 }

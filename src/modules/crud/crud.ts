@@ -1,36 +1,18 @@
 import { createAction } from '@reduxjs/toolkit';
 import { Query } from 'lib/idbx/Types';
-import { DictionaryState } from './Types';
+import {
+  QueyAction,
+  DKeys,
+  Action,
+  Reducer,
+  PrepareAction,
+  QueryAction,
+} from './Types';
 
 const CREATE_ITEM = 'CRUD/CREATE';
 const GET_ALL = 'CRUD/GET_ALL';
 const GET_ALL_SUCCESS = 'CRUD/GET_ALL_SUCCESS';
 const UPDATE_ITEM = 'CRUD/UPDATE_ITEM';
-
-type DKeys = keyof DictionaryState;
-
-export interface Action<T> {
-  payload: {
-    data: T,
-    name: DKeys
-  }
-}
-
-interface QueyAction {
-  payload: {
-    name: DKeys,
-    query?: Query | null,
-    index?: string
-  }
-}
-
-type R<S, A> = (state: S, action: A) => S;
-
-type Reducer<T> = R<Record<string, T>, Action<T>>;
-
-type PrepareAction<T = Record<string, any>> = (name: DKeys, data: T) => Action<T>;
-
-type QueryAction = (name: DKeys, query?: Query | null, index?: string) => QueyAction;
 
 function queryAction(name: DKeys, query?: Query | null, index?: string): QueyAction {
   return {

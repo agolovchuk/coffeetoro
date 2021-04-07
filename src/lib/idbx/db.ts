@@ -113,32 +113,28 @@ export default class IDB {
     });
   }
 
-  async addItem(table: string, value: any): Promise<void> {
-    try {
-      const objectStore = await this.os(table, EMode.READWRITE);
-      await this.request(objectStore.add(value));
-    } catch (err) {
-      console.warn(err);
-    }
-  }
-
-  async deleteItem(table: string, query: Query): Promise<void> {
+  async addItem(table: string, value: any): Promise<unknown> {
     const objectStore = await this.os(table, EMode.READWRITE);
-    await this.request(objectStore.delete(query));
+    return this.request(objectStore.add(value));
   }
 
-  async updateItem(table: string, value: any): Promise<void> {
+  async deleteItem(table: string, query: Query): Promise<unknown> {
     const objectStore = await this.os(table, EMode.READWRITE);
-    await this.request(objectStore.put(value));
+    return this.request(objectStore.delete(query));
   }
 
-  async updateIfExist(table:string, value: any): Promise<void> {
+  async updateItem(table: string, value: any): Promise<unknown> {
+    const objectStore = await this.os(table, EMode.READWRITE);
+    return this.request(objectStore.put(value));
+  }
+
+  async updateIfExist(table:string, value: any): Promise<unknown> {
     try {
       const objectStore = await this.os(table, EMode.READWRITE);
       await this.request(objectStore.add(value))
     } catch (err) {
       if (err.message === 'Key already exists in the object store.') {
-        await this.updateItem(table, value);
+        return await this.updateItem(table, value);
       } else {
         console.warn(err);
       }
