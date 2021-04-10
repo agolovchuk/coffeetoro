@@ -13,6 +13,7 @@ import {
   TMCItem,
   ProcessCardArticle, GroupArticles, ExpenseItem, Services,
   ExpenseExtended,
+  EArticlesType,
 } from './Types';
 import { IUser } from 'domain/env/Types';
 
@@ -41,7 +42,7 @@ export function sortByIndex<T extends ISortebaleList>(a: T, b: T) {
 /** Price */
 
 export function extendsPrice(price: PriceItem, tmc: TMC, pc: ProcessCards): PriceExtended {
-  if (price.type === 'tmc') {
+  if (price.type === EArticlesType.ARTICLES) {
     return { ...price, ...pick(get(tmc, price.barcode), ['title', 'description', 'unitId']) };
   }
   return { ...price, ...pick(get(pc, price.refId), ['title', 'description', 'primeCost']), unitId: '1' };

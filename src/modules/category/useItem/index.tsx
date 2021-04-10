@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
 import get from 'lodash/get';
-import { CountedCategoryItem } from 'domain/dictionary';
+import { CountedCategoryItem, EGroupName } from 'domain/dictionary';
 import { getId } from 'lib/id';
 import { MItem, Header } from '../../manage';
 import { getMax } from '../../../pages/Management/helper';
-import { EitherCategory, IUseItem, EGroupName } from '../Types';
+import { EitherCategory, IUseItem,  } from '../Types';
 import styles from './item.module.css';
 
 function createItemFactory(
@@ -56,7 +56,7 @@ function useItem({ groupName, category, categoryByName, categories, createLink, 
 
   const createCategory = useCallback(
     () => {
-      const categoryId = category ? get(categoryByName, [category, 'id']) : undefined;
+      const categoryId = category ? get(categoryByName, [category, 'id']) : groupName;
       const cat = createItemFactory(groupName, getMax(categories) + 1, categoryId);
       setItem(cat);
     },

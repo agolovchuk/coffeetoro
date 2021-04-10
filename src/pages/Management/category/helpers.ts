@@ -2,7 +2,7 @@ import pick from 'lodash/pick';
 import update from 'lodash/fp/update';
 import compose from 'lodash/fp/compose';
 import Decimal from "decimal.js-light";
-import { PriceBase, PricePC, PriceTMC } from "domain/dictionary";
+import { EArticlesType, PriceBase, PricePC, PriceTMC } from "domain/dictionary";
 import { getParent } from 'modules/tree/helpers';
 
 import { EitherEdit } from "../Types";
@@ -28,14 +28,14 @@ export function cleanPrice(price: any): PriceTMC | PricePC {
   if (price.type === 'tmc') {
     return {
       ...base,
-      type: 'tmc',
+      type: EArticlesType.ARTICLES,
       barcode: price.barcode,
     }
   }
   if (price.type === 'pc') {
     return {
       ...base,
-      type: 'pc',
+      type: EArticlesType.PC,
       refId: price.refId,
     }
   }

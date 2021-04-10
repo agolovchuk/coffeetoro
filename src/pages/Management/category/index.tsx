@@ -1,28 +1,29 @@
 import * as React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { Route, match } from 'react-router-dom';
-import { Field } from 'react-final-form';
+import {connect, ConnectedProps} from 'react-redux';
+import {match, Route} from 'react-router-dom';
+import {Field} from 'react-final-form';
 import groupBy from 'lodash/groupBy'
 import {
-  CRUD,
-  categoriesListSelector,
-  updateCategory,
-  CountedCategoryItem,
-  getPriceCategoriesAction,
-  createCategoryAction,
+  categoryGroupListSelector,
   categoryByNameSelector,
+  CountedCategoryItem,
+  createCategoryAction,
+  CRUD,
+  EGroupName,
+  getPriceCategoriesAction,
+  updateCategory,
 } from 'domain/dictionary';
-import { AppState } from 'domain/StoreType';
-import { InputField, SelectField } from 'components/Form/field';
-import { ManagementPopup } from '../../../modules/manage';
+import {AppState} from 'domain/StoreType';
+import {InputField, SelectField} from 'components/Form/field';
+import {ManagementPopup} from '../../../modules/manage';
 import Price from './price'
 import Tree from 'modules/tree';
-import { EGroupName, useItem } from 'modules/category';
-import { getParentsList, getParents } from 'modules/category/helpers';
+import {useItem} from 'modules/category';
+import {getParents, getParentsList} from 'modules/category/helpers';
 import styles from './category.module.css';
 
 const mapState = (state: AppState) => ({
-  categories: categoriesListSelector(state),
+  categories: categoryGroupListSelector(state, EGroupName.PRICES),
   categoryByName: categoryByNameSelector(state),
 });
 
@@ -64,13 +65,13 @@ function ProductManager({ categories, getCategories, update, create, categoryByN
   React.useEffect(() => { getCategories('name'); }, [getCategories]);
 
   const optionList = React.useMemo(
-    () => getParentsList(categories, group),
+    () => getParentsList(categories, group, EGroupName.PRICES),
     [categories, group],
   );
 
   const getKey = React.useMemo(() => getParents(categories), [categories]);
 
-  const name = React.useCallback((e: CountedCategoryItem) => e ? e.id : 'root', []);
+  const name = React.useCallback((e: CountedCategoryItem) => e ? e.id : EGroupName.PRICES, []);
 
   return (
     <div className={styles.container}>

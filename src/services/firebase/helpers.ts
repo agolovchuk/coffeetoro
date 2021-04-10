@@ -14,7 +14,8 @@ import {
   ExpenseItem,
   ExpenseProduct,
   ExpenseService,
-  IAccountItem
+  IAccountItem,
+  EArticlesType,
 } from 'domain/dictionary/Types';
 import { dayParamsValidator } from 'domain/daily/adapters';
 import { DayItem } from 'domain/daily/Types';
@@ -32,10 +33,10 @@ interface PriceContainer {
 }
 
 type FBPriceItem = PriceContainer & {
-  type: 'tmc';
+  type: EArticlesType.ARTICLES;
   barcode: string;
 } | PriceContainer & {
-  type: 'pc';
+  type: EArticlesType.PC;
   refId: string;
 };
 
@@ -133,8 +134,9 @@ function priceFBtoiDB({ expiry, add, ...data}: FBPriceItem): PriceItem {
   }
 }
 
-export const priceHandler = handlerFactory(
-  dbWrapper(C.TABLE.price.name, adapters.priceAdapter),
+export const priceHandler = handlerFactory<PriceItem, FBPriceItem>(
+  // @ts-ignore
+  dbWrapper(C.TABLE.price.name, adapters.priceAdapter), // TODO: You must solve trouble with enum
   eqPrice,
   {
     async add(data) { await this.set(priceFBtoiDB(data)); },

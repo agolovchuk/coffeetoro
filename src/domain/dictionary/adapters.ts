@@ -1,7 +1,7 @@
 import * as contracts from './contracts';
 import { dictionaryAdapterFactory, validate } from 'lib/contracts';
 import { arrayToRecord } from 'lib/dataHelper';
-import {PriceItem, TMCItem, ProcessCardItem, ExpenseItem, ServiceItem} from './Types';
+import { PriceItem, TMCItem, ProcessCardItem, ExpenseItem, ServiceItem } from './Types';
 
 export const categories = dictionaryAdapterFactory(contracts.category, 'id');
 export const prices = dictionaryAdapterFactory(contracts.price, 'id');

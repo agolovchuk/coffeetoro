@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Route } from 'react-router-dom';
-import { CategoryManager, EGroupName } from "modules/category";
-import { CategoryItem } from "domain/dictionary";
+import { CategoryManager } from "modules/category";
+import { CategoryItem, EGroupName } from "domain/dictionary";
 import TMCList from './list';
 
 function Articles({ match }: any) {
