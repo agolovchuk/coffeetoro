@@ -1,27 +1,27 @@
 import * as React from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import { Field } from 'react-final-form';
+import {connect, ConnectedProps} from 'react-redux';
+import {Field} from 'react-final-form';
 import groupBy from 'lodash/groupBy'
 import {
-  CRUD,
-  categoriesListSelector,
-  updateCategory,
-  CategoryItem,
-  getCategoriesAction,
-  createCategoryAction,
+  categoryGroupListSelector,
   categoryByNameSelector,
+  CategoryItem,
+  createCategoryAction,
+  CRUD,
+  EGroupName,
+  getCategoriesAction,
+  updateCategory,
 } from 'domain/dictionary';
-import { AppState } from 'domain/StoreType';
-import { InputField, SelectField } from 'components/Form/field';
+import {AppState} from 'domain/StoreType';
+import {InputField, SelectField} from 'components/Form/field';
 import ManagementPopup from 'modules/manage/popup';
 import Tree from 'modules/tree';
-import { getParentsList, getParents } from './helpers';
+import {getParents, getParentsList} from './helpers';
 import useItem from './useItem';
-import { EGroupName } from './Types';
 import styles from './category.module.css';
 
 const mapState = (state: AppState) => ({
-  categories: categoriesListSelector(state),
+  categories: categoryGroupListSelector(state, EGroupName.ARTICLES),
   categoryByName: categoryByNameSelector(state),
 });
 
@@ -71,7 +71,10 @@ function CategoryManager({
     getCategories('group', groupName);
   }, [getCategories, groupName]);
 
-  const optionList = React.useMemo(() => getParentsList(categories, group, groupName), [categories, group, groupName]);
+  const optionList = React.useMemo(
+    () => getParentsList(categories, group, groupName),
+    [categories, group, groupName]
+  );
 
   const getKey = React.useMemo(() => getParents(categories), [categories]);
 

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
 import { arrayToRecord, toArray } from 'lib/dataHelper';
-import { DictionaryState, CategoryItem, CountedCategoryItem } from './Types';
+import { DictionaryState, CategoryItem, CountedCategoryItem, EGroupName } from './Types';
 import { params } from 'domain/routes';
 import { userSelector } from 'domain/env';
 import {
@@ -13,6 +13,7 @@ import {
   extendsExpanseList,
   expenseByUser,
 } from './helpers';
+import { AppState } from "../StoreType";
 
 const categories = (state: DictionaryState) => state.categories;
 const prices = (state: DictionaryState) => state.prices;
@@ -24,7 +25,15 @@ const expenses = (state: DictionaryState) => state.expenses;
 const services = (state: DictionaryState) => state.services;
 const account = (state: DictionaryState) => state.account;
 
+const groupSelector = (state: AppState, group: EGroupName) => group;
+
 export const categoriesListSelector = createSelector(categories, c => Object.values(c).sort(sortByIndex));
+
+export const categoryGroupListSelector = createSelector(
+  [categoriesListSelector, groupSelector],
+  (c, g) => c.filter(f => f.group === g)
+);
+
 export const pricesListSelector = createSelector(prices, c => Object.values(c).sort(sortByIndex));
 export const unitsListSelector = createSelector(units, c => Object.values(c).sort(sortByIndex));
 export const tmcListSelector = createSelector(tmc, toArray);
@@ -61,7 +70,7 @@ export const currentCategorySelector = createSelector(
 
 export const currentCategoriesSelector = createSelector(
   [categoriesListSelector, params],
-  (c: ReadonlyArray<CountedCategoryItem>, p) => c.filter(f => f.parentId === (p.categoryId || 'root')),
+  (c: ReadonlyArray<CountedCategoryItem>, p) => c.filter(f => f.parentId === (p.categoryId || EGroupName.PRICES)),
 );
 
 export const priceByNameSelector = createSelector(prices, p => p);

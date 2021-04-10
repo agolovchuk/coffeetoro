@@ -21,6 +21,8 @@ const priceContainer = {
   step: t.union([t.undefined, t.number]),
 }
 
+export const priceBase = t.interface(priceContainer);
+
 export const price = t.union([
   t.interface({
     ...priceContainer,

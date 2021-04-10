@@ -5,36 +5,36 @@ import { getId } from 'lib/id';
 import { Field } from 'react-final-form';
 import pick from "lodash/pick";
 import cx from 'classnames';
-import {
-  SelectField,
-  Condition,
-  CheckBoxField
-} from 'components/Form/field';
+import { CheckBoxField, Condition, SelectField } from 'components/Form/field';
 import { Price } from 'components/Units';
 import { AppState } from 'domain/StoreType';
 import {
-  extendedPricesSelector,
-  PriceBase,
-  PriceTMC,
-  PricePC,
-  priceByNameSelector,
-  currentCategorySelector,
+  categoryGroupListSelector,
   createPriceAction,
+  currentCategorySelector,
+  EGroupName,
+  extendedPricesSelector,
+  getPricesByCategoryAction,
+  PriceBase,
+  priceByNameSelector,
+  PricePC,
+  PriceTMC,
+  putArticlesAction,
+  TMCItem,
   updatePriceAction,
-  getPricesByCategoryAction, categoriesListSelector, TMCItem, putArticlesAction,
+  EArticlesType,
 } from 'domain/dictionary';
-import { ManagementPopup, ItemList, Header } from '../../../../modules/manage';
-import { getMax } from '../../helper';
-import { ArticleSelector, ProcessCardSelector } from '../../../../modules/manage/selectors';
-import { EitherEdit } from '../../Types';
-import { getTitle } from '../../helper';
-import { cleanPrice, priceFormAdapter, priceSubmitAdapter } from '../helpers';
-import PricingGroup, { PricingField } from "components/Form/Pricing";
+import {Header, ItemList, ManagementPopup} from 'modules/manage';
+import {getMax, getTitle} from '../../helper';
+import {ArticleSelector, ProcessCardSelector} from 'modules/manage/selectors';
+import {EitherEdit} from '../../Types';
+import {cleanPrice, priceFormAdapter, priceSubmitAdapter} from '../helpers';
+import PricingGroup, {PricingField} from "components/Form/Pricing";
 import styles from './price.module.css';
 
 const TYPE = [
-  { name: 'tmc', title: 'TMC' },
-  { name: 'pc', title: 'Process Card' },
+  { name: EArticlesType.ARTICLES, title: 'TMC' },
+  { name: EArticlesType.PC, title: 'Process Card' },
 ]
 
 function createItem(parentId: string, sortIndex: number): PriceTMC {
@@ -45,7 +45,7 @@ function createItem(parentId: string, sortIndex: number): PriceTMC {
     expiry: null,
     valuation: 0,
     sortIndex,
-    type: 'tmc',
+    type: EArticlesType.ARTICLES,
     barcode: '',
     step: 1,
     quantity: 1,
@@ -53,7 +53,7 @@ function createItem(parentId: string, sortIndex: number): PriceTMC {
 }
 
 function priceUpdateAdapter({ type, refId, ...rest }: any, { barcode }: any): any {
-  return { ...rest, type: 'tmc', barcode: barcode || '' }
+  return { ...rest, type: EArticlesType.ARTICLES, barcode: barcode || '' }
 }
 
 interface PropsFromRouter {
@@ -61,7 +61,7 @@ interface PropsFromRouter {
 }
 
 const mapState = (state: AppState, props: PropsFromRouter) => ({
-  categories: categoriesListSelector(state),
+  categories: categoryGroupListSelector(state, EGroupName.PRICES),
   category: currentCategorySelector(state, props),
   prices: extendedPricesSelector(state, props),
   products: priceByNameSelector(state),
@@ -173,11 +173,11 @@ function PriceManager({ prices, update, create, category, getPrices, categories,
                 {...input}
               />
             )}/>
-            <Condition when="type" is="tmc" >
+            <Condition when="type" is={EArticlesType.ARTICLES} >
               <ArticleSelector updateAdapter={priceUpdateAdapter} onPicItem={putArticle} />
               <PricingGroup unit="g" />
             </Condition>
-            <Condition when="type" is="pc" >
+            <Condition when="type" is={EArticlesType.PC} >
               <ProcessCardSelector />
               <PricingField />
             </Condition>

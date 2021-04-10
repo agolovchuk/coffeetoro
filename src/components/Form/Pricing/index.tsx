@@ -51,8 +51,8 @@ function PricingGroup({ unit }: Props) {
               <input
                 inputMode="numeric"
                 type="text"
-                className={cx(styles.field, {[styles.error]: meta.error })}
                 {...input}
+                className={cx(styles.field, {[styles.error]: meta.error })}
                 value={input.value || ''}
               />
             )}
@@ -69,8 +69,8 @@ function PricingGroup({ unit }: Props) {
               <input
                 inputMode="numeric"
                 type="text"
-                className={styles.field}
                 {...input}
+                className={styles.field}
                 value={input.value || ''}
               />
             )}

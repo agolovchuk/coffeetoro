@@ -14,10 +14,20 @@ export type IAccountItem = t.TypeOf<typeof contracts.account>;
 export interface CountedCategoryItem extends CategoryItem {
   count: number;
 }
-/** ++++++++++++++++*/
-export type PriceItem = t.TypeOf<typeof contracts.price>;
 
-export type PriceBase = Omit<PriceItem, 'type' | 'barcode' | 'refId'>;
+export enum EGroupName {
+  ARTICLES = 'articles',
+  PRICES = 'prices',
+}
+
+export enum EArticlesType {
+  ARTICLES = 'tmc',
+  PC = 'pc',
+}
+
+/** ++++++++++++++++*/
+
+export type PriceBase = t.TypeOf<typeof contracts.priceBase>;
 
 export interface PriceExtendedBase extends PriceBase {
   title: string;
@@ -26,15 +36,18 @@ export interface PriceExtendedBase extends PriceBase {
 }
 
 export interface PriceTMC extends PriceBase {
-  type: 'tmc';
+  type: EArticlesType.ARTICLES;
   barcode: string;
 }
 
 export interface PricePC extends PriceBase {
-  type: 'pc';
+  type: EArticlesType.PC;
   refId: string;
   primeCost?: number,
 }
+
+export type PriceItem = PriceTMC | PricePC;
+
 /** ++++++++++++++++*/
 const baseContract = t.interface(contracts.expenseBase);
 interface ExpenseExtendedBase {

@@ -1,4 +1,4 @@
-import { CategoryItem, UnitItem } from 'domain/dictionary/Types';
+import { CategoryItem, UnitItem, EGroupName } from 'domain/dictionary/Types';
 import { IEnv } from 'domain/env';
 import { User } from 'domain/users';
 import {getId} from "../lib/id";
@@ -8,25 +8,25 @@ export const categories: ReadonlyArray<Partial<CategoryItem>> = [
     title: 'Кофе',
     name: 'coffee',
     sortIndex: 1,
-    parentId: 'root',
+    parentId: EGroupName.PRICES,
   },
   {
     title: 'Чай',
     name: 'tea',
     sortIndex: 2,
-    parentId: 'root',
+    parentId: EGroupName.PRICES,
   },
   {
     title: 'Напитки',
     name: 'drink',
     sortIndex: 3,
-    parentId: 'root',
+    parentId: EGroupName.PRICES,
   },
   {
     title: 'Десерты',
     name: 'dessert',
     sortIndex: 4,
-    parentId: 'root',
+    parentId: EGroupName.PRICES,
   },
   {
     title: 'Эспрессо',
