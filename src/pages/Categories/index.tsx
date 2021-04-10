@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 import { match } from 'react-router-dom';
-import { currentCategoriesSelector, getPriceCategoriesAction, CountedCategoryItem } from 'domain/dictionary';
+import { CountedCategoryItem, currentCategoriesSelector, getPriceCategoriesAction, EGroupName } from 'domain/dictionary';
 import { AppState } from 'domain/StoreType';
 import Grid from 'components/Grid';
 import Tile from 'components/Tile';
@@ -42,7 +42,7 @@ function Categories({ categories, match, getCategories }: Props) {
   const { params: { categoryId, orderId } } = match;
 
   React.useEffect(() => {
-    getCategories('parentId', categoryId || 'root');
+    getCategories('parentId', categoryId || EGroupName.PRICES);
   }, [categoryId, getCategories]);
 
   const getLink = React.useMemo(() => pathMaker(orderId), [orderId]);

@@ -6,8 +6,6 @@ export async function Printer() {
       }]
     });
 
-    console.log(device);
-
     const server = await device.gatt?.connect();
 
     if (typeof server === 'undefined') throw new Error('No gatt');

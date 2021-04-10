@@ -97,10 +97,8 @@ export async function removeUserDuplicates(t: IDBTransaction) {
 export function addDeviceId(t: IDBTransaction) {
   const request = t.objectStore(C.TABLE.env.name).openCursor();
   request.onsuccess = function (event) {
-    console.log(event, '%%%');
     const cursor = this.result;
     if (cursor) {
-      console.log(cursor.value, '$$$');
       cursor.update({ ...cursor.value, deviceId: getId(10) })
       cursor.continue()
     }

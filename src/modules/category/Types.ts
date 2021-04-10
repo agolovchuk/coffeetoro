@@ -1,10 +1,10 @@
-import { CountedCategoryItem } from 'domain/dictionary';
+import { CountedCategoryItem, EGroupName } from 'domain/dictionary';
 import { EitherEdit } from '../../pages/Management/Types';
 
-export enum EGroupName {
-  ARTICLES = 'articles',
-  PRICES = 'prices',
-}
+// export enum EGroupName {
+//   ARTICLES = 'articles',
+//   PRICES = 'prices',
+// }
 
 export type EitherCategory = EitherEdit<CountedCategoryItem>;
 

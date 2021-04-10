@@ -1,6 +1,6 @@
 {
   "name": "coffeetoro",
-  "version": "1.12.1",
+  "version": "1.12.2",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.1",
