@@ -1,4 +1,5 @@
 import * as React from "react";
+import { IAccountItem } from '../Types';
 import styles from "./summary.module.css";
 
 function toMoney(m: number) {
@@ -7,17 +8,17 @@ function toMoney(m: number) {
 
 interface Props {
   summary: {
-    cash: number;
-    bank: number;
     discount: number;
     income: number;
     orders: number;
   };
   date: string;
-  children?: React.ReactNode;
+  children?: JSX.Element;
+  accounts: ReadonlyArray<IAccountItem & { value: number }>;
 }
 
-function Summary({ summary, date, children }: Props) {
+function Summary({ summary, date, children, accounts }: Props) {
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Report for {date}</h1>
@@ -29,8 +30,11 @@ function Summary({ summary, date, children }: Props) {
       <dl className={styles.cache}>
         <dt><h5>Из них</h5></dt>
         <dd>
-          <div>по кассе: {toMoney(summary.cash)}</div>
-          <div>по банку: {toMoney(summary.bank)}</div>
+          {
+            accounts.map(e => (
+              <div key={e.id}>{e.name}: {toMoney(e.value)}</div>
+            ))
+          }
           <div>скидка: {toMoney(summary.discount)}</div>
         </dd>
       </dl>

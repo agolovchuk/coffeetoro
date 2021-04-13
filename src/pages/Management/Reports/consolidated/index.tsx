@@ -59,7 +59,7 @@ function Consolidated({ summary, getOrders, ordersByDate, getEntryPrice, expanse
   return (
     <section className={cx("scroll-section")}>
       <div className={styles.column}>
-        <SummaryIncome summary={summary} date={`${date.from} ${date.to}`} />
+        <SummaryIncome accounts={[]} summary={summary} date={`${date.from} ${date.to}`} />
         <SelectPeriod onSubmit={handleSetPeriod} initialValues={date} />
       </div>
       <BarCharts data={ordersByDate} />
