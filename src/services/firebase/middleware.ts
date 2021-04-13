@@ -184,7 +184,10 @@ export default function fbMiddleware({ getState, dispatch }: MiddlewareAPI<Dispa
           break;
 
         case TR.ADD_TRANSACTION:
-          database.ref(TR.TRANSACTION_LOG +'/' + action.payload.id).set(action.payload);
+          database.ref(TR.TRANSACTION_LOG +'/' + action.payload.id).set({
+            ...action.payload,
+            date: action.payload.date.toISOString(),
+          });
           break;
 
         // case DailyAction.SET_DAY_PARAMS:

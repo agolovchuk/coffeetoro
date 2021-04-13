@@ -13,7 +13,7 @@ import {
   getDailyLocalAction,
 } from "domain/reports";
 import { dailyParamsSelector, getDayParamsAction, setDayParamsAction } from "domain/daily";
-import { getExpenseAction, expanseSumSelector } from 'domain/dictionary';
+import { getExpenseAction, expanseSumSelector, accountsByIdSelector, CRUD } from 'domain/dictionary';
 import { closeSessionAction } from 'domain/env';
 import { myOrdersListSelector, getOrdersListAction } from 'domain/orders';
 import Daily from 'components/Daily';
@@ -28,6 +28,7 @@ const mapState = (state: AppState) => ({
   dailyParams: dailyParamsSelector(state),
   expanseSum: expanseSumSelector(state),
   myOrders: myOrdersListSelector(state),
+  accounts: accountsByIdSelector(state),
 });
 
 const mapDispatch = {
@@ -38,15 +39,16 @@ const mapDispatch = {
   getExpense: getExpenseAction,
   closeSession: closeSessionAction,
   getOrdersList: getOrdersListAction,
+  getAll: CRUD.getAllAction,
 };
 
 const connector = connect(mapState, mapDispatch);
 
 interface Props extends ConnectedProps<typeof connector>, RouteComponentProps<{ date: string }> {};
 
-function DailyReport({ match: { params }, closeSession, getDayParams, history, dailyParams, getExpense, expanseSum, getDailyReport, completeReport, getOrdersList, ...props }: Props) {
+function DailyReport({ match: { params }, closeSession, getDayParams, history, dailyParams, getExpense, expanseSum, getDailyReport, completeReport, getOrdersList, getAll, ...props }: Props) {
 
-  const { bank } = props.summary;
+  // const { bank } = props.summary;
 
   const date = React.useMemo(() =>
     params.date || format(new Date(), FORMAT), [params]);
@@ -62,10 +64,10 @@ function DailyReport({ match: { params }, closeSession, getDayParams, history, d
     // const c = before - 250000 + cash - get(expanseSum, 'cash', 0);
     return {
       cash: 0,
-      bank,
+      bank: 0,
       salary: 0,
     }
-  }, [bank]);
+  }, []);
 
   React.useEffect(() => {
     getDayParams(dateBefore);
@@ -76,6 +78,10 @@ function DailyReport({ match: { params }, closeSession, getDayParams, history, d
       completeReport(date);
     }
   }, [getDayParams, dateBefore, getExpense, date, getDailyReport, completeReport, getOrdersList]);
+
+  React.useEffect(() => {
+    getAll('account');
+  }, [getAll]);
 
   return (
     <Daily date={date} linkPrefix="/report" {...props}>
