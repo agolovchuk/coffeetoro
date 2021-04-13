@@ -4,29 +4,21 @@ import DayNavigator from "./dayNavigator";
 import Item from "./item";
 import Order from './order';
 import Summary from "./summary/income";
+import { accountsSummary } from './helpers';
 import styles from "./report.module.css";
+import { IReportProps } from './Types';
 
-interface Props {
-  summary: {
-    cash: number;
-    bank: number;
-    discount: number;
-    income: number;
-    orders: number;
-  }
-  articles: ReadonlyArray<any>;
-  orders: ReadonlyArray<any>;
-  date: string;
-  children?: React.ReactNode;
-  linkPrefix: string;
-}
+function Report({ children, summary, date, orders, accounts, ...props }: IReportProps) {
 
-function Report({ children, summary, date, ...props }: Props) {
+  const accountsList = React.useMemo(
+  () => accountsSummary(orders, accounts),
+  [orders, accounts],
+  );
 
   return (
     <section className={cx("scroll-section", styles.container)}>
       <div  className={cx(styles.column, styles.wrapper)}>
-        <Summary summary={summary} date={date}>
+        <Summary summary={summary} date={date} accounts={accountsList}>
           <DayNavigator date={date} prefix={props.linkPrefix} />
         </Summary>
         {
@@ -43,8 +35,8 @@ function Report({ children, summary, date, ...props }: Props) {
         </ul>
         <ul className={styles.list}>
           {
-            props.orders.map(e => (
-              <Order key={e.id} {...e} />
+            orders.map(e => (
+              <Order key={e.id} accounts={accounts} {...e} />
             ))
           }
         </ul>

@@ -10,7 +10,7 @@ export interface OrderArchiveItem {
   client: string;
   date: string;
   id: string;
-  payment: 1 | 2;
+  payment: string;
   items: ReadonlyArray<OrderArchiveContent>;
   discounts: ReadonlyArray<DiscountItem>;
   owner: string;
